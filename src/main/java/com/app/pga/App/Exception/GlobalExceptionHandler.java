@@ -7,12 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.nio.file.AccessDeniedException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@RestControllerAdvice
 public class GlobalExceptionHandler {
     //errores de Bean Validation en el cuerpo (@Valid @RequestBody), construye fieldErrors con field + message. → 400 Bad Request.
     @ExceptionHandler(MethodArgumentNotValidException.class)
