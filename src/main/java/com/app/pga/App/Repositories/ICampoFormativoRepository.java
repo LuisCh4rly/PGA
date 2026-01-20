@@ -11,10 +11,7 @@ import java.util.Optional;
 public interface ICampoFormativoRepository extends JpaRepository < CampoFormativo , Long> {
 
     boolean  existsByNombreEqualsIgnoreCase(String nombre);
-
-    @Override
     Optional<CampoFormativo> findById (Long id);
-
     List<CampoFormativo> findByActivoTrue();
 
 }

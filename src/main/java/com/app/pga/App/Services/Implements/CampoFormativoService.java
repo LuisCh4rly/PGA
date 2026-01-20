@@ -21,6 +21,7 @@ public class CampoFormativoService implements ICampoFormativoService {
 
     private final ICampoFormativoRepository campoFormativoRepository;
     private final CampoFormativoMapper campoFormativoMapper;
+    private final ActividadBaseService actividadBaseService;
 
     @Override
     public CampoFormativoDto crearCampo(CampoFormativoDto campoFormativoDto) {
@@ -85,8 +86,11 @@ public class CampoFormativoService implements ICampoFormativoService {
 
         if (campoFormativo.getActivo()){
             campoFormativo.setActivo(false);
+            actividadBaseService.habitarDeshabilitarPorCampo(id,false);
+
         }else{
             campoFormativo.setActivo(true);
+            actividadBaseService.habitarDeshabilitarPorCampo(id,true);
         }
 
         return campoFormativoMapper.toDto(campoFormativoRepository.save(campoFormativo));
