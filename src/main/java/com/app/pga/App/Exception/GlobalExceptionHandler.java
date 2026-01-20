@@ -13,6 +13,7 @@ import java.nio.file.AccessDeniedException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     //errores de Bean Validation en el cuerpo (@Valid @RequestBody), construye fieldErrors con field + message. → 400 Bad Request.
@@ -59,6 +60,10 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
+
+    //recursos ya existen→ 404.
+
+
     //DataIntegrityViolationException: violaciones de integridad (FK, unique, checks) → 409 Conflict.
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiError> handleIntegrity(DataIntegrityViolationException ex, HttpServletRequest req) {
@@ -66,7 +71,7 @@ public class GlobalExceptionHandler {
                 OffsetDateTime.now(),
                 HttpStatus.CONFLICT.value(),
                 "Data Integrity Violation",
-                "No se pudo completar la operación por restricciones de datos",
+                "No se pudo completar la operación por restricciones de datos" ,
                 req.getRequestURI(),
                 null
         );
@@ -112,7 +117,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
     }*/
 
-    @ExceptionHandler(AccessDeniedException.class)
+    /* @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex, HttpServletRequest req) {
         ApiError err = new ApiError(
                 OffsetDateTime.now(),
@@ -123,7 +128,8 @@ public class GlobalExceptionHandler {
                 null
         );
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
-    }
+    }*/
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest req) {
 
