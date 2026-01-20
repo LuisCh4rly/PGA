@@ -37,7 +37,7 @@ public class UsuarioService implements IUsuarioService {
         Usuario usuarioEntity = usuarioMapper.toEntity(usuarioDto);
         if (usuarioEntity.getCreated_At()==null){
             usuarioEntity.setCreated_At(Date.from(Instant.now()));
-            usuarioEntity.setActivo(true);//nuevo alumno inicia como activo
+            usuarioEntity.setActivo(true);//nuevo usuario inicia como activo
         }
         Usuario nuevoUsuario = usuarioRepository.save(usuarioEntity);
 
@@ -51,7 +51,7 @@ public class UsuarioService implements IUsuarioService {
         Usuario usuarioExistente = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NotFoundException("Registro no encontrado: "+ idUsuario));
 
         if(!usuarioExistente.getActivo()){
-            throw new IllegalStateException("No se puede modificar un usuario inactivo");
+            throw new IllegalStateException("No se puede modificar un registro inactivo");
         }
 
         usuarioExistente.setDireccion(usuarioDto.direccion());
@@ -71,7 +71,7 @@ public class UsuarioService implements IUsuarioService {
              .collect(Collectors.toList());
    }
 
-    //Consulta general para activos
+    //Consulta general
     @Transactional(readOnly = true)
     public List<UsuarioDto> findAll(){
         return usuarioRepository.findAll()
