@@ -4,7 +4,6 @@ import com.app.pga.App.Models.Dtos.UsuarioDto;
 import com.app.pga.App.Services.Implements.UsuarioService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import org.hibernate.annotations.Parameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
