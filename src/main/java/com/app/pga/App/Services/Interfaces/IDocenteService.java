@@ -1,4 +1,4 @@
-package com.app.pga.App.Services;
+package com.app.pga.App.Services.Interfaces;
 
 import com.app.pga.App.Models.Dtos.DocenteDto;
 

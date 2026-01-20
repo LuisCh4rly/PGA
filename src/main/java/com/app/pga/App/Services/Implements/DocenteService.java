@@ -7,7 +7,7 @@ import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Mappers.DocenteMapper;
 import com.app.pga.App.Repositories.IDocenteRepository;
 import com.app.pga.App.Repositories.IUsuarioRepository;
-import com.app.pga.App.Services.IDocenteService;
+import com.app.pga.App.Services.Interfaces.IDocenteService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

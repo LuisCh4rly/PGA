@@ -31,7 +31,7 @@ class ActividadBaseService implements IActividadBaseService {
             throw new IllegalStateException("El campo formativo está inhabilitado");
         }
         if(actividadBaseRepository.existsByTituloEqualsIgnoreCase(actividadBaseDto.titulo())) {
-            throw new DataIntegrityViolationException("");
+            throw new IllegalArgumentException("El registro ya existe");
         }
 
         ActividadBase actividadBaseNueva = actividadBaseMapper.toEntity(actividadBaseDto);

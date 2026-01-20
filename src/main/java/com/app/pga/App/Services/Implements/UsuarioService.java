@@ -5,7 +5,7 @@ import com.app.pga.App.Models.Dtos.UsuarioDto;
 import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Mappers.UsuarioMapper;
 import com.app.pga.App.Repositories.IUsuarioRepository;
-import com.app.pga.App.Services.IUsuarioService;
+import com.app.pga.App.Services.Interfaces.IUsuarioService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

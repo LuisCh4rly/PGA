@@ -27,7 +27,7 @@ public class CampoFormativoService implements ICampoFormativoService {
     public CampoFormativoDto crearCampo(CampoFormativoDto campoFormativoDto) {
 
         if(campoFormativoRepository.existsByNombreEqualsIgnoreCase(campoFormativoDto.nombre())) {
-            throw new DataIntegrityViolationException("");
+            throw new IllegalArgumentException("El registro ya existe");
         }
 
         CampoFormativo campoNuevo = campoFormativoMapper.toEntity(campoFormativoDto);
