@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ public class UsuarioService implements IUsuarioService {
 
         Usuario usuarioEntity = usuarioMapper.toEntity(usuarioDto);
         if (usuarioEntity.getCreated_At()==null){
-            usuarioEntity.setCreated_At(Date.from(Instant.now()));
+            usuarioEntity.setCreated_At(LocalDate.now());
             usuarioEntity.setActivo(true);//nuevo usuario inicia como activo
         }
         Usuario nuevoUsuario = usuarioRepository.save(usuarioEntity);

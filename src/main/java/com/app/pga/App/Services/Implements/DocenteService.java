@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,15 +32,15 @@ public class DocenteService implements IDocenteService {
 
     //Crear docente
     public DocenteDto createDocente (DocenteDto docenteDto){
-        Usuario usuario = iUsuarioRepository.findById(docenteDto.idUser()).orElseThrow(()-> new NotFoundException("Registro no encontrado"));
+        Usuario usuario = iUsuarioRepository.findById(docenteDto.usuarioDto().idUser()).orElseThrow(()-> new NotFoundException("Registro no encontrado"));
 
-        docenteRepository.findByUsuario_IdUser(docenteDto.idUser()).ifPresent(DocenteDto->{
+        docenteRepository.findByUsuario_IdUser(docenteDto.usuarioDto().idUser()).ifPresent(DocenteDto->{
             throw new IllegalArgumentException("El usuario ya se encuentra registrado a un docente");
         });
 
         Docente docenteEntity = docenteMapper.toEntity(docenteDto);
         if(docenteEntity.getFechaAlta()==null){
-            docenteEntity.setFechaAlta(Date.from(Instant.now()));
+            docenteEntity.setFechaAlta(LocalDate.now());
             docenteEntity.setActivo(true);
             docenteEntity.setUsuario(usuario);
         }
@@ -79,10 +80,10 @@ public class DocenteService implements IDocenteService {
     public DocenteDto desactivarActivarDocente (Long idDocente){
         Docente docente = docenteRepository.findById(idDocente).orElseThrow(()->new NotFoundException("Registro no encontrado: "+idDocente));
         if (docente.getActivo()==true){
-            docente.setFechaBaja(Date.from(Instant.now()));
+            docente.setFechaBaja(LocalDate.now());
             docente.setFechaAlta(null);
         } else {
-            docente.setFechaAlta(Date.from(Instant.now()));
+            docente.setFechaAlta(LocalDate.now());
             docente.setFechaBaja(null);
         }
         docente.setActivo(!docente.getActivo());//dasactivar activar
