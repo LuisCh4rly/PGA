@@ -13,10 +13,10 @@ import java.time.LocalDate;
  */
 public record AlumnoDto(
         Long idAlumno,
-        @Size(message = "Máximo 30 carácteres", max = 30)
+        @Size(message = "Máximo 60 carácteres", max = 60)
         @NotBlank(message = "Campo obligatorio.")
         String universidad,
-        @Size(message = "Máximo 30 carácteres.", max = 30)
+        @Size(message = "Máximo 60 carácteres.", max = 60)
         @NotBlank(message = "Campo obligatorio.")
         String carrera,
         @JsonFormat(pattern = "dd/MM/yyyy")
