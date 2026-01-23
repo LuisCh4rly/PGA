@@ -19,13 +19,14 @@ import java.util.List;
 public class DocenteController {
     private final DocenteService docenteService;
 
-    public DocenteController(DocenteService docenteService, UsuarioService usuarioService){this.docenteService=docenteService;}
+    public DocenteController(DocenteService docenteService){this.docenteService=docenteService;}
 
     //--------crear-------
     @PostMapping
     public ResponseEntity<DocenteDto>createDocente(@Valid @RequestBody DocenteDto docenteDto, UriComponentsBuilder uriComponentsBuilder){
         DocenteDto createDocente = docenteService.createDocente(docenteDto);
-        URI location = uriComponentsBuilder.path("/api/docente/{id}").buildAndExpand(createDocente.getClass()).toUri();
+        URI location = uriComponentsBuilder.path("/api/docente/{id}")
+                .buildAndExpand(createDocente.getClass()).toUri();
 
         return ResponseEntity.created(location).body(createDocente);
     }

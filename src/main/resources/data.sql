@@ -3,6 +3,7 @@ INSERT INTO usuarios (nombre, apellido_paterno, apellido_materno, created_At,  e
                                                                                                    ('JOSE ARMANDO', 'GUTIERRES', 'PERALTA', current_timestamp,'JOSEPERALTA@EMAIL.COM', 5512457836, 'OLIMPICA SUR 62', true),
                                                                                                    ('KAREN', 'ATENOGENES', 'MATINEZ',current_timestamp,'KARENMARTINEZ@EMAIL.COM', 5578945818, 'CALLE NIÑOS HEROES S/N', true),
                                                                                                    ('NOEL', 'SANCHEZ', 'SALCEDO', current_timestamp,'NOELSANCHEZ@EMAIL.COM', 5585967425, 'FRANCISCO SARABIA', true),
+                                                                                                   ('MAURICIO SEBASTIAN', 'JURADO', 'PEREZ', current_timestamp,'SEBASTIANJURADO@EMAIL.COM', 5578549017, 'AV. DE LOS MAESTROS', true),
                                                                                                    ('JULIO', 'MARTINEZ', 'LOPEZ', current_timestamp,'JULIOLOPEZ@EMAIL.COM', 5545258679, 'MIRAMONTES 89', true);
 -- Tabla de Campo formativo
 INSERT INTO campos_formativos (nombre, descripcion, activo) VALUES ('Arquitectura de APIs', 'Diseño de servicios REST y lógica de servidor en Java.', true),
@@ -34,4 +35,10 @@ INSERT INTO actividades_base (titulo, descripcion, activo, id_campo_formativo) V
                                                                                       ('Configurar Railway', 'Despliegue automático de la base de datos en la nube.', true, 5),
                                                                                       ('Monitorizar Logs', 'Implementar rastreo de errores en el servidor de producción.', true, 5),
                                                                                       ('Variables de Entorno', 'Gestionar credenciales sensibles de forma segura en la nube.', true, 5);
+
+--Tabla de Alumnos
+INSERT INTO alumnos (universidad, carrera, fecha_termino, activo, id_user) VALUES ('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', 'LICENCIATURA EN SISTEMAS', '12/12/2024', TRUE, 3),
+                                                                                  ('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', 'LICENCIATURA EN SISTEMAS', '12/12/2024', TRUE, 4),
+                                                                                  ('INSTITUTO POLITECNICO NACIONAL', 'LICENCIATURA EN SISTEMAS', '12/12/2024', TRUE, 5);
+
 COMMIT;
