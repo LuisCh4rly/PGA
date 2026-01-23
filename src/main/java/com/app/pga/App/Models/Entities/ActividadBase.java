@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @Entity
 @Table (name= "actividades_base")
@@ -27,6 +29,9 @@ public class ActividadBase {
     @ManyToOne ( fetch = FetchType.LAZY)
     @JoinColumn(name = "id_CampoFormativo", referencedColumnName = "idCampo")
     private CampoFormativo campoFormativo;
+
+    @OneToMany(mappedBy = "actividadBase")
+    private List< Curso_ActividadBase > cursos;
 
 
 
