@@ -21,5 +21,7 @@ public record ActividadBaseDto(Long idActividad,
                                Boolean activo,
 
                                @Valid
-                               CampoFormativoDto campoFormativo) implements Serializable {
+                               CampoFormativoDto campoFormativo
+
+                               ) implements Serializable {
 }
