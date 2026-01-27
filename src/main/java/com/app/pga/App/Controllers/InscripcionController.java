@@ -55,4 +55,8 @@ public class InscripcionController {
         InscripcionDto inscripcionDes = inscripcionService.desactivarActivarInscripcion(id);
         return ResponseEntity.ok(inscripcionDes);
     }
+    @PutMapping("/asignarGrupo")
+    public ResponseEntity<InscripcionDto>asignarGrupo(@RequestBody InscripcionDto dto){
+        return ResponseEntity.ok(inscripcionService.asignarGrupo(dto));
+    }
 }

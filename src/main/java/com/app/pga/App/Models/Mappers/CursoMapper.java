@@ -9,12 +9,14 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CursoMapper {
 
     @Mapping(target = "actividades",
             ignore = true)
     Curso toEntity(CursoDto cursoDto);
+    @Named("conActividades")
     @Mapping(
             target = "actividades",
             source = "actividades"
@@ -31,6 +33,7 @@ public interface CursoMapper {
     }
     ActividadBaseDto toDto(ActividadBase entity);
 
+    @Named("simple")
     @Mapping(
             target = "actividades",
             ignore = true)

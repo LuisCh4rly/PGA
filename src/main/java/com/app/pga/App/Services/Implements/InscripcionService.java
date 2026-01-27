@@ -4,10 +4,13 @@ import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Models.Dtos.InscripcionDto;
 import com.app.pga.App.Models.Dtos.InscripcionResumenDto;
 import com.app.pga.App.Models.Entities.Alumno;
+import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Inscripcion;
+import com.app.pga.App.Models.Enum.EstadoEnum;
 import com.app.pga.App.Models.Mappers.AlumnoMapper;
 import com.app.pga.App.Models.Mappers.InscripcionMapper;
 import com.app.pga.App.Repositories.IAlumnoRepository;
+import com.app.pga.App.Repositories.IGrupoRepository;
 import com.app.pga.App.Repositories.IInscripcionRepository;
 import com.app.pga.App.Services.Interfaces.IInscripcionService;
 import org.springframework.stereotype.Service;
@@ -25,12 +28,14 @@ public class InscripcionService implements IInscripcionService {
     private final IInscripcionRepository inscripcionRepository;
     private final AlumnoMapper alumnoMapper;
     private final IAlumnoRepository iAlumnoRepository;
+    private final IGrupoRepository grupoRepository;
 
-    public InscripcionService (InscripcionMapper inscripcionMapper, IInscripcionRepository inscripcionRepository, AlumnoMapper alumnoMapper, IAlumnoRepository iAlumnoRepository){
+    public InscripcionService (InscripcionMapper inscripcionMapper, IInscripcionRepository inscripcionRepository, AlumnoMapper alumnoMapper, IAlumnoRepository iAlumnoRepository, IGrupoRepository grupoRepository){
         this.inscripcionMapper=inscripcionMapper;
         this.inscripcionRepository=inscripcionRepository;
         this.alumnoMapper=alumnoMapper;
         this.iAlumnoRepository = iAlumnoRepository;
+        this.grupoRepository = grupoRepository;
     }
     //Crear inscripciones
     public InscripcionDto createInscripcion (InscripcionDto inscripcionDto){
@@ -94,5 +99,36 @@ public class InscripcionService implements IInscripcionService {
         Inscripcion inscripcionDes = inscripcionRepository.save(inscripcion);
         return inscripcionMapper.toDto(inscripcionDes);
     }
+    public InscripcionDto asignarGrupo (InscripcionDto inscripcionDto){
+        Inscripcion inscripcion = inscripcionRepository.findById(inscripcionDto.idInscripcion())
+                .orElseThrow(()->new NotFoundException("Inscripción no encontrada: "+inscripcionDto.idInscripcion()));
 
-}
+            if (!inscripcion.getEstado()) {
+                throw new IllegalStateException("La inscripción no está activa");
+            }
+
+            Grupo grupo = grupoRepository.findById(inscripcionDto.grupoDto().idGrupo())
+                    .orElseThrow(() -> new RuntimeException("Grupo no encontrado"));
+
+            if (grupo.getEstado() == EstadoEnum.DESHABILITADO) {
+                throw new IllegalStateException("El grupo no está activo");
+            }
+
+            boolean existe = inscripcionRepository
+                    .existsByAlumno_IdAlumnoAndGrupo_IdGrupoAndGrupo_Estado_Habilitado(
+                            inscripcion.getAlumno().getIdAlumno(),
+                            grupo.getIdGrupo()
+                    );
+
+            if (existe) {
+                throw new IllegalArgumentException("El alumno ya está inscrito en este grupo");
+            }
+
+            inscripcion.setGrupo(grupo);
+
+            return inscripcionMapper.toDto(inscripcionRepository.save(inscripcion));
+        }
+
+    }
+
+
