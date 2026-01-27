@@ -2,7 +2,6 @@ package com.app.pga.App.Services.Implements;
 
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Models.Dtos.InscripcionDto;
-import com.app.pga.App.Models.Dtos.InscripcionResumenDto;
 import com.app.pga.App.Models.Entities.Alumno;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Inscripcion;
@@ -46,11 +45,6 @@ public class InscripcionService implements IInscripcionService {
             throw new IllegalArgumentException("El alumno tiene una inscripción activa");
         });
 
-        //verificar que el alumno no tenga inscripciones previas del mismo tipo
-        if (inscripcionRepository.existsByAlumno_IdAlumnoAndTipo(alumno.getIdAlumno(),inscripcionDto.tipo())){
-            throw new IllegalArgumentException("El alumno ya tuvo una inscripcion de tipo: "+inscripcionDto.tipo());
-        }
-
         Inscripcion inscripcionEntity = inscripcionMapper.toEntity(inscripcionDto);
         if (inscripcionEntity.getEstado()==null){
             inscripcionEntity.setEstado(true);
@@ -73,8 +67,11 @@ public class InscripcionService implements IInscripcionService {
 
     //consulta general
     @Transactional(readOnly = true)
-    public List<InscripcionResumenDto>findResumen(){
-        return inscripcionRepository.findAllResumen();
+    public List<InscripcionDto>findAll(){
+        return inscripcionRepository.findAll()
+                .stream()
+                .map(inscripcion ->inscripcionMapper.toDtoResumen(inscripcion))
+                .collect(Collectors.toList());
     }
 
 
@@ -99,6 +96,9 @@ public class InscripcionService implements IInscripcionService {
         Inscripcion inscripcionDes = inscripcionRepository.save(inscripcion);
         return inscripcionMapper.toDto(inscripcionDes);
     }
+
+
+    //Asignar grupo
     public InscripcionDto asignarGrupo (InscripcionDto inscripcionDto){
         Inscripcion inscripcion = inscripcionRepository.findById(inscripcionDto.idInscripcion())
                 .orElseThrow(()->new NotFoundException("Inscripción no encontrada: "+inscripcionDto.idInscripcion()));
@@ -107,7 +107,7 @@ public class InscripcionService implements IInscripcionService {
                 throw new IllegalStateException("La inscripción no está activa");
             }
 
-            Grupo grupo = grupoRepository.findById(inscripcionDto.grupoDto().idGrupo())
+            Grupo grupo = grupoRepository.findById(inscripcionDto.grupo().idGrupo())
                     .orElseThrow(() -> new RuntimeException("Grupo no encontrado"));
 
             if (grupo.getEstado() == EstadoEnum.DESHABILITADO) {
@@ -127,7 +127,7 @@ public class InscripcionService implements IInscripcionService {
 
             inscripcion.setGrupo(grupo);
 
-            return inscripcionMapper.toDto(inscripcionRepository.save(inscripcion));
+            return inscripcionMapper.toDtoResumen(inscripcionRepository.save(inscripcion));
         }
 
     }

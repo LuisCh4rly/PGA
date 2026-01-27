@@ -37,8 +37,22 @@ INSERT INTO actividades_base (titulo, descripcion, activo, id_campo_formativo) V
                                                                                       ('Variables de Entorno', 'Gestionar credenciales sensibles de forma segura en la nube.', true, 5);
 
 --Tabla de Alumnos
-INSERT INTO alumnos (universidad, carrera, fecha_termino, activo, id_user) VALUES ('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', 'LICENCIATURA EN SISTEMAS', '12/12/2024', TRUE, 3),
-                                                                                  ('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', 'LICENCIATURA EN SISTEMAS', '12/12/2024', TRUE, 4),
-                                                                                  ('INSTITUTO POLITECNICO NACIONAL', 'LICENCIATURA EN SISTEMAS', '12/12/2024', TRUE, 5);
+INSERT INTO alumnos (universidad, carrera, fecha_termino,fecha_alta, activo, id_user) VALUES ('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', 'LICENCIATURA EN SISTEMAS', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 3),
+                                                                                        ('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', 'LICENCIATURA EN SISTEMAS', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 4),
+                                                                                        ('INSTITUTO POLITECNICO NACIONAL', 'LICENCIATURA EN SISTEMAS', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 5);
+--Tabla de Curso
+INSERT INTO cursos (nombre, descripcion, fecha_alta, activo) VALUES ( 'Diseño de Interfaces','Curso de diseño de interfaces y experiencia de usuario',CURRENT_DATE,true),
+                                                                   ( 'Programación Orientada a Objetos','Fundamentos de programación orientada a objetos con Java',CURRENT_DATE,true),
+                                                                   ( 'Bases de Datos','Modelado, consultas SQL y diseño de bases de datos relacionales',CURRENT_DATE,true);
+--Insertar actividades a un curso
+INSERT INTO cursos_actividades (curso_id, actividad_base_id) VALUES (1, 3);
+
+--Tabla Grupo
+INSERT INTO grupos (nombre, estado,created_at, periodo, id_curso, id_docente) VALUES ('Grupo1', 'HABILITADO',current_timestamp, 'Marzo-Septiembre', 1, 1),
+                                                                          ('Grupo2', 'HABILITADO',current_timestamp, 'Marzo-Septiembre', 2, 1);
+
+--Tabla inscripcion
+INSERT INTO inscripciones (fecha_inscripcion, fecha_inicio, fecha_fin, estado, tipo, id_alumno, id_grupo) VALUES (current_timestamp, '01/02/2026','01/02/2027',TRUE,  'Servicio_Social', 1, 1),
+                                                                                                                 (current_timestamp, '01/02/2026','01/02/2027',TRUE,  'Servicio_Social', 2, 1);
 
 COMMIT;

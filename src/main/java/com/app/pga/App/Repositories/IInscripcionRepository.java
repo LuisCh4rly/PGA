@@ -1,6 +1,5 @@
 package com.app.pga.App.Repositories;
 
-import com.app.pga.App.Models.Dtos.InscripcionResumenDto;
 import com.app.pga.App.Models.Entities.Inscripcion;
 import com.app.pga.App.Models.Enum.EstadoEnum;
 import com.app.pga.App.Models.Enum.tipoInscripcion;
@@ -20,19 +19,6 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
     WHERE i.estado = true
  """)
     List<Inscripcion>findByEstadoTrue();
-
-    @Query("""
-    select new com.app.pga.App.Models.Dtos.InscripcionResumenDto(
-        i.idInscripcion,
-        i.tipo,
-        i.estado,
-        u.nombre
-    )
-    from Inscripcion i
-    join i.alumno a
-    join a.usuario u
-""")
-    List<InscripcionResumenDto> findAllResumen();
 
     boolean existsByAlumno_IdAlumnoAndTipo(Long idAlumno, tipoInscripcion tipo);
 

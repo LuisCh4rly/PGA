@@ -26,6 +26,6 @@ public record InscripcionDto(
         @NotNull
         AlumnoDto alumno,
 
-        GrupoDto grupoDto)
+        GrupoDto grupo)
         implements Serializable {
 }

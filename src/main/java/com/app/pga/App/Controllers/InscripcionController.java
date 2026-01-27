@@ -1,12 +1,10 @@
 package com.app.pga.App.Controllers;
 
 import com.app.pga.App.Models.Dtos.InscripcionDto;
-import com.app.pga.App.Models.Dtos.InscripcionResumenDto;
 import com.app.pga.App.Services.Implements.InscripcionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -45,8 +43,8 @@ public class InscripcionController {
 
     //---consulta ---
     @GetMapping
-    public ResponseEntity<List<InscripcionResumenDto>> listarResumen() {
-        return ResponseEntity.ok(inscripcionService.findResumen());
+    public ResponseEntity<List<InscripcionDto>> listarResumen() {
+        return ResponseEntity.ok(inscripcionService.findAll());
     }
 
     //---consulta por id---

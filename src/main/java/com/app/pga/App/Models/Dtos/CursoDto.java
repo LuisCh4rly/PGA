@@ -14,11 +14,11 @@ import java.util.List;
  * DTO for {@link com.app.pga.App.Models.Entities.Curso}
  */
 public record CursoDto(Long idCurso,
-                       @Size(message = "Máximo 30 carácteres", max = 30)
+                       @Size(message = "Máximo 60 carácteres", max = 60)
                        @NotBlank(message = "Campo obligatorio")
                        String nombre,
 
-                       @Size(message = "Máximo 60 carácteres", max = 60)
+                       @Size(message = "Máximo 120 carácteres", max = 120)
                        @NotBlank String descripcion,
 
                        @JsonFormat (pattern = "dd/MM/yyyy")
