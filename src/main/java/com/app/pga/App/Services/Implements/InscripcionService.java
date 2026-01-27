@@ -114,13 +114,14 @@ public class InscripcionService implements IInscripcionService {
                 throw new IllegalStateException("El grupo no está activo");
             }
 
-            boolean existe = inscripcionRepository
-                    .existsByAlumno_IdAlumnoAndGrupo_IdGrupoAndGrupo_Estado_Habilitado(
-                            inscripcion.getAlumno().getIdAlumno(),
-                            grupo.getIdGrupo()
-                    );
+            boolean existe = inscripcionRepository.existsByAlumno_IdAlumnoAndGrupo_IdGrupoAndGrupo_Estado(
+                    inscripcion.getAlumno().getIdAlumno(),
+                    grupo.getIdGrupo(),
+                    EstadoEnum.HABILITADO
+            );
 
-            if (existe) {
+
+        if (existe) {
                 throw new IllegalArgumentException("El alumno ya está inscrito en este grupo");
             }
 

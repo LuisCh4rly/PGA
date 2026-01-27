@@ -2,6 +2,7 @@ package com.app.pga.App.Repositories;
 
 import com.app.pga.App.Models.Dtos.InscripcionResumenDto;
 import com.app.pga.App.Models.Entities.Inscripcion;
+import com.app.pga.App.Models.Enum.EstadoEnum;
 import com.app.pga.App.Models.Enum.tipoInscripcion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,5 +36,10 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
 
     boolean existsByAlumno_IdAlumnoAndTipo(Long idAlumno, tipoInscripcion tipo);
 
-    boolean existsByAlumno_IdAlumnoAndGrupo_IdGrupoAndGrupo_Estado_Habilitado(Long idAlumno, Long idGrupo);
+    boolean existsByAlumno_IdAlumnoAndGrupo_IdGrupoAndGrupo_Estado(
+            Long idAlumno,
+            Long idGrupo,
+            EstadoEnum estado
+    );
+
 }
