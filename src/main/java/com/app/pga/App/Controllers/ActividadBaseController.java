@@ -61,4 +61,5 @@ class ActividadBaseController {
                 .body(actividadBaseService.habitarDeshabilitar(id));
     }
 
+
 }

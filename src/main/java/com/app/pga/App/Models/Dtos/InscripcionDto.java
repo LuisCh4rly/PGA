@@ -24,6 +24,8 @@ public record InscripcionDto(
         @NotNull(message = "Campo oblligatorio")
         tipoInscripcion tipo,
         @NotNull
-        AlumnoDto alumno)
+        AlumnoDto alumno,
+
+        GrupoDto grupoDto)
         implements Serializable {
 }

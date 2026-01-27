@@ -27,5 +27,7 @@ public class Inscripcion {
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name="idAlumno")
     private Alumno alumno;
-    //private Grupo grupo;
+    @OneToOne()
+    @JoinColumn(name = "id_grupo", referencedColumnName = "idGrupo")
+    private Grupo grupo;
 }

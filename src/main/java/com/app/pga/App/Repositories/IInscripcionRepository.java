@@ -34,4 +34,6 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
     List<InscripcionResumenDto> findAllResumen();
 
     boolean existsByAlumno_IdAlumnoAndTipo(Long idAlumno, tipoInscripcion tipo);
+
+    boolean existsByAlumno_IdAlumnoAndGrupo_IdGrupoAndGrupo_Estado_Habilitado(Long idAlumno, Long idGrupo);
 }
