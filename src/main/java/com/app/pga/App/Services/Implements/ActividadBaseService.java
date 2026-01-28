@@ -1,6 +1,8 @@
 package com.app.pga.App.Services.Implements;
 
+import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
+import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.ActividadBaseDto;
 import com.app.pga.App.Models.Entities.ActividadBase;
 import com.app.pga.App.Models.Entities.CampoFormativo;
@@ -28,10 +30,10 @@ class ActividadBaseService implements IActividadBaseService {
         CampoFormativo campoFormativo = campoFormativoRepository.findById(actividadBaseDto.campoFormativo().idCampo())
                 .orElseThrow(()-> new NotFoundException("Campo formativo no encontrado"));
         if(!campoFormativo.getActivo()){
-            throw new IllegalStateException("El campo formativo está inhabilitado");
+            throw new ResourceDisabledException("Campo formativo deshabilitado");
         }
         if(actividadBaseRepository.existsByTituloEqualsIgnoreCase(actividadBaseDto.titulo())) {
-            throw new IllegalArgumentException("El registro ya existe");
+            throw new DuplicateResourceException("Actividad Base existente");
         }
 
         ActividadBase actividadBaseNueva = actividadBaseMapper.toEntity(actividadBaseDto);
@@ -43,7 +45,7 @@ class ActividadBaseService implements IActividadBaseService {
     @Override
     public ActividadBaseDto obtenerActividadBase(Long idActividadBase) {
         ActividadBase actividadBase = actividadBaseRepository.findById(idActividadBase)
-                .orElseThrow(()-> new NotFoundException("Registro no encontrado"));
+                .orElseThrow(()-> new NotFoundException("Actividad Base no encontrada"));
         return actividadBaseMapper.toDto(actividadBase);
     }
 
@@ -74,9 +76,9 @@ class ActividadBaseService implements IActividadBaseService {
     @Override
     public ActividadBaseDto actualizarActividadBase(ActividadBaseDto actividadBaseDto, Long idActividadBase) {
         ActividadBase actividadBase = actividadBaseRepository.findById(idActividadBase)
-                .orElseThrow(()-> new NotFoundException("Registro no encontrado"));
+                .orElseThrow(()-> new NotFoundException("Actividad Base no encontrada"));
         if(!actividadBase.getActivo()){
-            throw new IllegalStateException("No se puede modificar una actividad deshabilitada");
+            throw new ResourceDisabledException("No se puede modificar una actividad deshabilitada");
         }
         actividadBase.setDescripcion(actividadBaseDto.descripcion());
         return actividadBaseMapper.toDto(actividadBaseRepository.save(actividadBase));
@@ -85,9 +87,10 @@ class ActividadBaseService implements IActividadBaseService {
     @Override
     public ActividadBaseDto habitarDeshabilitar(Long idActividadBase) {
        ActividadBase actividadBase = actividadBaseRepository.findById(idActividadBase)
-                .orElseThrow(()-> new NotFoundException("Registro no encontrado"));
+                .orElseThrow(()-> new NotFoundException("Actividad Base no encontrada"));
+
         if(!actividadBase.getCampoFormativo().getActivo()){
-            throw new IllegalStateException("No se puede modificar una actividad cuyo campo está deshabilitado");
+            throw new ResourceDisabledException("Campo formativo deshabilitado");
         }
         if (actividadBase.getActivo()){
             actividadBase.setActivo(false);

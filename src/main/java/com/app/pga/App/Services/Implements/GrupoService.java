@@ -1,12 +1,12 @@
 package com.app.pga.App.Services.Implements;
 
 import com.app.pga.App.Exception.NotFoundException;
+import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.GrupoDto;
-import com.app.pga.App.Models.Entities.ActividadBase;
 import com.app.pga.App.Models.Entities.Curso;
 import com.app.pga.App.Models.Entities.Docente;
 import com.app.pga.App.Models.Entities.Grupo;
-import com.app.pga.App.Models.Enum.EstadoEnum;
+import com.app.pga.App.Models.Enum.Estado;
 import com.app.pga.App.Models.Mappers.GrupoMapper;
 import com.app.pga.App.Repositories.ICursoRepository;
 import com.app.pga.App.Repositories.IDocenteRepository;
@@ -29,18 +29,21 @@ class GrupoService implements IGrupoService {
     @Override
 
     public GrupoDto crear(GrupoDto dto) {
+        if (grupoRepository.existsByNombreEqualsIgnoreCase(dto.nombre())) {
+            throw new IllegalArgumentException("Grupo existente");
+        }
         Curso curso = cursoRepository.findById(dto.curso().idCurso())
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
         if (!curso.getActivo()) {
-            throw new IllegalStateException("Curso deshabilitado");
+            throw new ResourceDisabledException("Curso deshabilitado");
         }
        Docente docente = docenteRepository.findById(dto.docente().idDocente())
                 .orElseThrow(() -> new NotFoundException("Docente no encontrado"));
         if (!docente.getActivo()) {
-            throw new IllegalStateException("Docente deshabilitado");
+            throw new ResourceDisabledException("Docente deshabilitado");
         }
         Grupo grupo = grupoMapper.toEntity(dto);
-        grupo.setEstado(EstadoEnum.HABILITADO);
+        grupo.setEstado(Estado.HABILITADO);
         grupo.setCreated_at(LocalDate.now());
         grupo.setCurso(curso);
         grupo.setDocente(docente);
@@ -59,6 +62,13 @@ class GrupoService implements IGrupoService {
         List <Grupo> grupos = grupoRepository.findAll();
         return grupos.stream()
                 .map(a->grupoMapper.toDtoSimple(a))
+                .collect(Collectors.toList());
+    }
+    @Override
+    public List<GrupoDto> obtenerGruposActivos() {
+        List<Grupo> grupos = grupoRepository.findByEstado(Estado.HABILITADO);
+        return grupos.stream()
+                .map(c -> grupoMapper.toDtoSimple(c))
                 .collect(Collectors.toList());
     }
 
@@ -83,10 +93,10 @@ class GrupoService implements IGrupoService {
         Grupo grupo = grupoRepository.findById(idGrupo)
                 .orElseThrow(() -> new NotFoundException(" Grupo no encontrado"));
 
-    if (grupo.getEstado().equals(EstadoEnum.HABILITADO)) {
-        grupo.setEstado(EstadoEnum.DESHABILITADO);
+    if (grupo.getEstado().equals(Estado.HABILITADO)) {
+        grupo.setEstado(Estado.DESHABILITADO);
     }else{
-        grupo.setEstado(EstadoEnum.HABILITADO);
+        grupo.setEstado(Estado.HABILITADO);
     }
 
         return grupoMapper.toDtoSimple(grupoRepository.save(grupo));
@@ -98,10 +108,10 @@ class GrupoService implements IGrupoService {
                 .orElseThrow(() -> new NotFoundException("Grupo no encontrado"));
 
         Docente docente = docenteRepository.findById(dto.docente().idDocente())
-                .orElseThrow(() -> new IllegalArgumentException("Docente no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Docente no encontrado"));
 
         if (!docente.getActivo()) {
-            throw new IllegalStateException("Docente deshabilitado");
+            throw new ResourceDisabledException("Docente deshabilitado");
         }
 
         grupo.setDocente(docente);

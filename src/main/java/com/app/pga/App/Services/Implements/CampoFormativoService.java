@@ -1,6 +1,8 @@
 package com.app.pga.App.Services.Implements;
 
+import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
+import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.CampoFormativoDto;
 import com.app.pga.App.Models.Entities.CampoFormativo;
 import com.app.pga.App.Models.Mappers.CampoFormativoMapper;
@@ -27,7 +29,7 @@ public class CampoFormativoService implements ICampoFormativoService {
     public CampoFormativoDto crearCampo(CampoFormativoDto campoFormativoDto) {
 
         if(campoFormativoRepository.existsByNombreEqualsIgnoreCase(campoFormativoDto.nombre())) {
-            throw new IllegalArgumentException("El registro ya existe");
+            throw new DuplicateResourceException("Campo Formativo existente");
         }
 
         CampoFormativo campoNuevo = campoFormativoMapper.toEntity(campoFormativoDto);
@@ -41,7 +43,7 @@ public class CampoFormativoService implements ICampoFormativoService {
     @Override
     public CampoFormativoDto obtenerCampo(Long idCampo) {
         CampoFormativo campoFormativo = campoFormativoRepository.findById(idCampo)
-                .orElseThrow(()->new NotFoundException("Registro no encontrado"));
+                .orElseThrow(()->new NotFoundException("Campo Formativo no encontrado"));
         return campoFormativoMapper.toDto(campoFormativo);
     }
 
@@ -68,10 +70,10 @@ public class CampoFormativoService implements ICampoFormativoService {
     @Override
     public CampoFormativoDto actualizarCampo(CampoFormativoDto campoFormativoDto, Long id) {
             CampoFormativo campoFormativo = campoFormativoRepository.findById(id)
-                    .orElseThrow(()-> new NotFoundException("Registro no encontrado"));
+                    .orElseThrow(()-> new NotFoundException("Campo Formativo no encontrado"));
 
             if(!campoFormativo.getActivo()){
-                throw new IllegalStateException("No se puede modificar una campo deshabilitado");
+                throw new ResourceDisabledException("Campo Formativo deshabilitado");
             }
 
             campoFormativo.setDescripcion(campoFormativoDto.descripcion());
@@ -82,7 +84,7 @@ public class CampoFormativoService implements ICampoFormativoService {
     @Override
     public CampoFormativoDto habitarDeshabilitar(Long id) {
         CampoFormativo campoFormativo = campoFormativoRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException("Registro no encontrado"));
+                .orElseThrow(()-> new NotFoundException("Campo Formativo no encontrado"));
 
         if (campoFormativo.getActivo()){
             campoFormativo.setActivo(false);

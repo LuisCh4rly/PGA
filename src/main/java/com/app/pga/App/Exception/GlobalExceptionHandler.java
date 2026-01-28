@@ -144,4 +144,41 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(err);
     }
+
+    //Recurso duplicado   409
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ApiError> handleDuplicate(
+            DuplicateResourceException ex,
+            HttpServletRequest req) {
+
+        ApiError err = new ApiError(
+                OffsetDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Duplicate Resource",
+                ex.getMessage(),
+                req.getRequestURI(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
+    }
+    // Recurso deshabilitado  409
+    @ExceptionHandler(ResourceDisabledException.class)
+    public ResponseEntity<ApiError> handleDisabled(
+            ResourceDisabledException ex,
+            HttpServletRequest req) {
+
+        ApiError err = new ApiError(
+                OffsetDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Resource Disabled",
+                ex.getMessage(),
+                req.getRequestURI(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
+    }
+
+
 }

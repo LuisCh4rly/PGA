@@ -1,6 +1,6 @@
 package com.app.pga.App.Models.Enum;
 
-public enum EstadoEnum {
+public enum Estado {
     HABILITADO,
     DESHABILITADO
 

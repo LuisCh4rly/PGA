@@ -1,6 +1,6 @@
 package com.app.pga.App.Models.Enum;
 
-public enum AlcanceEnum {
+public enum Alcance {
     GRUPAL,
     INDIVIDUAL
 }

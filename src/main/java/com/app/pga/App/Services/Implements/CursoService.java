@@ -1,7 +1,9 @@
 package com.app.pga.App.Services.Implements;
 
 
+import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
+import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.ActividadBaseDto;
 import com.app.pga.App.Models.Dtos.CursoDto;
 import com.app.pga.App.Models.Entities.ActividadBase;
@@ -34,7 +36,7 @@ class CursoService implements ICursoService {
     @Override
     public CursoDto crearCurso(CursoDto cursoDto) {
         if (cursoRepository.existsByNombreEqualsIgnoreCase(cursoDto.nombre())) {
-            throw new IllegalArgumentException("El registro ya existe");
+            throw new IllegalArgumentException("Curso existente");
         }
         Curso cursoNuevo = cursoMapper.toEntity(cursoDto);
         cursoNuevo.setActivo(true);
@@ -44,9 +46,9 @@ class CursoService implements ICursoService {
         if (!cursoDto.actividades().isEmpty()) {
             for (ActividadBaseDto a : cursoDto.actividades()) {
                 ActividadBase ab = actividadBaseRepository.findById(a.idActividad())
-                        .orElseThrow(() -> new RuntimeException("Actividad base no encontrada"));
+                        .orElseThrow(() -> new NotFoundException("Actividad Base no encontrada"));
                 if (!ab.getActivo()) {
-                    throw new IllegalArgumentException("Actividad: " + ab.getTitulo() + " está deshabilitada");
+                    throw new ResourceDisabledException("Actividad: " + ab.getTitulo() + " está deshabilitada");
                 }
                 Curso_ActividadBase cab = Curso_ActividadBase.builder()
                         .curso(cursoNuevo)
@@ -63,7 +65,7 @@ class CursoService implements ICursoService {
     @Override
     public CursoDto obtenerCurso(Long idCurso) {
         Curso curso = cursoRepository.findById(idCurso)
-                .orElseThrow(() -> new NotFoundException("Registro no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
         return cursoMapper.toDtoConActividades(curso);
     }
 
@@ -86,9 +88,9 @@ class CursoService implements ICursoService {
     @Override
     public CursoDto actualizarCurso(CursoDto cursoDto, Long idCurso) {
         Curso curso = cursoRepository.findById(idCurso)
-                .orElseThrow(() -> new NotFoundException("Registro no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
         if (!curso.getActivo()) {
-            throw new IllegalStateException("No se puede modificar un curso deshabilitado");
+            throw new ResourceDisabledException("No se puede modificar un curso deshabilitado");
         }
         curso.setDescripcion(cursoDto.descripcion());
         return cursoMapper.toDtoSimple(cursoRepository.save(curso));
@@ -98,15 +100,13 @@ class CursoService implements ICursoService {
     @Override
     public CursoDto habitarDeshabilitar(Long idCurso) {
         Curso curso = cursoRepository.findById(idCurso)
-                .orElseThrow(() -> new NotFoundException("Registro no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
         if (curso.getActivo()) {
             curso.setActivo(false);
             curso.setFechaBaja(LocalDate.now());
-            curso.setFechaAlta(null);
         } else {
             curso.setActivo(true);
             curso.setFechaAlta(LocalDate.now());
-            curso.setFechaBaja(null);
         }
         return cursoMapper.toDtoSimple(cursoRepository.save(curso));
     }
@@ -114,20 +114,20 @@ class CursoService implements ICursoService {
     @Override
     public CursoDto asignarActividades(Long idCurso, List<ActividadBaseDto> actividades) {
         Curso curso = cursoRepository.findById(idCurso)
-                .orElseThrow(() -> new NotFoundException("Registro no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
 
         if (!curso.getActivo()){
-            throw new IllegalArgumentException("No se puede asignar actividades a un curso deshabilitado");
+            throw new ResourceDisabledException("No se puede asignar actividades a un curso deshabilitado");
         }
         for (ActividadBaseDto a : actividades) {
             ActividadBase ab = actividadBaseRepository.findById(a.idActividad())
-                    .orElseThrow(() -> new RuntimeException("Actividad base no encontrada"));
+                    .orElseThrow(() -> new RuntimeException("Actividad Base no encontrada"));
 
             if (!ab.getActivo()) {
-                throw new IllegalArgumentException("Actividad: " + ab.getTitulo() + " está deshabilitada");
+                throw new ResourceDisabledException("Actividad: " + ab.getTitulo() + " está deshabilitada");
             }
             if (cursoActividadBaseRepository.existsByCurso_IdCursoAndActividadBase_IdActividad(curso.getIdCurso(), ab.getIdActividad())) {
-                throw new IllegalStateException("La actividad ya está asignada al curso");
+                throw new DuplicateResourceException("La actividad ya está asignada al curso");
             }
 
             Curso_ActividadBase cab = Curso_ActividadBase.builder()
@@ -141,7 +141,7 @@ class CursoService implements ICursoService {
     public void quitarActividades(Long idCurso, Long idActividad) {
 
         Curso_ActividadBase cab = cursoActividadBaseRepository.findByCurso_IdCursoAndActividadBase_IdActividad(idCurso, idActividad)
-                .orElseThrow(()->new IllegalArgumentException("La actividad no está asignada al curso"));
+                .orElseThrow(()->new NotFoundException("La actividad no está asignada al curso"));
         cursoActividadBaseRepository.delete(cab);
 
 

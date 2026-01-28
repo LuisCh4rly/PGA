@@ -1,6 +1,8 @@
 package com.app.pga.App.Services.Implements;
 
+import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
+import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.AlumnoDto;
 import com.app.pga.App.Models.Entities.Alumno;
 import com.app.pga.App.Models.Entities.Usuario;
@@ -30,10 +32,11 @@ public class AlumnoService implements IAlumnoService {
 
     //Crerar Alumnos
     public AlumnoDto ccreateAlumno (AlumnoDto alumnoDto){
-        Usuario usuario = usuarioRepository.findById(alumnoDto.usuarioDto().idUser()).orElseThrow(()-> new NotFoundException("Registro no encontrado."));
+        Usuario usuario = usuarioRepository.findById(alumnoDto.usuarioDto().idUser())
+                .orElseThrow(()-> new NotFoundException("Usuario no encontrado."));
 
         alumnoRepository.findByUsuario_IdUser(alumnoDto.usuarioDto().idUser()).ifPresent(AlumnoDto->{
-            throw new IllegalArgumentException("El usuario ya se encuentra asociado a un alumno");
+            throw new DuplicateResourceException("El usuario ya se encuentra asociado a un alumno");
         });
 
         Alumno alumnoEntity = alumnoMapper.toEntity(alumnoDto);
@@ -49,10 +52,11 @@ public class AlumnoService implements IAlumnoService {
 
     //Actualizar alumno
     public AlumnoDto actualizarAlumno (Long idAlumno, AlumnoDto alumnoDto){
-        Alumno alumnoExistente = alumnoRepository.findById(idAlumno).orElseThrow(()->new NotFoundException("Registro no encontrado: "+idAlumno));
+        Alumno alumnoExistente = alumnoRepository.findById(idAlumno)
+                .orElseThrow(()->new NotFoundException("Alumno no encontrado: "+idAlumno));
 
         if(!alumnoExistente.getActivo()){
-            throw new IllegalStateException("No se puede modificar un registro inactivo");
+            throw new ResourceDisabledException("No se puede modificar un alumno deshabilitado");
         }
 
         alumnoExistente.setFechaTermino(alumnoDto.fechaTermino());
@@ -85,14 +89,18 @@ public class AlumnoService implements IAlumnoService {
     //Cosulta por id
     @Transactional(readOnly = true)
     public AlumnoDto findById (Long idAlumno){
-        Alumno alumno = alumnoRepository.findById(idAlumno).orElseThrow(()->new NotFoundException("Registro no encontrado: "+idAlumno));
+        Alumno alumno = alumnoRepository.findById(idAlumno)
+                .orElseThrow(()->new NotFoundException("Alumno no encontrado: "+idAlumno));
         return alumnoMapper.toDto(alumno);
     }
 
 
     //Desactivar - Activar
     public AlumnoDto desactivarActivarAlumno (long idAlumno){
-        Alumno alumno = alumnoRepository.findById(idAlumno).orElseThrow(()->new NotFoundException("Registro no encontrado: "+idAlumno));
+
+        Alumno alumno = alumnoRepository.findById(idAlumno)
+                .orElseThrow(()->new NotFoundException("Alumno no encontrado:" +idAlumno));
+
         if (alumno.getActivo()==true){
             alumno.setFechaBaja(LocalDate.now());
             alumno.setFechaAlta(null);

@@ -1,6 +1,6 @@
 package com.app.pga.App.Models.Entities;
 
-import com.app.pga.App.Models.Enum.AlcanceEnum;
+import com.app.pga.App.Models.Enum.Alcance;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name= "actividades_grupo")
@@ -29,7 +28,7 @@ public class ActividadGrupo {
     private Boolean reqEntrega = true;
 
     @Enumerated (EnumType.STRING)
-    private AlcanceEnum alcance;
+    private Alcance alcance;
 
     @ManyToOne()
     @JoinColumn(name = "id_grupo", referencedColumnName = "idGrupo")

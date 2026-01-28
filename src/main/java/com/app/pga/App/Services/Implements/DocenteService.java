@@ -1,5 +1,6 @@
 package com.app.pga.App.Services.Implements;
 
+import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Models.Dtos.DocenteDto;
 import com.app.pga.App.Models.Entities.Docente;
@@ -32,10 +33,11 @@ public class DocenteService implements IDocenteService {
 
     //Crear docente
     public DocenteDto createDocente (DocenteDto docenteDto){
-        Usuario usuario = iUsuarioRepository.findById(docenteDto.usuarioDto().idUser()).orElseThrow(()-> new NotFoundException("Registro no encontrado"));
+        Usuario usuario = iUsuarioRepository.findById(docenteDto.usuarioDto().idUser())
+                .orElseThrow(()-> new NotFoundException("Docente no encontrado"));
 
         docenteRepository.findByUsuario_IdUser(docenteDto.usuarioDto().idUser()).ifPresent(DocenteDto->{
-            throw new IllegalArgumentException("El usuario ya se encuentra registrado a un docente");
+            throw new DuplicateResourceException("El usuario ya se encuentra registrado a un docente");
         });
 
         Docente docenteEntity = docenteMapper.toEntity(docenteDto);
@@ -71,14 +73,16 @@ public class DocenteService implements IDocenteService {
     //Consulta por id
     @Transactional(readOnly = true)
     public DocenteDto findById(Long idDocente) {
-        Docente docente = docenteRepository.findById(idDocente).orElseThrow(()->new NotFoundException("Registro no encontrado: "+idDocente));
+        Docente docente = docenteRepository.findById(idDocente)
+                .orElseThrow(()->new NotFoundException("Docente no encontrado: "+idDocente));
         return docenteMapper.toDto(docente);
     }
 
 
     //Desactivar - Activar
     public DocenteDto desactivarActivarDocente (Long idDocente){
-        Docente docente = docenteRepository.findById(idDocente).orElseThrow(()->new NotFoundException("Registro no encontrado: "+idDocente));
+        Docente docente = docenteRepository.findById(idDocente)
+                .orElseThrow(()->new NotFoundException("Docente no encontrado: "+ idDocente));
         if (docente.getActivo()==true){
             docente.setFechaBaja(LocalDate.now());
             docente.setFechaAlta(null);

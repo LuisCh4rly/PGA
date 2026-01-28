@@ -1,11 +1,13 @@
 package com.app.pga.App.Services.Implements;
 
+import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
+import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.InscripcionDto;
 import com.app.pga.App.Models.Entities.Alumno;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Inscripcion;
-import com.app.pga.App.Models.Enum.EstadoEnum;
+import com.app.pga.App.Models.Enum.Estado;
 import com.app.pga.App.Models.Mappers.AlumnoMapper;
 import com.app.pga.App.Models.Mappers.InscripcionMapper;
 import com.app.pga.App.Repositories.IAlumnoRepository;
@@ -38,11 +40,14 @@ public class InscripcionService implements IInscripcionService {
     }
     //Crear inscripciones
     public InscripcionDto createInscripcion (InscripcionDto inscripcionDto){
-        Alumno alumno = iAlumnoRepository.findById(inscripcionDto.alumno().idAlumno()).orElseThrow(()->new NotFoundException("Registro no encontrado."));
-
+        Alumno alumno = iAlumnoRepository.findById(inscripcionDto.alumno().idAlumno())
+                .orElseThrow(()->new NotFoundException("Alumno no encontrado."));
+        if(!alumno.getActivo()){
+            throw new ResourceDisabledException("Alumno deshbilitado");
+        }
         //verificar que el alumno no tenga inscripciones activas
         inscripcionRepository.findByAlumno_IdAlumnoAndEstadoTrue(inscripcionDto.alumno().idAlumno()).ifPresent(InscripcionDto->{
-            throw new IllegalArgumentException("El alumno tiene una inscripción activa");
+            throw new DuplicateResourceException("El alumno tiene una inscripción activa");
         });
 
         Inscripcion inscripcionEntity = inscripcionMapper.toEntity(inscripcionDto);
@@ -78,13 +83,15 @@ public class InscripcionService implements IInscripcionService {
     //consulta por id
     @Transactional(readOnly = true)
     public InscripcionDto finfById(Long idInscripcion){
-        Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion).orElseThrow(()->new NotFoundException("Registro no encontrado: "+idInscripcion));
+        Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion)
+                .orElseThrow(()->new NotFoundException("Registro no encontrado: "+idInscripcion));
         return inscripcionMapper.toDto(inscripcion);
     }
 
     //activar desactivar
     public InscripcionDto desactivarActivarInscripcion(Long idInscripcion){
-        Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion).orElseThrow(()->new NotFoundException("Registro no encontrado: "+idInscripcion));
+        Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion)
+                .orElseThrow(()->new NotFoundException("Registro no encontrado: "+idInscripcion));
         if(inscripcion.getEstado()==true){
             inscripcion.setFechaBaja(LocalDate.now());
             inscripcion.setFechaInscripcion(null);
@@ -104,25 +111,25 @@ public class InscripcionService implements IInscripcionService {
                 .orElseThrow(()->new NotFoundException("Inscripción no encontrada: "+inscripcionDto.idInscripcion()));
 
             if (!inscripcion.getEstado()) {
-                throw new IllegalStateException("La inscripción no está activa");
+                throw new ResourceDisabledException("La inscripción no está activa");
             }
 
             Grupo grupo = grupoRepository.findById(inscripcionDto.grupo().idGrupo())
-                    .orElseThrow(() -> new RuntimeException("Grupo no encontrado"));
+                    .orElseThrow(() -> new NotFoundException("Grupo no encontrado"));
 
-            if (grupo.getEstado() == EstadoEnum.DESHABILITADO) {
-                throw new IllegalStateException("El grupo no está activo");
+            if (grupo.getEstado() == Estado.DESHABILITADO) {
+                throw new ResourceDisabledException("El grupo no está activo");
             }
 
             boolean existe = inscripcionRepository.existsByAlumno_IdAlumnoAndGrupo_IdGrupoAndGrupo_Estado(
                     inscripcion.getAlumno().getIdAlumno(),
                     grupo.getIdGrupo(),
-                    EstadoEnum.HABILITADO
+                    Estado.HABILITADO
             );
 
 
         if (existe) {
-                throw new IllegalArgumentException("El alumno ya está inscrito en este grupo");
+                throw new DuplicateResourceException("El alumno ya está inscrito en este grupo");
             }
 
             inscripcion.setGrupo(grupo);

@@ -1,6 +1,6 @@
 package com.app.pga.App.Models.Dtos;
 
-import com.app.pga.App.Models.Enum.EstadoEnum;
+import com.app.pga.App.Models.Enum.Estado;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,7 +17,7 @@ public record GrupoDto(Long idGrupo,
                        String nombre,
 
                        @NotNull
-                       EstadoEnum estado,
+                       Estado estado,
 
                        LocalDate created_at,
                        String periodo,
