@@ -28,6 +28,8 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
             Estado estado
     );
 
-    List<Inscripcion>findByGrupo_IdGrupoAndGrupo_Estado(Long idInscripcion, Estado estado);
+    List<Inscripcion> findByGrupo_IdGrupoAndEstadoTrue(Long idGrupo);
+    
+    Optional<Inscripcion>findByIdInscripcionAndGrupo_IdGrupoAndEstadoTrue(Long idInscripcion, Long idGrupo);
 
 }
