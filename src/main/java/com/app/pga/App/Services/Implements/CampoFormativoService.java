@@ -11,13 +11,14 @@ import com.app.pga.App.Services.Interfaces.ICampoFormativoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
+@Transactional
 public class CampoFormativoService implements ICampoFormativoService {
 
 
@@ -41,6 +42,7 @@ public class CampoFormativoService implements ICampoFormativoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CampoFormativoDto obtenerCampo(Long idCampo) {
         CampoFormativo campoFormativo = campoFormativoRepository.findById(idCampo)
                 .orElseThrow(()->new NotFoundException("Campo Formativo no encontrado"));
@@ -48,6 +50,7 @@ public class CampoFormativoService implements ICampoFormativoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CampoFormativoDto> obtenerCampos() {
         List <CampoFormativo>  camposFormativos = campoFormativoRepository.findAll();
 
@@ -58,6 +61,7 @@ public class CampoFormativoService implements ICampoFormativoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CampoFormativoDto> obtenerCamposActivos() {
         List <CampoFormativo>  camposFormativosActivos = campoFormativoRepository.findByActivoTrue();
 

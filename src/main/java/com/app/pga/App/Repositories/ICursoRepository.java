@@ -8,4 +8,5 @@ import java.util.List;
 public interface ICursoRepository extends JpaRepository<Curso, Long> {
    boolean existsByNombreEqualsIgnoreCase(String nombre);
     List<Curso> findByActivoTrue();
+
 }

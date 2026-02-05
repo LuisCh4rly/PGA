@@ -161,27 +161,40 @@ INSERT INTO inscripciones (fecha_inscripcion, fecha_inicio, fecha_fin, estado, t
                                                                                                                  (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'Jovenes_Construyendo_El_Futuro', 20, 5),
                                                                                                                  (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'Servicio_Social', 21, 5);
 -- Precargar actividades por grupo (desde el curso)
-INSERT INTO actividad_grupo (id_grupo, id_actividad_base, estado, fecha_alta)
+INSERT INTO actividades_grupos (titulo,descripcion,fecha_asignacion,req_entrega,alcance,origen,id_grupo)
 SELECT
-    g.id_grupo,
-    ca.actividad_base_id,
+    ab.titulo,
+    ab.descripcion,
+    CURRENT_TIMESTAMP,
     TRUE,
-    CURRENT_TIMESTAMP
+    'GRUPAL',
+    'CURSO',
+    g.id_grupo
 FROM grupos g
          JOIN cursos_actividades ca
               ON ca.curso_id = g.id_curso
-WHERE g.estado = 'HABILITADO';
+         JOIN actividades_base ab
+              ON  ab.id_actividad = ca.actividad_base_id
+WHERE g.estado = 'HABILITADO' AND ab.activo = true;
+
+
 
 ---Precargar actividades de alumno
-INSERT INTO actividad_alumno (estado_tarea, excento, inscripcion_id, actividad_grupo_id)
+INSERT INTO actividades_alumnos (estado_tarea, excento,motivo_exencion,Url_entrega, fecha_entrega, observaciones,  id_actividad_grupo, id_inscripcion)
 SELECT
-    'En_Espera',
+    'Sin_Iniciar',
     FALSE,
-    i.id_inscripcion,
-    ag.id_actividad_grupo
+    null,
+    null,
+    null,
+    null,
+    ag.id_actividad_grupo,
+    i.id_inscripcion
+
 FROM inscripciones i
-         JOIN actividad_grupo ag
+         JOIN actividades_grupos ag
               ON ag.id_grupo = i.id_grupo
+
 WHERE i.estado = TRUE;
 
 

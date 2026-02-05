@@ -1,6 +1,5 @@
-package com.app.pga.App.Models.Dtos;
+package com.app.pga.App.Models.Dtos.RequestDto;
 
-import com.app.pga.App.Models.Enum.Alcance;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +7,6 @@ import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * DTO for {@link com.app.pga.App.Models.Entities.Sesion}

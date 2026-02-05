@@ -2,6 +2,7 @@ package com.app.pga.App.Repositories;
 
 import com.app.pga.App.Models.Entities.ActividadBase;
 import com.app.pga.App.Models.Entities.CampoFormativo;
+import com.app.pga.App.Models.Entities.Curso;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,6 +12,7 @@ public interface IActividadBaseRepository extends JpaRepository<ActividadBase, L
     boolean existsByTituloEqualsIgnoreCase(String titulo);
     Optional<ActividadBase> findById(Long aLong);
     List<ActividadBase> findByActivoTrue();
+
 
     List<ActividadBase> findByCampoFormativo_IdCampo(Long IdCampo);
 }

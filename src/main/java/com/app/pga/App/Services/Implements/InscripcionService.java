@@ -13,7 +13,9 @@ import com.app.pga.App.Models.Mappers.InscripcionMapper;
 import com.app.pga.App.Repositories.IAlumnoRepository;
 import com.app.pga.App.Repositories.IGrupoRepository;
 import com.app.pga.App.Repositories.IInscripcionRepository;
+import com.app.pga.App.Services.Interfaces.IActividadAlumnoService;
 import com.app.pga.App.Services.Interfaces.IInscripcionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+
 public class InscripcionService implements IInscripcionService {
 
     private final InscripcionMapper inscripcionMapper;
@@ -30,13 +33,15 @@ public class InscripcionService implements IInscripcionService {
     private final AlumnoMapper alumnoMapper;
     private final IAlumnoRepository iAlumnoRepository;
     private final IGrupoRepository grupoRepository;
+    private final IActividadAlumnoService actividadAlumnoService;
 
-    public InscripcionService (InscripcionMapper inscripcionMapper, IInscripcionRepository inscripcionRepository, AlumnoMapper alumnoMapper, IAlumnoRepository iAlumnoRepository, IGrupoRepository grupoRepository){
+    public InscripcionService (InscripcionMapper inscripcionMapper, IInscripcionRepository inscripcionRepository, AlumnoMapper alumnoMapper, IAlumnoRepository iAlumnoRepository, IGrupoRepository grupoRepository, IActividadAlumnoService actividadAlumnoService){
         this.inscripcionMapper=inscripcionMapper;
         this.inscripcionRepository=inscripcionRepository;
         this.alumnoMapper=alumnoMapper;
         this.iAlumnoRepository = iAlumnoRepository;
         this.grupoRepository = grupoRepository;
+        this.actividadAlumnoService= actividadAlumnoService;
     }
     //Crear inscripciones
     public InscripcionDto createInscripcion (InscripcionDto inscripcionDto){
@@ -133,6 +138,7 @@ public class InscripcionService implements IInscripcionService {
             }
 
             inscripcion.setGrupo(grupo);
+            actividadAlumnoService.asignarActividadesGrupalesPorInscripcion(inscripcion.getIdInscripcion());
 
             return inscripcionMapper.toDtoResumen(inscripcionRepository.save(inscripcion));
         }
