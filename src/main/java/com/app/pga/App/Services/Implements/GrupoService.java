@@ -14,6 +14,7 @@ import com.app.pga.App.Repositories.IGrupoRepository;
 import com.app.pga.App.Services.Interfaces.IGrupoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,11 +22,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 class GrupoService implements IGrupoService {
     private final ICursoRepository cursoRepository;
     private final IDocenteRepository docenteRepository;
     private final GrupoMapper grupoMapper;
     private final IGrupoRepository grupoRepository;
+    private final ActividadGrupoService actividadGrupoService;
     @Override
 
     public GrupoDto crear(GrupoDto dto) {
@@ -47,10 +50,13 @@ class GrupoService implements IGrupoService {
         grupo.setCreated_at(LocalDate.now());
         grupo.setCurso(curso);
         grupo.setDocente(docente);
+        Grupo nuevo = grupoRepository.save(grupo);
+        actividadGrupoService.precargarDesdeCurso(nuevo.getIdGrupo());
         return grupoMapper.toDtoActividades(grupoRepository.save(grupo));
 
 
     }
+    @Transactional(readOnly = true)
     public GrupoDto obtenerPorId(Long idGrupo) {
         Grupo grupo = grupoRepository.findById(idGrupo)
                 .orElseThrow(() -> new NotFoundException("Grupo no encontrado"));
@@ -58,6 +64,7 @@ class GrupoService implements IGrupoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GrupoDto> obtenerGrupoGeneral() {
         List <Grupo> grupos = grupoRepository.findAll();
         return grupos.stream()
@@ -65,6 +72,7 @@ class GrupoService implements IGrupoService {
                 .collect(Collectors.toList());
     }
     @Override
+    @Transactional(readOnly = true)
     public List<GrupoDto> obtenerGruposActivos() {
         List<Grupo> grupos = grupoRepository.findByEstado(Estado.HABILITADO);
         return grupos.stream()
@@ -73,6 +81,7 @@ class GrupoService implements IGrupoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GrupoDto> obtenerPorCurso(Long idCurso) {
         return grupoRepository.findByCursoIdCurso(idCurso)
                 .stream()
@@ -81,6 +90,7 @@ class GrupoService implements IGrupoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GrupoDto> obtenerPorDocente(Long idDocente) {
         return  grupoRepository.findByDocenteIdDocente(idDocente)
                 .stream()

@@ -1,4 +1,4 @@
-package com.app.pga.App.Models.Dtos;
+package com.app.pga.App.Models.Dtos.ResponseDto;
 
 import com.app.pga.App.Models.Enum.EstadoAsistencia;
 

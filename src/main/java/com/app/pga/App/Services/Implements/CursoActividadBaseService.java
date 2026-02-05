@@ -10,11 +10,13 @@ import com.app.pga.App.Repositories.ICurso_ActividadBaseRepository;
 import com.app.pga.App.Services.Interfaces.ICursoActividadBaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 class CursoActividadBaseService implements ICursoActividadBaseService {
     private final ICursoRepository cursoRepository;
     private final IActividadBaseRepository actividadBaseRepository;

@@ -18,6 +18,7 @@ import com.app.pga.App.Repositories.ICurso_ActividadBaseRepository;
 import com.app.pga.App.Services.Interfaces.ICursoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 class CursoService implements ICursoService {
     private final ICursoRepository cursoRepository;
     private final CursoMapper cursoMapper;
@@ -63,6 +65,7 @@ class CursoService implements ICursoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CursoDto obtenerCurso(Long idCurso) {
         Curso curso = cursoRepository.findById(idCurso)
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
@@ -70,6 +73,7 @@ class CursoService implements ICursoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CursoDto> obtenerCursosGeneral() {
         List<Curso> cursos = cursoRepository.findAll();
         return cursos.stream()
@@ -78,6 +82,7 @@ class CursoService implements ICursoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CursoDto> obtenerCursosActivos() {
         List<Curso> cursos = cursoRepository.findByActivoTrue();
         return cursos.stream()

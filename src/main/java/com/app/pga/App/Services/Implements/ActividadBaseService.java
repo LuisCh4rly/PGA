@@ -13,12 +13,14 @@ import com.app.pga.App.Services.Interfaces.IActividadBaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 class ActividadBaseService implements IActividadBaseService {
 
     private final IActividadBaseRepository actividadBaseRepository;
@@ -42,7 +44,9 @@ class ActividadBaseService implements IActividadBaseService {
         return actividadBaseMapper.toDto(actividadBaseRepository.save(actividadBaseNueva));
     }
 
+
     @Override
+    @Transactional(readOnly = true)
     public ActividadBaseDto obtenerActividadBase(Long idActividadBase) {
         ActividadBase actividadBase = actividadBaseRepository.findById(idActividadBase)
                 .orElseThrow(()-> new NotFoundException("Actividad Base no encontrada"));
@@ -50,6 +54,7 @@ class ActividadBaseService implements IActividadBaseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ActividadBaseDto> obtenerActividadesBaseGeneral() {
         List <ActividadBase> actividadesBase = actividadBaseRepository.findAll();
         return actividadesBase.stream()
@@ -58,6 +63,7 @@ class ActividadBaseService implements IActividadBaseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ActividadBaseDto> obtenerActividadesBaseActivas() {
         List <ActividadBase> actividadeActivas = actividadBaseRepository.findByActivoTrue();
         return actividadeActivas.stream()
@@ -66,6 +72,7 @@ class ActividadBaseService implements IActividadBaseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ActividadBaseDto> obtenerActividadesBasePorCampo(Long idCampo) {
         List <ActividadBase> actividadesCampo = actividadBaseRepository.findByCampoFormativo_IdCampo(idCampo);
         return actividadesCampo.stream()
