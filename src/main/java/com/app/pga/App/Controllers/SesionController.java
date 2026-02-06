@@ -1,16 +1,21 @@
 package com.app.pga.App.Controllers;
 
+import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Models.Dtos.*;
 import com.app.pga.App.Models.Dtos.RequestDto.SesionRequestDto;
 import com.app.pga.App.Models.Dtos.RequestDto.SesionUpdateDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.SesionDetalletDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.SesionDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.SesiondocenteDto;
+import com.app.pga.App.Models.Entities.Sesion;
+import com.app.pga.App.Models.Enum.EstadoAsistencia;
+import com.app.pga.App.Models.Mappers.InscripcionMapper;
 import com.app.pga.App.Repositories.ISesionAlumnoRepository;
 import com.app.pga.App.Repositories.ISesionRepository;
 import com.app.pga.App.Services.Implements.SesionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -84,9 +89,14 @@ class SesionController {
 
     //actualizar detalles de la sesion
     @PutMapping("/actualizar/{idSesion}")
-    public ResponseEntity<SesionDetalletDto> actualizarDetallesSesion(@PathVariable Long idSesion,  @Valid @RequestBody SesionUpdateDto dto){
+    public ResponseEntity<SesionDetalletDto> actualizarDetallesSesion(@PathVariable Long idSesion, @Valid @RequestBody SesionUpdateDto dto){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(sesionService.actualizarSesion(idSesion, dto));
+    }
+
+    @GetMapping("/grupos/asistencias")
+    public ResponseEntity<List<ReporteAsistenciaGrupoDto>> reporteAsistenciaGrupo() {
+        return ResponseEntity.ok(sesionService.obtenerReporteAsistenciaGrupo());
     }
 
 
