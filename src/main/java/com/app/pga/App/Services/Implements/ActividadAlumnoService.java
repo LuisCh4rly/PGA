@@ -3,6 +3,7 @@ package com.app.pga.App.Services.Implements;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.ActividadAlumnoDto;
+import com.app.pga.App.Models.Dtos.ReporteSeguimientoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.CambiarEstadoTareaDto;
 import com.app.pga.App.Models.Entities.ActividadAlumno;
 import com.app.pga.App.Models.Entities.ActividadGrupo;
@@ -170,6 +171,10 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
         return storageService.loadAsResource(aa.getUrlEntrega());
     }
 
+    @Transactional(readOnly = true)
+    public List<ReporteSeguimientoDto>obtenerReporteSeguimientoGrupo(){
+        return actividadAlumnoRepository.reporteSeguimientoGeneral();
+    }
 }
 
 

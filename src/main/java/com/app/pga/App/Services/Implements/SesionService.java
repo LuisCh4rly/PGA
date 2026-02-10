@@ -100,6 +100,16 @@ public class SesionService implements ISesionService {
         }
         sesionAlumnoRepository.saveAll(relaciones);
 
+
+        List<Asistencia>asistencias = relaciones.stream().map(sa->{
+            Asistencia a =new Asistencia();
+            a.setSesionAlumno(sa);
+            a.setEstado(EstadoAsistencia.SIN_INICIAR);
+            return a;
+        })
+                .toList();
+        asistenciaRepository.saveAll(asistencias);
+
         return sesionMapper.toDto(sesion);
     }
 
@@ -133,6 +143,15 @@ public class SesionService implements ISesionService {
                 .toList();
 
         sesionAlumnoRepository.saveAll(nuevasRelaciones);
+
+        List<Asistencia>asistencias = nuevasRelaciones.stream().map(sa->{
+                    Asistencia a =new Asistencia();
+                    a.setSesionAlumno(sa);
+                    a.setEstado(EstadoAsistencia.SIN_INICIAR);
+                    return a;
+                })
+                .toList();
+        asistenciaRepository.saveAll(asistencias);
 
         return sesionMapper.toDetalleDto(sesion);
     }
@@ -274,4 +293,8 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
         return sesionMapper.toDetalleDto(sesionRepository.save(sesion));
     }
 
+    @Transactional(readOnly = true)
+    public List<ReporteAsistenciaGrupoDto>obtenerReporteAsistenciaGrupo(){
+        return sesionRepository.reporteAsistenciaGeneral();
+    }
 }
