@@ -173,9 +173,7 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
 
     @Transactional(readOnly = true)
     public List<ReporteSeguimientoDto>obtenerReporteSeguimientoGrupo(){
-        List<ReporteSeguimientoDto> datos = actividadAlumnoRepository.reporteSeguimientoGeneral();
-        System.out.println("Total registros: " + datos.size());
-        return datos;
+        return actividadAlumnoRepository.reporteSeguimientoGeneral();
     }
 }
 
