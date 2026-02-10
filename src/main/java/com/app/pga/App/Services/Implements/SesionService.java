@@ -34,13 +34,13 @@ public class SesionService implements ISesionService {
     private final ISesionRepository sesionRepository;
     private final ISesionAlumnoRepository sesionAlumnoRepository;
     private final SesionMapper sesionMapper;
-    private final AsistenciaRepository asistenciaRepository;
+    private final IAsistenciaRepository asistenciaRepository;
     private final IGrupoRepository iGrupoRepository;
     private final GrupoMapper grupoMapper;
     private final IDocenteRepository docenteRepository;
 
 
-    public SesionService (ISesionRepository sesionRepository, IInscripcionRepository inscripcionRepository, ISesionAlumnoRepository sesionAlumnoRepository, SesionMapper sesionMapper, AsistenciaRepository asistenciaRepository, IGrupoRepository iGrupoRepository, GrupoMapper grupoMapper, IDocenteRepository docenteRepository){
+    public SesionService (ISesionRepository sesionRepository, IInscripcionRepository inscripcionRepository, ISesionAlumnoRepository sesionAlumnoRepository, SesionMapper sesionMapper, IAsistenciaRepository asistenciaRepository, IGrupoRepository iGrupoRepository, GrupoMapper grupoMapper, IDocenteRepository docenteRepository){
         this.sesionRepository=sesionRepository;
         this.inscripcionRepository=inscripcionRepository;
         this.sesionAlumnoRepository=sesionAlumnoRepository;

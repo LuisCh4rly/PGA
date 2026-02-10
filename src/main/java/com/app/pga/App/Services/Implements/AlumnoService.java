@@ -5,6 +5,7 @@ import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.AlumnoDto;
 import com.app.pga.App.Models.Entities.Alumno;
+import com.app.pga.App.Models.Entities.Expediente;
 import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Mappers.AlumnoMapper;
 import com.app.pga.App.Repositories.IAlumnoRepository;
@@ -23,15 +24,17 @@ public class AlumnoService implements IAlumnoService {
     private final AlumnoMapper alumnoMapper;
     private final IAlumnoRepository alumnoRepository;
     private final IUsuarioRepository usuarioRepository;
+    private final ExpedienteService expedienteService;
 
-    public AlumnoService(AlumnoMapper alumnoMapper, IAlumnoRepository alumnoRepository, IUsuarioRepository usuarioRepository){
+    public AlumnoService(AlumnoMapper alumnoMapper, IAlumnoRepository alumnoRepository, IUsuarioRepository usuarioRepository,ExpedienteService expedienteService){
         this.alumnoMapper=alumnoMapper;
         this.alumnoRepository=alumnoRepository;
         this.usuarioRepository=usuarioRepository;
+        this.expedienteService = expedienteService;
     }
 
     //Crerar Alumnos
-    public AlumnoDto ccreateAlumno (AlumnoDto alumnoDto){
+    public AlumnoDto createAlumno (AlumnoDto alumnoDto){
         Usuario usuario = usuarioRepository.findById(alumnoDto.usuarioDto().idUser())
                 .orElseThrow(()-> new NotFoundException("Usuario no encontrado."));
 
@@ -46,6 +49,7 @@ public class AlumnoService implements IAlumnoService {
             alumnoEntity.setUsuario(usuario);
         }
         Alumno nuevoAlumno = alumnoRepository.save(alumnoEntity);
+        expedienteService.crearExpediente(nuevoAlumno.getIdAlumno());
         return alumnoMapper.toDto(nuevoAlumno);
     }
 
@@ -107,6 +111,8 @@ public class AlumnoService implements IAlumnoService {
         }else{
             alumno.setFechaAlta(LocalDate.now());
             alumno.setFechaBaja(null);
+            Expediente expediente = expedienteService.obtenerPorAlumno(idAlumno);
+            expedienteService.sincronizarExpediente(expediente);
         }
         alumno.setActivo(!alumno.getActivo());
         Alumno alumnoActDes = alumnoRepository.save(alumno);

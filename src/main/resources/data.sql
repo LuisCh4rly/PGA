@@ -197,5 +197,44 @@ FROM inscripciones i
 
 WHERE i.estado = TRUE;
 
+--Tabla documentos
+INSERT INTO catalogo_documentos(tipo, nombre, activo, obligatorio)
+VALUES ('CURP', 'CURP', TRUE,TRUE),
+       ('CV', 'Curriculum Viate', TRUE, TRUE),
+       ('CD', 'Comprobante de Domicilio', TRUE, TRUE),
+       ('INE', 'Identificación Oficial', TRUE, TRUE),
+       ('FOTO', 'Fotografía', TRUE,TRUE);
 
-    COMMIT;
+--Crear Expediente alumno
+WITH alumnos_sin_expediente AS (
+    SELECT a.id_alumno
+    FROM alumnos a
+             LEFT JOIN expedientes e
+                       ON e.id_alumno = a.id_alumno
+    WHERE a.activo = true
+      AND e.id_expediente IS NULL
+),
+
+     expedientes_creados AS (
+INSERT INTO expedientes (id_alumno, estado)
+SELECT
+    ase.id_alumno,
+    'NO_APROBADO'
+FROM alumnos_sin_expediente ase
+    RETURNING id_expediente, id_alumno
+)
+
+INSERT INTO documentos_expedientes (
+    id_expediente,
+    id_documento,
+    estado_documento
+)
+SELECT
+    ec.id_expediente,
+    d.id_documento,
+    'PENDIENTE'
+FROM expedientes_creados ec
+         CROSS JOIN catalogo_documentos d
+WHERE d.activo = true;
+
+

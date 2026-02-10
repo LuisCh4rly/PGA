@@ -25,7 +25,7 @@ public class AlumnoController {
     //-----crear----
     @PostMapping
     public ResponseEntity<AlumnoDto>createAlumno (@Valid @RequestBody AlumnoDto alumnoDto, UriComponentsBuilder uriComponentsBuilder){
-        AlumnoDto createAlumno = alumnoService.ccreateAlumno(alumnoDto);
+        AlumnoDto createAlumno = alumnoService.createAlumno(alumnoDto);
         URI location = uriComponentsBuilder.path("/api/alumno/{id}")
                 .buildAndExpand(createAlumno.getClass()).toUri();
 

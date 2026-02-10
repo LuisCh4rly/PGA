@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
@@ -43,7 +44,7 @@ public class StorageService implements IStorageService {
 
             Path destino = carpeta.resolve(nombreArchivo);
 
-            Files.copy(archivo.getInputStream(), destino);
+            Files.copy(archivo.getInputStream(), destino,  StandardCopyOption.REPLACE_EXISTING);
 
             return destino.toString().replace("\\", "/");
 
@@ -51,6 +52,29 @@ public class StorageService implements IStorageService {
             throw new RuntimeException("Error guardando archivo", e);
         }
     }
+    @Override
+    public String guardarDocumentoExpediente( Long idAlumno, String tipoDocumento,  MultipartFile archivo) {
+        validarArchivo(archivo);
+        try {
+            Path carpeta = Paths.get(BASE_PATH,
+                    "alumnos",
+                    idAlumno.toString(),
+                    "expediente");
+
+            Files.createDirectories(carpeta);
+
+            String nombre = UUID.randomUUID() + "_" + archivo.getOriginalFilename();
+            Path destino = carpeta.resolve(nombre);
+
+            Files.copy(archivo.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+
+            return destino.toString().replace("\\", "/");
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error guardando documento", e);
+        }
+    }
+
 
     @Override
     public Resource loadAsResource(String path) {
@@ -74,6 +98,9 @@ public class StorageService implements IStorageService {
             throw new IllegalArgumentException("Archivo vacío");
         }
     }
+
+
+
 }
 
 
