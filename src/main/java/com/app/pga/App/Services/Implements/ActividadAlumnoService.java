@@ -164,7 +164,7 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
                 .orElseThrow(() -> new NotFoundException("Actividad del alumno no encontrada"));
 
         if (aa.getUrlEntrega() == null || aa.getUrlEntrega().isBlank()) {
-            throw new IllegalStateException("La actividad aún no tiene entrega");
+            throw new NotFoundException("La actividad aún no tiene entrega");
         }
 
         return storageService.loadAsResource(aa.getUrlEntrega());

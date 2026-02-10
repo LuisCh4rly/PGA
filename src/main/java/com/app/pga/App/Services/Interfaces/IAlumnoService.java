@@ -5,7 +5,7 @@ import com.app.pga.App.Models.Dtos.AlumnoDto;
 import java.util.List;
 
 public interface IAlumnoService {
-    AlumnoDto ccreateAlumno (AlumnoDto alumnoDto);
+    AlumnoDto createAlumno (AlumnoDto alumnoDto);
     AlumnoDto actualizarAlumno (Long idAlumno, AlumnoDto alumnoDto);
     List<AlumnoDto> findAllActivos();
     List<AlumnoDto>findAll();
