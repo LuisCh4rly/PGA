@@ -22,9 +22,6 @@ public record UsuarioResponseDto(
         String apellidoMaterno,
         @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate created_At,
-        @Email(message = "Formato inválido", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
-        @NotBlank(message = "Campo obligatorio")
-        String email,
         @Pattern(message = "Debe tener exactamente 10 dígitos", regexp = "^\\d{10}$")
         @NotBlank(message = "Campo Obligatorio")
         String telefono,

@@ -25,7 +25,7 @@ public class UserDetailsImp implements UserDetails {
         Collection<? extends GrantedAuthority> authorities = Set.of( new SimpleGrantedAuthority("ROLE_".concat(cuenta.getRole().getName().name())));
         return new UserDetailsImp(
                 cuenta.getIdCuenta(),
-                cuenta.getUsuario().getEmail(),
+                cuenta.getEmail(),
                 cuenta.getPassword(),
                 authorities
         );

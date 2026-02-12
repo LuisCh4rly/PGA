@@ -37,13 +37,13 @@ public class CuentaService implements ICuentaService {
     @Override
     public CuentaResponseDto register(AuthRegisterDto dto) {
 
-        cuentaRepository.findByUsuario_Email(dto.email()).ifPresent(e -> {
+        cuentaRepository.findByEmail(dto.email()).ifPresent(e -> {
             throw new IllegalArgumentException("El email ya está en uso");
         });
         Role role = roleRepository .findByName(ERole.valueOf(dto.rol()))
                 .orElseThrow(() -> new NotFoundException("Rol no encontrado"));
         //REGISTRO DE USUARIOS
-        UsuarioRequestDto usuarioDto = new UsuarioRequestDto(dto.nombre(),dto.apellidoPaterno(),dto.apellidoMaterno(),dto.email(),dto.telefono(), dto.direccion());
+        UsuarioRequestDto usuarioDto = new UsuarioRequestDto(dto.nombre(),dto.apellidoPaterno(),dto.apellidoMaterno(),dto.telefono(), dto.direccion());
         Usuario usuarioNuevo = usuarioService.createUsuario(usuarioDto);
 
        //REGISTRO DE ALUMNOS O DOCENTES
@@ -59,6 +59,7 @@ public class CuentaService implements ICuentaService {
         Cuenta cuenta = Cuenta.builder()
                 .usuario(usuarioNuevo)
                 .role(role)
+                .email(dto.email())
                 .password(encoder.encode(dto.password()))
                 .build();
 
@@ -66,7 +67,7 @@ public class CuentaService implements ICuentaService {
                 cuenta.getUsuario().getNombre(),
                 cuenta.getUsuario().getApellidoPaterno(),
                 cuenta.getUsuario().getApellidoMaterno(),
-                cuenta.getUsuario().getEmail(),
+                cuenta.getEmail(),
                 cuenta.getUsuario().getActivo(),
                 cuenta.getRole().getName().toString());
     }
@@ -81,7 +82,7 @@ public class CuentaService implements ICuentaService {
                         c.getUsuario().getNombre(),
                         c.getUsuario().getApellidoPaterno(),
                         c.getUsuario().getApellidoMaterno(),
-                        c.getUsuario().getEmail(),
+                        c.getEmail(),
                         c.getUsuario().getActivo(),
                         c.getRole().getName().toString()
                 ))
@@ -95,7 +96,7 @@ public class CuentaService implements ICuentaService {
                 cuenta.getUsuario().getNombre(),
                 cuenta.getUsuario().getApellidoPaterno(),
                 cuenta.getUsuario().getApellidoMaterno(),
-                cuenta.getUsuario().getEmail(),
+                cuenta.getEmail(),
                 cuenta.getUsuario().getActivo(),
                 cuenta.getRole().getName().toString());
     }
