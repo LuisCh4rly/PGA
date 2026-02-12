@@ -15,7 +15,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email ) throws UsernameNotFoundException {
-        Cuenta cuenta = cuentaRepository.findByUsuario_Email(email)
+        Cuenta cuenta = cuentaRepository.findByEmail(email)
                 .orElseThrow(()-> new UsernameNotFoundException("Cuenta no encontrada con el email: "+ email));
 
         if (cuenta.getUsuario() == null || !cuenta.getUsuario().getActivo()) {

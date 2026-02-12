@@ -25,8 +25,6 @@ public class Usuario {
     private String apellidoPaterno;
     private String apellidoMaterno;
     private LocalDate created_At;
-    @Column(unique = true)
-    private String email;
     private String telefono;
     private String direccion;
     private Boolean activo;

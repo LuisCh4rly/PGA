@@ -9,8 +9,6 @@ public record UsuarioRequestDto(
         String nombre,
         String apellidoPaterno,
         String apellidoMaterno,
-
-        String email,
         String telefono,
         String direccion
 

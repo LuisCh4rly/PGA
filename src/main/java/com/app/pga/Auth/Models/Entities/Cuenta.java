@@ -29,6 +29,10 @@ public class Cuenta {
     @OneToOne
     @JoinColumn(name = "usuario_id", referencedColumnName = "idUsuario")
     private Usuario usuario;
+
+    @Column(unique = true)
+    private String email;
+
 }
 
 
