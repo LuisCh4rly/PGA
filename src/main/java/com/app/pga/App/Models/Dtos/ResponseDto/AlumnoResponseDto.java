@@ -1,17 +1,13 @@
-package com.app.pga.App.Models.Dtos;
+package com.app.pga.App.Models.Dtos.ResponseDto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
-/**
- * DTO for {@link com.app.pga.App.Models.Entities.Alumno}
- */
-public record AlumnoDto(
+public record AlumnoResponseDto(
         Long idAlumno,
         @Size(message = "Máximo 60 carácteres", max = 60)
         @NotBlank(message = "Campo obligatorio.")
@@ -26,7 +22,12 @@ public record AlumnoDto(
         @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate fechaBaja,
         Boolean activo,
-        @NotNull
-        UsuarioDto usuarioDto)
-        implements Serializable {
+        @NotBlank(message = "Campo obligatorio.")
+        String nombre,
+        @NotBlank(message = "Campo obligatorio.")
+        String apellidoPaterno,
+        @NotBlank(message = "Campo obligatorio.")
+        String apellidoMaterno
+)  implements Serializable {
+
 }

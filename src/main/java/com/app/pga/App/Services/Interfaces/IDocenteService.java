@@ -1,13 +1,16 @@
 package com.app.pga.App.Services.Interfaces;
 
-import com.app.pga.App.Models.Dtos.DocenteDto;
+
+import com.app.pga.App.Models.Dtos.RequestDto.DocenteRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.DocenteResponseDto;
+import com.app.pga.App.Models.Entities.Docente;
 
 import java.util.List;
 
 public interface IDocenteService {
-    DocenteDto createDocente (DocenteDto docenteDto);
-    List<DocenteDto> findAllActivos();
-    List<DocenteDto>findAll();
-    DocenteDto findById(Long idDocente);
-    DocenteDto desactivarActivarDocente (Long idDocente);
+    Docente createDocente (DocenteRequestDto docenteRequestDto);
+    List<DocenteResponseDto> findAllActivos();
+    List<DocenteResponseDto>findAll();
+    DocenteResponseDto findById(Long idDocente);
+    DocenteResponseDto desactivarActivarDocente (Long idDocente);
 }

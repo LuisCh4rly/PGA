@@ -1,7 +1,8 @@
 package com.app.pga.App.Services.Implements;
 
 import com.app.pga.App.Exception.NotFoundException;
-import com.app.pga.App.Models.Dtos.UsuarioDto;
+import com.app.pga.App.Models.Dtos.RequestDto.UsuarioRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.UsuarioResponseDto;
 import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Mappers.UsuarioMapper;
 import com.app.pga.App.Repositories.IUsuarioRepository;
@@ -29,25 +30,24 @@ public class UsuarioService implements IUsuarioService {
 
 
     // Crear Usuario
-    public UsuarioDto createUsuario (UsuarioDto usuarioDto){
+    public Usuario createUsuario (UsuarioRequestDto usuarioRequesDto){
 
-        usuarioRepository.findByNombreAndApellidoPaternoAndApellidoMaterno(usuarioDto.nombre(), usuarioDto.apellidoPaterno(), usuarioDto.apellidoMaterno()).ifPresent(UsuarioDto -> {
+        usuarioRepository.findByNombreAndApellidoPaternoAndApellidoMaterno(usuarioRequesDto.nombre(), usuarioRequesDto.apellidoPaterno(), usuarioRequesDto.apellidoMaterno()).ifPresent(UsuarioDto -> {
             throw new IllegalArgumentException("El registro ya existe");
         });
 
-        Usuario usuarioEntity = usuarioMapper.toEntity(usuarioDto);
+        Usuario usuarioEntity = usuarioMapper.toEntity(usuarioRequesDto);
         if (usuarioEntity.getCreated_At()==null){
             usuarioEntity.setCreated_At(LocalDate.now());
             usuarioEntity.setActivo(true);//nuevo usuario inicia como activo
         }
         Usuario nuevoUsuario = usuarioRepository.save(usuarioEntity);
 
-
-        return usuarioMapper.toDto(nuevoUsuario);
+        return nuevoUsuario;
     }
 
     //Actualizar usuario
-    public UsuarioDto actualizarUsuario (Long idUsuario, UsuarioDto usuarioDto){
+    public UsuarioResponseDto actualizarUsuario (Long idUsuario, UsuarioRequestDto usuarioRequestDto){
 
         Usuario usuarioExistente = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NotFoundException("Registro no encontrado: "+ idUsuario));
 
@@ -55,8 +55,8 @@ public class UsuarioService implements IUsuarioService {
             throw new IllegalStateException("No se puede modificar un registro inactivo");
         }
 
-        usuarioExistente.setDireccion(usuarioDto.direccion());
-        usuarioExistente.setTelefono(usuarioDto.telefono());
+        usuarioExistente.setDireccion(usuarioRequestDto.direccion());
+        usuarioExistente.setTelefono(usuarioRequestDto.telefono());
 
         Usuario usuarioActualizado = usuarioRepository.save(usuarioExistente);
 
@@ -66,7 +66,7 @@ public class UsuarioService implements IUsuarioService {
 
     //Consulta general para activos
    @Transactional(readOnly = true)
-   public List<UsuarioDto> findAllActivos(){
+   public List<UsuarioResponseDto> findAllActivos(){
      return usuarioRepository.findByActivoTrue()
              .stream().map(usuario -> usuarioMapper.toDto(usuario))
              .collect(Collectors.toList());
@@ -74,7 +74,7 @@ public class UsuarioService implements IUsuarioService {
 
     //Consulta general
     @Transactional(readOnly = true)
-    public List<UsuarioDto> findAll(){
+    public List<UsuarioResponseDto> findAll(){
         return usuarioRepository.findAll()
                 .stream().map(usuario -> usuarioMapper.toDto(usuario))
                 .collect(Collectors.toList());
@@ -82,13 +82,13 @@ public class UsuarioService implements IUsuarioService {
 
    //Consulta por id
    @Transactional(readOnly = true)
-   public UsuarioDto findById (Long idUsuario){
+   public UsuarioResponseDto findById (Long idUsuario){
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(()-> new NotFoundException("Registro no encontrado: "+ idUsuario));
         return usuarioMapper.toDto(usuario);
    }
 
    //Desactivar usuario
-    public UsuarioDto desactivarUsuario (Long idUsuario){
+    public UsuarioResponseDto desactivarUsuario (Long idUsuario){
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(()-> new NotFoundException("Registro no encontrado: "+ idUsuario));
         usuario.setActivo(!usuario.getActivo());//desactivado
         Usuario usuarioDesactivado = usuarioRepository.save(usuario);

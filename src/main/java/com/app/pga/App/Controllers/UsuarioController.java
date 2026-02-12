@@ -1,6 +1,7 @@
 package com.app.pga.App.Controllers;
 
-import com.app.pga.App.Models.Dtos.UsuarioDto;
+import com.app.pga.App.Models.Dtos.RequestDto.UsuarioRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.UsuarioResponseDto;
 import com.app.pga.App.Services.Implements.UsuarioService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -23,48 +24,49 @@ public class UsuarioController {
     }
 
     //-----Crear------
-    @PostMapping
-    public ResponseEntity<UsuarioDto>createUsuario(@Valid @RequestBody UsuarioDto usuarioDto, UriComponentsBuilder uriComponentsBuilder){
+    /*@PostMapping
+    public ResponseEntity<UsuarioResponseDto>createUsuario(@Valid @RequestBody UsuarioRequestDto usuarioRequestDto, UriComponentsBuilder uriComponentsBuilder){
 
-        UsuarioDto createUsuario = usuarioService.createUsuario(usuarioDto);
+        UsuarioResponseDto createUsuario = usuarioService.createUsuario(usuarioRequestDto);
         URI location = uriComponentsBuilder.path("/api/usuario/{id}").buildAndExpand(createUsuario.getClass()).toUri();
 
         return ResponseEntity.created(location).body(createUsuario);
     }
-
+*/
 
     //---Actualizar---
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioDto>actualizarUsuario(@PathVariable @Min(1) Long id, @Valid @RequestBody UsuarioDto usuarioDto){
-        UsuarioDto actualizarUsuario = usuarioService.actualizarUsuario(id, usuarioDto);
+    public ResponseEntity<UsuarioResponseDto>actualizarUsuario(@PathVariable @Min(1) Long id, @Valid @RequestBody UsuarioRequestDto usuarioRequestDto){
+        UsuarioResponseDto actualizarUsuario = usuarioService.actualizarUsuario(id, usuarioRequestDto);
         return ResponseEntity.ok(actualizarUsuario);
     }
 
     //---Consulta por id---
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDto>consultaID (@PathVariable @Min(1) Long id){
+    public ResponseEntity<UsuarioResponseDto>consultaID (@PathVariable @Min(1) Long id){
         return ResponseEntity.ok(usuarioService.findById(id));
     }
 
 
     //----Consulta general para activos----
     @GetMapping("/activos")
-    public ResponseEntity<List<UsuarioDto>>ConsultaActivos(){
+    public ResponseEntity<List<UsuarioResponseDto>>ConsultaActivos(){
         return ResponseEntity.ok(usuarioService.findAllActivos());
     }
 
 
     //----Consulta general----
     @GetMapping
-    public ResponseEntity<List<UsuarioDto>>Consulta(){
+    public ResponseEntity<List<UsuarioResponseDto>>Consulta(){
+
         return ResponseEntity.ok(usuarioService.findAll());
     }
 
 
     //----Desactivar usuario----
     @PutMapping("/desactivar/{id}")
-    public ResponseEntity<UsuarioDto>desactivarUsuario(@PathVariable Long id){
-        UsuarioDto usuarioDesactivado = usuarioService.desactivarUsuario(id);
+    public ResponseEntity<UsuarioResponseDto>desactivarUsuario(@PathVariable Long id){
+        UsuarioResponseDto usuarioDesactivado = usuarioService.desactivarUsuario(id);
         return ResponseEntity.ok(usuarioDesactivado);
     }
 

@@ -1,5 +1,6 @@
 package com.app.pga.App.Models.Dtos;
 
+import com.app.pga.App.Models.Dtos.ResponseDto.AlumnoResponseDto;
 import com.app.pga.App.Models.Enum.tipoInscripcion;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +25,7 @@ public record InscripcionDto(
         @NotNull(message = "Campo oblligatorio")
         tipoInscripcion tipo,
         @NotNull
-        AlumnoDto alumno,
+        AlumnoResponseDto alumno,
 
         GrupoDto grupo)
         implements Serializable {

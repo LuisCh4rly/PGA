@@ -20,7 +20,7 @@ import java.util.Date;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idUser;
+    private Long idUsuario;
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;

@@ -21,7 +21,7 @@ public class Docente {
     private LocalDate fechaBaja;
     private Boolean activo;
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_user")//relacion con usuario FK
+    @JoinColumn(name="id_usuario")//relacion con usuario FK
     private Usuario usuario;
 
 }
