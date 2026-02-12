@@ -1,4 +1,4 @@
-package com.app.pga.App.Models.Dtos;
+package com.app.pga.App.Models.Dtos.ResponseDto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
@@ -8,12 +8,8 @@ import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 
-/**
- * DTO for {@link com.app.pga.App.Models.Entities.Usuario}
- */
-public record UsuarioDto(
+public record UsuarioResponseDto(
         Long idUser,
         @Size(message = "Máximo 30 carácteres", max = 30)
         @NotBlank(message = "Campo obligatorio")
@@ -35,6 +31,7 @@ public record UsuarioDto(
         @Size(message = "Máximo 60 carácteres", max = 60)
         @NotBlank(message = "Campo obligatorio")
         String direccion,
-        Boolean activo)
-        implements Serializable {
+        Boolean activo
+
+) implements Serializable {
 }

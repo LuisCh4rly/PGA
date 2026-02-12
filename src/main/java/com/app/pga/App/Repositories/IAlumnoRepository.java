@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IAlumnoRepository extends JpaRepository<Alumno, Long> {
-    Optional<Alumno> findByUsuario_IdUser(Long id);
+    Optional<Alumno> findByUsuario_IdUsuario(Long id);
 
     @Query("""
     SELECT a

@@ -2,7 +2,8 @@ package com.app.pga.App.Services.Implements;
 
 import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
-import com.app.pga.App.Models.Dtos.DocenteDto;
+import com.app.pga.App.Models.Dtos.RequestDto.DocenteRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.DocenteResponseDto;
 import com.app.pga.App.Models.Entities.Docente;
 import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Mappers.DocenteMapper;
@@ -32,28 +33,28 @@ public class DocenteService implements IDocenteService {
     }
 
     //Crear docente
-    public DocenteDto createDocente (DocenteDto docenteDto){
-        Usuario usuario = iUsuarioRepository.findById(docenteDto.usuarioDto().idUser())
+    public Docente createDocente (DocenteRequestDto docenteRequestDto){
+        Usuario usuario = iUsuarioRepository.findById(docenteRequestDto.idUsuario())
                 .orElseThrow(()-> new NotFoundException("Docente no encontrado"));
 
-        docenteRepository.findByUsuario_IdUser(docenteDto.usuarioDto().idUser()).ifPresent(DocenteDto->{
+        docenteRepository.findByUsuario_IdUsuario(docenteRequestDto.idUsuario()).ifPresent(DocenteDto->{
             throw new DuplicateResourceException("El usuario ya se encuentra registrado a un docente");
         });
 
-        Docente docenteEntity = docenteMapper.toEntity(docenteDto);
+        Docente docenteEntity = docenteMapper.toEntity(docenteRequestDto);
         if(docenteEntity.getFechaAlta()==null){
             docenteEntity.setFechaAlta(LocalDate.now());
             docenteEntity.setActivo(true);
             docenteEntity.setUsuario(usuario);
         }
         Docente nuevoDocente = docenteRepository.save(docenteEntity);
-        return docenteMapper.toDto(nuevoDocente);
+        return nuevoDocente;
     }
 
 
     //Consulta general para activos
     @Transactional(readOnly = true)
-    public List<DocenteDto>findAllActivos(){
+    public List<DocenteResponseDto>findAllActivos(){
         return docenteRepository.findByActivoTrue()
                 .stream()
                 .map(docente ->docenteMapper.toDto(docente))
@@ -62,7 +63,7 @@ public class DocenteService implements IDocenteService {
 
     //Consulta general
     @Transactional(readOnly = true)
-    public List<DocenteDto>findAll(){
+    public List<DocenteResponseDto>findAll(){
         return docenteRepository.findAll()
                 .stream()
                 .map(docente ->docenteMapper.toDto(docente))
@@ -72,7 +73,7 @@ public class DocenteService implements IDocenteService {
 
     //Consulta por id
     @Transactional(readOnly = true)
-    public DocenteDto findById(Long idDocente) {
+    public DocenteResponseDto findById(Long idDocente) {
         Docente docente = docenteRepository.findById(idDocente)
                 .orElseThrow(()->new NotFoundException("Docente no encontrado: "+idDocente));
         return docenteMapper.toDto(docente);
@@ -80,7 +81,7 @@ public class DocenteService implements IDocenteService {
 
 
     //Desactivar - Activar
-    public DocenteDto desactivarActivarDocente (Long idDocente){
+    public DocenteResponseDto desactivarActivarDocente (Long idDocente){
         Docente docente = docenteRepository.findById(idDocente)
                 .orElseThrow(()->new NotFoundException("Docente no encontrado: "+ idDocente));
         if (docente.getActivo()==true){

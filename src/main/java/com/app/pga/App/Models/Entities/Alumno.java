@@ -24,6 +24,6 @@ public class Alumno {
     private LocalDate fechaBaja;
     private Boolean activo;
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idUser")
+    @JoinColumn(name = "idUsuario")
     private Usuario usuario;
 }

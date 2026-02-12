@@ -35,7 +35,7 @@ INSERT INTO campos_formativos (nombre, descripcion, activo) VALUES ('Arquitectur
                                                                    ('Metodologías Ágiles', 'Gestión de proyectos con Scrum, Kanban y mejora continua del trabajo en equipo.', true);
 
 --Tabla de Docentes
-INSERT INTO docentes (fecha_alta, activo, id_user) VALUES (CURRENT_TIMESTAMP, TRUE, 1),
+INSERT INTO docentes (fecha_alta, activo, id_usuario) VALUES (CURRENT_TIMESTAMP, TRUE, 1),
                                                           (CURRENT_TIMESTAMP, TRUE, 2),
                                                           (CURRENT_TIMESTAMP, TRUE, 3),
                                                           (CURRENT_TIMESTAMP, TRUE, 4);
@@ -68,7 +68,7 @@ INSERT INTO actividades_base (titulo, descripcion, activo, id_campo_formativo) V
                                                                                       ('Rate Limiting', 'Limitar solicitudes por usuario para prevenir abuso del sistema.', true, 4);
 
 --Tabla de Alumnos
-INSERT INTO alumnos (universidad, carrera, fecha_termino,fecha_alta, activo, id_user) VALUES ('INSTITUTO POLITECNICO NACIONAL', 'LICENCIATURA EN SISTEMAS', '12/12/2025', CURRENT_TIMESTAMP, TRUE, 5),
+INSERT INTO alumnos (universidad, carrera, fecha_termino,fecha_alta, activo, id_usuario) VALUES ('INSTITUTO POLITECNICO NACIONAL', 'LICENCIATURA EN SISTEMAS', '12/12/2025', CURRENT_TIMESTAMP, TRUE, 5),
                                                                                              ('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', 'INGENIERIA EN COMPUTACION', '12/12/2022', CURRENT_TIMESTAMP, TRUE, 6),
                                                                                              ('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', 'INGENIERIA EN SISTEMAS', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 7),
                                                                                              ('INSTITUTO POLITECNICO NACIONAL', 'INGENIERIA EN SISTEMAS COMPUTACIONALES', '13/10/2024', CURRENT_TIMESTAMP, TRUE, 8),
@@ -237,4 +237,10 @@ FROM expedientes_creados ec
          CROSS JOIN catalogo_documentos d
 WHERE d.activo = true;
 
+INSERT INTO roles (name) VALUES
+    ('ADMIN'),
+    ('DOCENTE'),
+    ('ALUMNO');
+
+COMMIT ;
 

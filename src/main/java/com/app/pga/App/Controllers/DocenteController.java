@@ -1,8 +1,9 @@
 package com.app.pga.App.Controllers;
 
-import com.app.pga.App.Models.Dtos.DocenteDto;
+
+import com.app.pga.App.Models.Dtos.RequestDto.DocenteRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.DocenteResponseDto;
 import com.app.pga.App.Services.Implements.DocenteService;
-import com.app.pga.App.Services.Implements.UsuarioService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
@@ -22,39 +23,39 @@ public class DocenteController {
     public DocenteController(DocenteService docenteService){this.docenteService=docenteService;}
 
     //--------crear-------
-    @PostMapping
-    public ResponseEntity<DocenteDto>createDocente(@Valid @RequestBody DocenteDto docenteDto, UriComponentsBuilder uriComponentsBuilder){
-        DocenteDto createDocente = docenteService.createDocente(docenteDto);
+  /*  @PostMapping
+    public ResponseEntity<DocenteResponseDto>createDocente(@Valid @RequestBody DocenteRequestDto docenteRequestDto, UriComponentsBuilder uriComponentsBuilder){
+        DocenteResponseDto createDocente = docenteService.createDocente(docenteRequestDto);
         URI location = uriComponentsBuilder.path("/api/docente/{id}")
                 .buildAndExpand(createDocente.getClass()).toUri();
 
         return ResponseEntity.created(location).body(createDocente);
-    }
+    }*/
 
     //------consulta por id----
     @GetMapping("/{id}")
-    public ResponseEntity<DocenteDto>consultaID(@PathVariable @Min(1) Long id){
+    public ResponseEntity<DocenteResponseDto>consultaID(@PathVariable @Min(1) Long id){
         return ResponseEntity.ok(docenteService.findById(id));
     }
 
     //------consulta para activos----
     @GetMapping("/activos")
-    public ResponseEntity<List<DocenteDto>>consultaActivos(){
+    public ResponseEntity<List<DocenteResponseDto>>consultaActivos(){
         return ResponseEntity.ok(docenteService.findAllActivos());
     }
 
 
     //------consulta----
     @GetMapping
-    public ResponseEntity<List<DocenteDto>>consulta(){
+    public ResponseEntity<List<DocenteResponseDto>>consulta(){
         return ResponseEntity.ok(docenteService.findAll());
     }
 
 
     //------activar desactivar-------
     @PutMapping("/desactivar/{id}")
-    public ResponseEntity<DocenteDto>desactivarActivar(@PathVariable @Min(1) Long id){
-        DocenteDto docenteActDes = docenteService.desactivarActivarDocente(id);
+    public ResponseEntity<DocenteResponseDto>desactivarActivar(@PathVariable @Min(1) Long id){
+        DocenteResponseDto docenteActDes = docenteService.desactivarActivarDocente(id);
         return ResponseEntity.ok(docenteActDes);
     }
 }

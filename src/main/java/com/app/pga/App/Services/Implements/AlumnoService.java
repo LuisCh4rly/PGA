@@ -3,12 +3,14 @@ package com.app.pga.App.Services.Implements;
 import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
-import com.app.pga.App.Models.Dtos.AlumnoDto;
+import com.app.pga.App.Models.Dtos.RequestDto.AlumnoRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.AlumnoResponseDto;
 import com.app.pga.App.Models.Entities.Alumno;
 import com.app.pga.App.Models.Entities.Expediente;
 import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Mappers.AlumnoMapper;
 import com.app.pga.App.Repositories.IAlumnoRepository;
+import com.app.pga.App.Repositories.IDocenteRepository;
 import com.app.pga.App.Repositories.IUsuarioRepository;
 import com.app.pga.App.Services.Interfaces.IAlumnoService;
 import org.springframework.stereotype.Service;
@@ -25,24 +27,29 @@ public class AlumnoService implements IAlumnoService {
     private final IAlumnoRepository alumnoRepository;
     private final IUsuarioRepository usuarioRepository;
     private final ExpedienteService expedienteService;
+    private final IDocenteRepository docenteRepository;
 
-    public AlumnoService(AlumnoMapper alumnoMapper, IAlumnoRepository alumnoRepository, IUsuarioRepository usuarioRepository,ExpedienteService expedienteService){
-        this.alumnoMapper=alumnoMapper;
-        this.alumnoRepository=alumnoRepository;
-        this.usuarioRepository=usuarioRepository;
+    public AlumnoService(AlumnoMapper alumnoMapper, IAlumnoRepository alumnoRepository, IUsuarioRepository usuarioRepository, ExpedienteService expedienteService, IDocenteRepository docenteRepository) {
+        this.alumnoMapper = alumnoMapper;
+        this.alumnoRepository = alumnoRepository;
+        this.usuarioRepository = usuarioRepository;
         this.expedienteService = expedienteService;
+        this.docenteRepository = docenteRepository;
     }
 
     //Crerar Alumnos
-    public AlumnoDto createAlumno (AlumnoDto alumnoDto){
-        Usuario usuario = usuarioRepository.findById(alumnoDto.usuarioDto().idUser())
+    public Alumno createAlumno (AlumnoRequestDto alumnoRequestDto){
+        Usuario usuario = usuarioRepository.findById(alumnoRequestDto.idUsuario())
                 .orElseThrow(()-> new NotFoundException("Usuario no encontrado."));
 
-        alumnoRepository.findByUsuario_IdUser(alumnoDto.usuarioDto().idUser()).ifPresent(AlumnoDto->{
+        alumnoRepository.findByUsuario_IdUsuario(alumnoRequestDto.idUsuario()).ifPresent(AlumnoDto->{
             throw new DuplicateResourceException("El usuario ya se encuentra asociado a un alumno");
         });
+        docenteRepository.findByUsuario_IdUsuario(alumnoRequestDto.idUsuario()).ifPresent(AlumnoDto->{
+            throw new DuplicateResourceException("El usuario ya se encuentra asociado a un docente");
+        });
 
-        Alumno alumnoEntity = alumnoMapper.toEntity(alumnoDto);
+        Alumno alumnoEntity = alumnoMapper.toEntity(alumnoRequestDto);
         if(alumnoEntity.getFechaAlta()==null){
             alumnoEntity.setFechaAlta(LocalDate.now());
             alumnoEntity.setActivo(true);
@@ -50,12 +57,12 @@ public class AlumnoService implements IAlumnoService {
         }
         Alumno nuevoAlumno = alumnoRepository.save(alumnoEntity);
         expedienteService.crearExpediente(nuevoAlumno.getIdAlumno());
-        return alumnoMapper.toDto(nuevoAlumno);
+        return nuevoAlumno;
     }
 
 
     //Actualizar alumno
-    public AlumnoDto actualizarAlumno (Long idAlumno, AlumnoDto alumnoDto){
+    public AlumnoResponseDto actualizarAlumno (Long idAlumno, AlumnoRequestDto alumnoRequestDto){
         Alumno alumnoExistente = alumnoRepository.findById(idAlumno)
                 .orElseThrow(()->new NotFoundException("Alumno no encontrado: "+idAlumno));
 
@@ -63,7 +70,7 @@ public class AlumnoService implements IAlumnoService {
             throw new ResourceDisabledException("No se puede modificar un alumno deshabilitado");
         }
 
-        alumnoExistente.setFechaTermino(alumnoDto.fechaTermino());
+        alumnoExistente.setFechaTermino(alumnoRequestDto.fechaTermino());
 
         Alumno alumnoActualizado = alumnoRepository.save(alumnoExistente);
         return alumnoMapper.toDto(alumnoActualizado);
@@ -72,7 +79,7 @@ public class AlumnoService implements IAlumnoService {
 
     //Consulta general para activos
     @Transactional(readOnly = true)
-    public List<AlumnoDto>findAllActivos(){
+    public List<AlumnoResponseDto>findAllActivos(){
         return alumnoRepository.findByActivoTrue()
                 .stream()
                 .map(alumno ->alumnoMapper.toDto(alumno))
@@ -82,7 +89,7 @@ public class AlumnoService implements IAlumnoService {
 
     //Consulta general
     @Transactional(readOnly = true)
-    public List<AlumnoDto>findAll(){
+    public List<AlumnoResponseDto>findAll(){
         return alumnoRepository.findAll()
                 .stream()
                 .map(alumno ->alumnoMapper.toDto(alumno))
@@ -92,7 +99,7 @@ public class AlumnoService implements IAlumnoService {
 
     //Cosulta por id
     @Transactional(readOnly = true)
-    public AlumnoDto findById (Long idAlumno){
+    public AlumnoResponseDto findById (Long idAlumno){
         Alumno alumno = alumnoRepository.findById(idAlumno)
                 .orElseThrow(()->new NotFoundException("Alumno no encontrado: "+idAlumno));
         return alumnoMapper.toDto(alumno);
@@ -100,7 +107,7 @@ public class AlumnoService implements IAlumnoService {
 
 
     //Desactivar - Activar
-    public AlumnoDto desactivarActivarAlumno (long idAlumno){
+    public AlumnoResponseDto desactivarActivarAlumno (long idAlumno){
 
         Alumno alumno = alumnoRepository.findById(idAlumno)
                 .orElseThrow(()->new NotFoundException("Alumno no encontrado:" +idAlumno));
