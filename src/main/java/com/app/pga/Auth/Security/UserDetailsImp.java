@@ -19,6 +19,7 @@ public class UserDetailsImp implements UserDetails {
     private Long id;
     private String email;
     private String password;
+    private Boolean debeCambiarPassword;
     private Collection<? extends GrantedAuthority> authorities;
 
     public static UserDetailsImp build(Cuenta cuenta) {
@@ -27,6 +28,7 @@ public class UserDetailsImp implements UserDetails {
                 cuenta.getIdCuenta(),
                 cuenta.getEmail(),
                 cuenta.getPassword(),
+                cuenta.getDebeCambiarPassword(),
                 authorities
         );
     }
@@ -42,4 +44,6 @@ public class UserDetailsImp implements UserDetails {
     public String getUsername() {
         return email;
     }
+
+    public boolean seDebeCambiarContraseña() { return debeCambiarPassword;}
 }

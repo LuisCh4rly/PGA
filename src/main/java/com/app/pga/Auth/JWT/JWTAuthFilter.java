@@ -55,10 +55,23 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                 Claims claims = jwtService.extractAllClaims(token);
 
                 List<String> roles = claims.get("ROLES", List.class);
-
                 List<GrantedAuthority> authorities = roles.stream()
                         .map(role -> new SimpleGrantedAuthority(role))
                         .collect(Collectors.toList());
+
+                //extraer el claim referente a cambiarPassword
+                Boolean debeCambiarPassword = claims.get("debeCambiarPassword", Boolean.class);
+                String uri = request.getRequestURI();
+                boolean isChangePasswordEndpoint = uri.equals("/api/auth/cambiar-password");
+
+
+                // bloqueo de endpoints para forzar cambio de contraseña
+                if (Boolean.TRUE.equals(debeCambiarPassword) && !isChangePasswordEndpoint) {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.getWriter()
+                            .write("Debes cambiar tu contraseña");
+                    return;
+                }
 
                 //crear un nuevo objeto de autenticación con el usuario y sus roles
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

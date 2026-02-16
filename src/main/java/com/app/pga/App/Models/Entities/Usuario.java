@@ -29,7 +29,7 @@ public class Usuario {
     private String telefono;
     private String direccion;
     private Boolean activo;
-    @OneToOne(mappedBy = "usuario")
+    @OneToOne(mappedBy ="usuario")
     private Cuenta cuenta;
     private LocalDate fechaAlta;
     private LocalDate fechaBaja;

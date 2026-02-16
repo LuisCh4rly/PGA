@@ -9,6 +9,7 @@ import com.app.pga.Auth.Service.CuentaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,5 +23,15 @@ import java.util.Map;
 @RequestMapping("/api/cuentas")
 @RequiredArgsConstructor
 public class CuentaController {
+    private final CuentaService cuentaService;
+    @GetMapping
 
+
+    public ResponseEntity<?> listarCuentas() {
+        return ResponseEntity.ok(cuentaService.listarCuentas());
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> cuentaById(@PathVariable Long id) {
+        return ResponseEntity.ok(cuentaService.cuentaById(id));
+    }
 }

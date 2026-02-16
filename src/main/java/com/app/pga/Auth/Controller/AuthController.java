@@ -3,6 +3,7 @@ package com.app.pga.Auth.Controller;
 import com.app.pga.Auth.JWT.JWTService;
 import com.app.pga.Auth.Models.Dtos.Request.AuthRegisterDto;
 import com.app.pga.Auth.Models.Dtos.Request.AuthRequestDto;
+import com.app.pga.Auth.Models.Dtos.Request.cambioPasswordRequestDto;
 import com.app.pga.Auth.Models.Dtos.Response.AuthResponseDto;
 import com.app.pga.Auth.Security.UserDetailsServiceImp;
 import com.app.pga.Auth.Service.CuentaService;
@@ -49,5 +50,11 @@ public class AuthController {
 
     public UserDetails getCurrentUser (Principal principal){
         return userDetailsService.loadUserByUsername(principal.getName());
+    }
+
+    @PutMapping("/cambiar-password")
+    public ResponseEntity<?> cambiarPassword (@Valid @RequestBody cambioPasswordRequestDto request, Authentication authentication) {
+        cuentaService.cambioPassword(authentication.getName(),request);
+        return ResponseEntity.ok(Map.of("message","Cambio de contraseña exitoso"));
     }
 }

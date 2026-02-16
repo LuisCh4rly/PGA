@@ -15,10 +15,9 @@ public record AuthRegisterDto(
         String apellidoPaterno,
         @NotBlank
         String apellidoMaterno,
-        @Email(message = "Formato inválido", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+
         @NotBlank(message = "Campo obligatorio")
-        String email,
-        @NotBlank(message = "Campo Obligatorio")
+
         String telefono,
         @Size(message = "Máximo 60 carácteres", max = 60)
         @NotBlank(message = "Campo obligatorio")
@@ -33,9 +32,9 @@ public record AuthRegisterDto(
         @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate fechaTermino,
 
-
-        @NotBlank
-        String password,
+        @Email(message = "Formato inválido", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+        String email,
+        @NotBlank(message = "Campo Obligatorio")
         @NotBlank(message = "Campo obligatorio")
         String rol
 

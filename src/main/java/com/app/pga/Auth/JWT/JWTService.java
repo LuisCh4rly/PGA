@@ -1,6 +1,7 @@
 package com.app.pga.Auth.JWT;
 
 import com.app.pga.Auth.Models.Dtos.Response.AuthResponseDto;
+import com.app.pga.Auth.Security.UserDetailsImp;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -28,6 +29,8 @@ public class JWTService {
         Instant now = Instant.now() ; //fecha actual
         Instant expiration = now.plusMillis(timeExpiration);
 
+        UserDetailsImp user = (UserDetailsImp) userDetails;
+
         List<String> roles = userDetails.getAuthorities()
                 .stream()
                 .map(auth -> auth.getAuthority())
@@ -38,6 +41,7 @@ public class JWTService {
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiration))
                 .claim("ROLES", roles)
+                .claim("debeCambiarPassword", user.getDebeCambiarPassword())
                 .signWith(getSignatureKey())
                 .compact();
         return new AuthResponseDto(token, "Bearer", expiration);

@@ -33,6 +33,9 @@ public class Cuenta {
     @Column(unique = true)
     private String email;
 
+    private Boolean debeCambiarPassword;
+
+
 }
 
 
