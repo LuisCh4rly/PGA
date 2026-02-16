@@ -45,7 +45,7 @@ class DocumentoService implements IDocumentoService {
         documento.setActivo(true);
         Documento doc = documentoRepository.save(documento);
 
-       List<Expediente> expedientes = expedienteRepository.findByAlumno_ActivoTrue();
+       List<Expediente> expedientes = expedienteRepository.findExpedientesAlumnoActivo();
        List<Documento_Expediente> documentos = expedientes.stream()
                 .map(exp-> {
                     Documento_Expediente d = new Documento_Expediente();

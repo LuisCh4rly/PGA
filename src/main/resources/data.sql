@@ -1,29 +1,72 @@
+--Tabla de roles
+INSERT INTO roles (id_role, name) VALUES
+                                 (1, 'ADMIN'),
+                                 (2, 'DOCENTE'),
+                                 (3, 'ALUMNO');
+
+
 --Tabla de usuarios
 INSERT INTO usuarios (nombre, apellido_paterno, apellido_materno, created_At, telefono, direccion, activo) VALUES ('MARISOL', 'HERRERA', 'SANDOVAL', current_timestamp, 5548769826, 'AV. LOMAS ESTRELLA 59', true),
-                                                                                                   ('JOSE ARMANDO', 'GUTIERRES', 'PERALTA', current_timestamp, 5512457836, 'OLIMPICA SUR 62', true),
-                                                                                                   ('KAREN', 'ATENOGENES', 'MATINEZ',current_timestamp, 5578945818, 'CALLE NIÑOS HEROES S/N', true),
-                                                                                                   ('NOEL', 'SANCHEZ', 'SALCEDO', current_timestamp,5585967425, 'FRANCISCO SARABIA', true),
-                                                                                                   ('MAURICIO SEBASTIAN', 'JURADO', 'PEREZ', current_timestamp, 5578549017, 'AV. DE LOS MAESTROS', true),
-                                                                                                   ('JULIO', 'MARTINEZ', 'LOPEZ', current_timestamp, 5545258679, 'MIRAMONTES 89', true),
-                                                                                                   ('JUAN', 'PEREZ', 'LOPEZ', current_timestamp, 5512345678, 'CALLE REFORMA 120', true),
-                                                                                                   ('ANA', 'GOMEZ', 'MARTINEZ', current_timestamp, 5523456789, 'AV. INSURGENTES 450', true),
-                                                                                                   ('CARLOS', 'RAMIREZ', 'TORRES', current_timestamp, 5534567890, 'CALLE JUAREZ 89', true),
-                                                                                                   ('LUISA', 'MENDOZA', 'CRUZ', current_timestamp, 5545678901, 'AV. UNIVERSIDAD 300', true),
-                                                                                                   ('MIGUEL', 'HERNANDEZ', 'FLORES', current_timestamp, 5556789012, 'CALLE ALLENDE 45', true),
-                                                                                                   ('SOFIA', 'CASTILLO', 'RIVERA', current_timestamp, 5567890123, 'AV. TLAHUAC 210', true),
-                                                                                                   ('DANIEL', 'ORTIZ', 'NAVARRO', current_timestamp, 5578901234, 'CALLE HIDALGO 67', true),
-                                                                                                   ('FERNANDA', 'ROJAS', 'SALINAS', current_timestamp, 5589012345, 'AV. AZTECAS 500', true),
-                                                                                                   ('JORGE', 'VARGAS', 'MEJIA', current_timestamp, 5590123456, 'CALLE PINO SUAREZ 150', true),
-                                                                                                   ('PAULA', 'SANTOS', 'LUNA', current_timestamp, 5511122233, 'AV. COYOACAN 88', true),
-                                                                                                   ('RICARDO', 'MORALES', 'AGUILAR', current_timestamp, 5522233344, 'CALLE MORELOS 34', true),
-                                                                                                   ('KAREN', 'DELGADO', 'PACHECO', current_timestamp, 5533344455, 'AV. CHURUBUSCO 410', true),
-                                                                                                   ('ALBERTO', 'NUNEZ', 'REYES', current_timestamp, 5544455566, 'CALLE ZARAGOZA 76', true),
-                                                                                                   ('VALERIA', 'IBARRA', 'MOLINA', current_timestamp, 5555566677, 'AV. PATRIOTISMO 260', true),
-                                                                                                   ('OSCAR', 'FUENTES', 'ROMERO', current_timestamp, 5566677788, 'CALLE TLAXCALA 19', true),
-                                                                                                   ('CARMEN', 'CRUZ', 'ROSAS', current_timestamp,5577788899, 'AV. DIVISION DEL NORTE 102', true),
-                                                                                                   ('IVAN', 'SILVA', 'CORONA', current_timestamp,5588899900, 'CALLE DURANGO 55', true),
-                                                                                                   ('PATRICIA', 'VEGA', 'CARRILLO', current_timestamp, 5599900011, 'AV. OBSERVATORIO 380', true),
-                                                                                                   ('EDUARDO', 'CORTES', 'MIRANDA', current_timestamp, 5510101010, 'CALLE TOLUCA 90', true);
+                                                                                                                  ('JOSE ARMANDO', 'GUTIERRES', 'PERALTA', current_timestamp, 5512457836, 'OLIMPICA SUR 62', true),
+                                                                                                                  ('KAREN', 'ATENOGENES', 'MATINEZ',current_timestamp, 5578945818, 'CALLE NIÑOS HEROES S/N', true),
+                                                                                                                  ('NOEL', 'SANCHEZ', 'SALCEDO', current_timestamp,5585967425, 'FRANCISCO SARABIA', true),
+                                                                                                                  ('MAURICIO SEBASTIAN', 'JURADO', 'PEREZ', current_timestamp, 5578549017, 'AV. DE LOS MAESTROS', true),
+                                                                                                                  ('JULIO', 'MARTINEZ', 'LOPEZ', current_timestamp, 5545258679, 'MIRAMONTES 89', true),
+                                                                                                                  ('JUAN', 'PEREZ', 'LOPEZ', current_timestamp, 5512345678, 'CALLE REFORMA 120', true),
+                                                                                                                  ('ANA', 'GOMEZ', 'MARTINEZ', current_timestamp, 5523456789, 'AV. INSURGENTES 450', true),
+                                                                                                                  ('CARLOS', 'RAMIREZ', 'TORRES', current_timestamp, 5534567890, 'CALLE JUAREZ 89', true),
+                                                                                                                  ('LUISA', 'MENDOZA', 'CRUZ', current_timestamp, 5545678901, 'AV. UNIVERSIDAD 300', true),
+                                                                                                                  ('MIGUEL', 'HERNANDEZ', 'FLORES', current_timestamp, 5556789012, 'CALLE ALLENDE 45', true),
+                                                                                                                  ('SOFIA', 'CASTILLO', 'RIVERA', current_timestamp, 5567890123, 'AV. TLAHUAC 210', true),
+                                                                                                                  ('DANIEL', 'ORTIZ', 'NAVARRO', current_timestamp, 5578901234, 'CALLE HIDALGO 67', true),
+                                                                                                                  ('FERNANDA', 'ROJAS', 'SALINAS', current_timestamp, 5589012345, 'AV. AZTECAS 500', true),
+                                                                                                                  ('JORGE', 'VARGAS', 'MEJIA', current_timestamp, 5590123456, 'CALLE PINO SUAREZ 150', true),
+                                                                                                                  ('PAULA', 'SANTOS', 'LUNA', current_timestamp, 5511122233, 'AV. COYOACAN 88', true),
+                                                                                                                  ('RICARDO', 'MORALES', 'AGUILAR', current_timestamp, 5522233344, 'CALLE MORELOS 34', true),
+                                                                                                                  ('KAREN', 'DELGADO', 'PACHECO', current_timestamp, 5533344455, 'AV. CHURUBUSCO 410', true),
+                                                                                                                  ('ALBERTO', 'NUNEZ', 'REYES', current_timestamp, 5544455566, 'CALLE ZARAGOZA 76', true),
+                                                                                                                  ('VALERIA', 'IBARRA', 'MOLINA', current_timestamp, 5555566677, 'AV. PATRIOTISMO 260', true),
+                                                                                                                  ('OSCAR', 'FUENTES', 'ROMERO', current_timestamp, 5566677788, 'CALLE TLAXCALA 19', true),
+                                                                                                                  ('CARMEN', 'CRUZ', 'ROSAS', current_timestamp,5577788899, 'AV. DIVISION DEL NORTE 102', true),
+                                                                                                                  ('IVAN', 'SILVA', 'CORONA', current_timestamp,5588899900, 'CALLE DURANGO 55', true),
+                                                                                                                  ('PATRICIA', 'VEGA', 'CARRILLO', current_timestamp, 5599900011, 'AV. OBSERVATORIO 380', true),
+                                                                                                                  ('EDUARDO', 'CORTES', 'MIRANDA', current_timestamp, 5510101010, 'CALLE TOLUCA 90', true);
+
+--tabla de cuentas
+INSERT INTO cuentas (password, role_id, usuario_id, email) VALUES
+-- ADMIN (solo uno)
+('$2a$10$7sZqk2m4P1tNf8FJr6bZ6e9CqR8cGkP6E1G5Zc8hN9v1mFQ2PzKSe', 1, 1, 'admin@pga.com'),
+
+-- DOCENTES (usuarios 2,3,4)
+('$2a$10$X8n8KxZP8r7MZ1QF9z9xUu0x0YvR7Kp8Q0JzM5kQnYQk2sF9D2L7m', 2, 2, 'docente1@pga.com'),
+('$2a$10$X8n8KxZP8r7MZ1QF9z9xUu0x0YvR7Kp8Q0JzM5kQnYQk2sF9D2L7m', 2, 3, 'docente2@pga.com'),
+('$2a$10$X8n8KxZP8r7MZ1QF9z9xUu0x0YvR7Kp8Q0JzM5kQnYQk2sF9D2L7m', 2, 4, 'docente3@pga.com'),
+
+-- ALUMNOS (usuarios 5 en adelante)
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 5, 'alumno5@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 6, 'alumno6@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 7, 'alumno7@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 8, 'alumno8@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 9, 'alumno9@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 10,'alumno10@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 11,'alumno11@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 12, 'alumno12@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 13, 'alumno13@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 14, 'alumno14@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 15, 'alumno15@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 16, 'alumno16@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 17, 'alumno17@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 18, 'alumno18@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 19, 'alumno19@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 20, 'alumno20@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 21, 'alumno21@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 22, 'alumno22@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 23, 'alumno23@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 24, 'alumno24@pga.com'),
+('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 25, 'alumno25@pga.com');
+
+
+
 -- Tabla de Campo formativo
 INSERT INTO campos_formativos (nombre, descripcion, activo) VALUES ('Arquitectura de APIs', 'Diseño de servicios REST y lógica de servidor en Java.', true),
                                                                    ('Gestion de Datos', 'Modelado SQL y optimización de bases de datos masivas.', true),
@@ -34,11 +77,6 @@ INSERT INTO campos_formativos (nombre, descripcion, activo) VALUES ('Arquitectur
                                                                    ('Arquitectura de Software', 'Diseño de sistemas escalables, patrones y buenas prácticas de arquitectura.', true),
                                                                    ('Metodologías Ágiles', 'Gestión de proyectos con Scrum, Kanban y mejora continua del trabajo en equipo.', true);
 
---Tabla de Docentes
-INSERT INTO docentes (fecha_alta, activo, id_usuario) VALUES (CURRENT_TIMESTAMP, TRUE, 1),
-                                                          (CURRENT_TIMESTAMP, TRUE, 2),
-                                                          (CURRENT_TIMESTAMP, TRUE, 3),
-                                                          (CURRENT_TIMESTAMP, TRUE, 4);
 
 -- Tabla de Activides
 INSERT INTO actividades_base (titulo, descripcion, activo, id_campo_formativo) VALUES ('Crear Endpoint REST', 'Desarrollo de una ruta POST para recibir archivos JSON.', true, 1),
@@ -66,29 +104,6 @@ INSERT INTO actividades_base (titulo, descripcion, activo, id_campo_formativo) V
                                                                                       ('Normalización de Datos', 'Aplicar reglas de normalización para evitar redundancia.', true, 2),
                                                                                       ('Lazy Loading UI', 'Cargar componentes bajo demanda para mejorar rendimiento.', true, 3),
                                                                                       ('Rate Limiting', 'Limitar solicitudes por usuario para prevenir abuso del sistema.', true, 4);
-
---Tabla de Alumnos
-INSERT INTO alumnos (universidad, carrera, fecha_termino,fecha_alta, activo, id_usuario) VALUES ('INSTITUTO POLITECNICO NACIONAL', 'LICENCIATURA EN SISTEMAS', '12/12/2025', CURRENT_TIMESTAMP, TRUE, 5),
-                                                                                             ('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', 'INGENIERIA EN COMPUTACION', '12/12/2022', CURRENT_TIMESTAMP, TRUE, 6),
-                                                                                             ('UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO', 'INGENIERIA EN SISTEMAS', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 7),
-                                                                                             ('INSTITUTO POLITECNICO NACIONAL', 'INGENIERIA EN SISTEMAS COMPUTACIONALES', '13/10/2024', CURRENT_TIMESTAMP, TRUE, 8),
-                                                                                             ('INSTITUTO POLITECNICO NACIONAL', 'INGENIERIA EN INFORMATICA', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 9),
-                                                                                             ('UNIVERSIDAD AUTONOMA METROPOLITANA', 'LICENCIATURA EN COMPUTACION', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 10),
-                                                                                             ('UNIVERSIDAD AUTONOMA METROPOLITANA', 'INGENIERIA EN SISTEMAS', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 11),
-                                                                                             ('UNIVERSIDAD DE GUADALAJARA', 'INGENIERIA EN SOFTWARE', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 12),
-                                                                                             ('UNIVERSIDAD DE GUADALAJARA', 'LICENCIATURA EN TECNOLOGIAS DE LA INFORMACION', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 13),
-                                                                                             ('BENEMERITA UNIVERSIDAD AUTONOMA DE PUEBLA', 'INGENIERIA EN SISTEMAS COMPUTACIONALES', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 14),
-                                                                                             ('BENEMERITA UNIVERSIDAD AUTONOMA DE PUEBLA', 'LICENCIATURA EN INFORMATICA', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 15),
-                                                                                             ('UNIVERSIDAD VERACRUZANA', 'INGENIERIA DE SOFTWARE', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 16),
-                                                                                             ('UNIVERSIDAD VERACRUZANA', 'INGENIERIA EN TECNOLOGIAS COMPUTACIONALES', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 17),
-                                                                                             ('UNIVERSIDAD AUTONOMA DE NUEVO LEON', 'INGENIERIA EN SISTEMAS', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 18),
-                                                                                             ('UNIVERSIDAD AUTONOMA DE NUEVO LEON', 'INGENIERIA EN TECNOLOGIAS DE LA INFORMACION', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 19),
-                                                                                             ('UNIVERSIDAD DE SONORA', 'INGENIERIA EN SISTEMAS COMPUTACIONALES', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 20),
-                                                                                             ('UNIVERSIDAD DE SONORA', 'INGENIERIA EN SOFTWARE', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 21),
-                                                                                             ('UNIVERSIDAD AUTONOMA DE QUERETARO', 'INGENIERIA EN COMPUTACION', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 22),
-                                                                                             ('UNIVERSIDAD AUTONOMA DE QUERETARO', 'LICENCIATURA EN INFORMATICA', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 23),
-                                                                                             ('UNIVERSIDAD AUTONOMA DE CHIAPAS', 'INGENIERIA EN SISTEMAS', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 24),
-                                                                                             ('UNIVERSIDAD AUTONOMA DE CHIAPAS', 'INGENIERIA EN DESARROLLO DE SOFTWARE', '12/12/2024', CURRENT_TIMESTAMP, TRUE, 25);
 
 --Tabla de Curso
 INSERT INTO cursos (nombre, descripcion, fecha_alta, activo) VALUES ( 'Diseño de Interfaces','Curso de diseño de interfaces y experiencia de usuario',CURRENT_DATE,true),
@@ -132,34 +147,37 @@ INSERT INTO cursos_actividades (curso_id, actividad_base_id) VALUES (1, 9),
 
 
 --Tabla Grupo
-INSERT INTO grupos (nombre, estado,created_at, periodo, id_curso, id_docente) VALUES ('Grupo1', 'HABILITADO',current_timestamp, 'Marzo-Septiembre', 1, 1),
+INSERT INTO grupos (nombre, estado,created_at, periodo, id_curso, id_usuario) VALUES ('Grupo1', 'HABILITADO',current_timestamp, 'Marzo-Septiembre', 1, 1),
                                                                                      ('Grupo2', 'HABILITADO',current_timestamp, 'Marzo-Septiembre', 2, 1),
                                                                                      ('Grupo3', 'HABILITADO', current_timestamp, 'Marzo-Septiembre', 3, 2),
                                                                                      ('Grupo4', 'HABILITADO', current_timestamp, 'Marzo-Septiembre', 4, 4),
                                                                                      ('Grupo5', 'HABILITADO', current_timestamp, 'Marzo-Septiembre', 5, 3);
 
---Tabla inscripcion
-INSERT INTO inscripciones (fecha_inscripcion, fecha_inicio, fecha_fin, estado, tipo, id_alumno, id_grupo) VALUES (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'Servicio_Social', 1, 1),
-                                                                                                                 (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'Practicas_Profesionales', 2, 1),
-                                                                                                                 (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'Jovenes_Construyendo_El_Futuro', 3, 1),
-                                                                                                                 (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'Servicio_Social', 4, 1),
-                                                                                                                 (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'Practicas_Profesionales', 5, 2),
-                                                                                                                 (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'Jovenes_Construyendo_El_Futuro', 6, 2),
-                                                                                                                 (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'Servicio_Social', 7, 2),
-                                                                                                                 (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'Practicas_Profesionales', 8, 2),
-                                                                                                                 (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'Jovenes_Construyendo_El_Futuro', 9, 3),
-                                                                                                                 (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'Servicio_Social', 10, 3),
-                                                                                                                 (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'Practicas_Profesionales', 11, 3),
-                                                                                                                 (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'Servicio_Social', 12, 3),
-                                                                                                                 (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'Practicas_Profesionales', 13, 4),
-                                                                                                                 (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'Jovenes_Construyendo_El_Futuro', 14, 4),
-                                                                                                                 (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'Servicio_Social', 15, 4),
-                                                                                                                 (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'Practicas_Profesionales', 16, 4),
-                                                                                                                 (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'Jovenes_Construyendo_El_Futuro', 17, 5),
-                                                                                                                 (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'Servicio_Social', 18, 5),
-                                                                                                                 (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'Practicas_Profesionales', 19, 5),
-                                                                                                                 (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'Jovenes_Construyendo_El_Futuro', 20, 5),
-                                                                                                                 (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'Servicio_Social', 21, 5);
+-- Tabla inscripciones
+INSERT INTO inscripciones
+(fecha_inscripcion, fecha_inicio, fecha_fin, estado, escuela, nivel_estudio, carrera, tipo, id_usuario, id_grupo) VALUES (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'UNAM', 'LICENCIATURA', 'Ingenieria en Sistemas', 'Servicio_Social', 5, 1),
+                                                        (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'IPN', 'LICENCIATURA', 'Contaduria', 'Practicas_Profesionales', 6, 1),
+                                                        (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'CONALEP', 'TECNICO', 'Informatica', 'Jovenes_Construyendo_El_Futuro', 7, 1),
+                                                        (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'UAM', 'LICENCIATURA', 'Administracion', 'Servicio_Social', 8, 1),
+                                                        (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'TESCI', 'LICENCIATURA', 'Industrial', 'Practicas_Profesionales', 9, 2),
+                                                        (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'CBTIS', 'TECNICO', 'Programacion', 'Jovenes_Construyendo_El_Futuro', 10, 2),
+                                                        (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'UAEM', 'LICENCIATURA', 'Derecho', 'Servicio_Social', 11, 2),
+                                                        (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'IPN', 'LICENCIATURA', 'Mecatronica', 'Practicas_Profesionales', 12, 2),
+                                                        (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'UNAM', 'LICENCIATURA', 'Psicologia', 'Jovenes_Construyendo_El_Futuro', 13, 3),
+                                                        (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'UVM', 'LICENCIATURA', 'Mercadotecnia', 'Servicio_Social', 14, 3),
+                                                        (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'UAEM', 'LICENCIATURA', 'Arquitectura', 'Practicas_Profesionales', 15, 3),
+                                                        (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'IPN', 'LICENCIATURA', 'Electronica', 'Servicio_Social', 16, 3),
+                                                        (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'UNAM', 'LICENCIATURA', 'Economia', 'Practicas_Profesionales', 17, 4),
+                                                        (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'CONALEP', 'TECNICO', 'Soporte Tecnico', 'Jovenes_Construyendo_El_Futuro', 18, 4),
+                                                        (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'UAM', 'LICENCIATURA', 'Biologia', 'Servicio_Social', 19, 4),
+                                                        (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'UAEM', 'LICENCIATURA', 'Contaduria', 'Practicas_Profesionales', 20, 4),
+                                                        (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'CBTIS', 'TECNICO', 'Electronica', 'Jovenes_Construyendo_El_Futuro', 21, 5),
+                                                        (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'UNAM', 'LICENCIATURA', 'Ingenieria Civil', 'Servicio_Social', 22, 5),
+                                                        (current_timestamp, '01/02/2026','01/07/2026', TRUE, 'IPN', 'LICENCIATURA', 'Logistica', 'Practicas_Profesionales', 23, 5),
+                                                        (current_timestamp, '01/02/2026','01/02/2027', TRUE, 'UVM', 'LICENCIATURA', 'Negocios Internacionales', 'Jovenes_Construyendo_El_Futuro', 24, 5),
+                                                        (current_timestamp, '01/02/2026','01/08/2026', TRUE, 'UAEM', 'LICENCIATURA', 'Ingenieria en Sistemas', 'Servicio_Social', 25, 5);
+
+
 -- Precargar actividades por grupo (desde el curso)
 INSERT INTO actividades_grupos (titulo,descripcion,fecha_asignacion,req_entrega,alcance,origen,id_grupo)
 SELECT
@@ -205,23 +223,25 @@ VALUES ('CURP', 'CURP', TRUE,TRUE),
        ('INE', 'Identificación Oficial', TRUE, TRUE),
        ('FOTO', 'Fotografía', TRUE,TRUE);
 
---Crear Expediente alumno
+-- Crear Expedientes para usuarios con rol ALUMNO
+
 WITH alumnos_sin_expediente AS (
-    SELECT a.id_alumno
-    FROM alumnos a
-             LEFT JOIN expedientes e
-                       ON e.id_alumno = a.id_alumno
-    WHERE a.activo = true
+    SELECT u.id_usuario
+    FROM usuarios u
+             JOIN cuentas c ON c.usuario_id = u.id_usuario
+             LEFT JOIN expedientes e ON e.id_usuario = u.id_usuario
+    WHERE c.role_id = 3
+      AND u.activo = true
       AND e.id_expediente IS NULL
 ),
 
      expedientes_creados AS (
-INSERT INTO expedientes (id_alumno, estado)
+INSERT INTO expedientes (id_usuario, estado)
 SELECT
-    ase.id_alumno,
+    ase.id_usuario,
     'NO_APROBADO'
 FROM alumnos_sin_expediente ase
-    RETURNING id_expediente, id_alumno
+    RETURNING id_expediente, id_usuario
 )
 
 INSERT INTO documentos_expedientes (
@@ -237,10 +257,7 @@ FROM expedientes_creados ec
          CROSS JOIN catalogo_documentos d
 WHERE d.activo = true;
 
-INSERT INTO roles (name) VALUES
-    ('ADMIN'),
-    ('DOCENTE'),
-    ('ALUMNO');
+
 
 COMMIT ;
 

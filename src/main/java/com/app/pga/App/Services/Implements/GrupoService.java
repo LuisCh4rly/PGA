@@ -4,13 +4,13 @@ import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.GrupoDto;
 import com.app.pga.App.Models.Entities.Curso;
-import com.app.pga.App.Models.Entities.Docente;
 import com.app.pga.App.Models.Entities.Grupo;
+import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Enum.Estado;
 import com.app.pga.App.Models.Mappers.GrupoMapper;
 import com.app.pga.App.Repositories.ICursoRepository;
-import com.app.pga.App.Repositories.IDocenteRepository;
 import com.app.pga.App.Repositories.IGrupoRepository;
+import com.app.pga.App.Repositories.IUsuarioRepository;
 import com.app.pga.App.Services.Interfaces.IGrupoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,10 +25,11 @@ import java.util.stream.Collectors;
 @Transactional
 class GrupoService implements IGrupoService {
     private final ICursoRepository cursoRepository;
-    private final IDocenteRepository docenteRepository;
     private final GrupoMapper grupoMapper;
     private final IGrupoRepository grupoRepository;
     private final ActividadGrupoService actividadGrupoService;
+    private final IUsuarioRepository iUsuarioRepository;
+
     @Override
 
     public GrupoDto crear(GrupoDto dto) {
@@ -40,16 +41,18 @@ class GrupoService implements IGrupoService {
         if (!curso.getActivo()) {
             throw new ResourceDisabledException("Curso deshabilitado");
         }
-       Docente docente = docenteRepository.findById(dto.docente().idDocente())
+
+        //se verifica que tenga rol docente
+       Usuario usuario = iUsuarioRepository.findDocenteById(dto.usuario().idUser())
                 .orElseThrow(() -> new NotFoundException("Docente no encontrado"));
-        if (!docente.getActivo()) {
+        if (!usuario.getActivo()) {
             throw new ResourceDisabledException("Docente deshabilitado");
         }
         Grupo grupo = grupoMapper.toEntity(dto);
         grupo.setEstado(Estado.HABILITADO);
         grupo.setCreated_at(LocalDate.now());
         grupo.setCurso(curso);
-        grupo.setDocente(docente);
+        grupo.setUsuario(usuario);
         Grupo nuevo = grupoRepository.save(grupo);
         actividadGrupoService.precargarDesdeCurso(nuevo.getIdGrupo());
         return grupoMapper.toDtoActividades(grupoRepository.save(grupo));
@@ -92,7 +95,7 @@ class GrupoService implements IGrupoService {
     @Override
     @Transactional(readOnly = true)
     public List<GrupoDto> obtenerPorDocente(Long idDocente) {
-        return  grupoRepository.findByDocenteIdDocente(idDocente)
+        return  grupoRepository.findGruposByDocente(idDocente)
                 .stream()
                 .map(c->grupoMapper.toDtoSimple(c))
                 .toList();
@@ -117,14 +120,14 @@ class GrupoService implements IGrupoService {
         Grupo grupo = grupoRepository.findById(dto.idGrupo())
                 .orElseThrow(() -> new NotFoundException("Grupo no encontrado"));
 
-        Docente docente = docenteRepository.findById(dto.docente().idDocente())
+        Usuario usuario = iUsuarioRepository.findDocenteById(dto.usuario().idUser())
                 .orElseThrow(() -> new NotFoundException("Docente no encontrado"));
 
-        if (!docente.getActivo()) {
+        if (!usuario.getActivo()) {
             throw new ResourceDisabledException("Docente deshabilitado");
         }
 
-        grupo.setDocente(docente);
+        grupo.setUsuario(usuario);
         return grupoMapper.toDtoSimple(grupoRepository.save(grupo));
     }
 }

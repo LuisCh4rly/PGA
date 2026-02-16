@@ -1,5 +1,6 @@
 package com.app.pga.App.Models.Entities;
 
+import com.app.pga.Auth.Models.Entities.Cuenta;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -28,4 +29,8 @@ public class Usuario {
     private String telefono;
     private String direccion;
     private Boolean activo;
+    @OneToOne(mappedBy = "usuario")
+    private Cuenta cuenta;
+    private LocalDate fechaAlta;
+    private LocalDate fechaBaja;
 }

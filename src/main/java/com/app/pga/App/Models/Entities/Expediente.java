@@ -26,7 +26,7 @@ public class Expediente {
     private String observaciones;
 
     @OneToOne
-    @JoinColumn(name = "id_alumno", unique = true)
-    private Alumno alumno;
+    @JoinColumn(name = "id_usuario", unique = true)
+    private Usuario usuario;
 
 }

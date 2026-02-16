@@ -33,8 +33,8 @@ public class Grupo {
     private Curso curso;
 
     @ManyToOne()
-    @JoinColumn(name="id_docente", referencedColumnName = "idDocente")
-    private Docente docente;
+    @JoinColumn(name="id_usuario", referencedColumnName = "idUsuario")
+    private Usuario usuario;
 
 
 }

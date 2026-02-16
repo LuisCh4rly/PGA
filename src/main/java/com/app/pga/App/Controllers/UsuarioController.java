@@ -69,5 +69,32 @@ public class UsuarioController {
         UsuarioResponseDto usuarioDesactivado = usuarioService.desactivarUsuario(id);
         return ResponseEntity.ok(usuarioDesactivado);
     }
+    //-----------DOCENTES--------
+
+    //-------consulta DOCENTES ACTIVOS
+    @GetMapping("/docentes-activos")
+    public ResponseEntity<List<UsuarioResponseDto>>consultaDocentesActivos(){
+        return ResponseEntity.ok(usuarioService.findAllActivosDocentes());
+    }
+
+    //-------consulta DOCENTES
+    @GetMapping("/docentes")
+    public ResponseEntity<List<UsuarioResponseDto>>consultaDocentes(){
+        return ResponseEntity.ok(usuarioService.findAllDocentes());
+    }
+
+    //-----------ALUMNOS--------
+
+    //-------consulta ALUMNOS ACTIVOS
+    @GetMapping("/alumnos-activos")
+    public ResponseEntity<List<UsuarioResponseDto>>consultaAlumnosActivos(){
+        return ResponseEntity.ok(usuarioService.findAllActivosAlumnos());
+    }
+
+    //-------consulta ALUMNOS
+    @GetMapping("/alumnos")
+    public ResponseEntity<List<UsuarioResponseDto>>consultaAlumnos(){
+        return ResponseEntity.ok(usuarioService.findAllAlumnos());
+    }
 
 }

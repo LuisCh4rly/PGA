@@ -37,10 +37,10 @@ public class SesionService implements ISesionService {
     private final IAsistenciaRepository asistenciaRepository;
     private final IGrupoRepository iGrupoRepository;
     private final GrupoMapper grupoMapper;
-    private final IDocenteRepository docenteRepository;
+    private final IUsuarioRepository usuarioRepository;
 
 
-    public SesionService (ISesionRepository sesionRepository, IInscripcionRepository inscripcionRepository, ISesionAlumnoRepository sesionAlumnoRepository, SesionMapper sesionMapper, IAsistenciaRepository asistenciaRepository, IGrupoRepository iGrupoRepository, GrupoMapper grupoMapper, IDocenteRepository docenteRepository){
+    public SesionService (ISesionRepository sesionRepository, IInscripcionRepository inscripcionRepository, ISesionAlumnoRepository sesionAlumnoRepository, SesionMapper sesionMapper, IAsistenciaRepository asistenciaRepository, IGrupoRepository iGrupoRepository, GrupoMapper grupoMapper, IUsuarioRepository usuarioRepository){
         this.sesionRepository=sesionRepository;
         this.inscripcionRepository=inscripcionRepository;
         this.sesionAlumnoRepository=sesionAlumnoRepository;
@@ -48,7 +48,7 @@ public class SesionService implements ISesionService {
         this.asistenciaRepository = asistenciaRepository;
         this.iGrupoRepository = iGrupoRepository;
         this.grupoMapper = grupoMapper;
-        this.docenteRepository = docenteRepository;
+        this.usuarioRepository= usuarioRepository;
     }
 //crear sesion
     public SesionDto createSesion (SesionRequestDto dto, Long idGrupo){
@@ -57,7 +57,7 @@ public class SesionService implements ISesionService {
             throw new ResourceDisabledException("Grupo deshbilitado");
         }
         //verifiicar que el docente no tenga sesion a esa hora
-        boolean existe = sesionRepository.existsByGrupo_Docente_IdDocenteAndFecha(grupo.getDocente().getIdDocente(), dto.fecha());
+        boolean existe = sesionRepository.existsSesionActivaDocente(grupo.getUsuario().getIdUsuario(), dto.fecha());
         if (existe) {
             throw new IllegalStateException("El docente ya tiene una sesión en ese horario");
         }
@@ -203,9 +203,9 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
                 .map(sa->new SesionAlumnoDetalleDto(
                         sa.getIdSesionAlumno(),
                         sa.getInscripcion().getIdInscripcion(),
-                        sa.getInscripcion().getAlumno().getUsuario().getNombre(),
-                        sa.getInscripcion().getAlumno().getUsuario().getApellidoPaterno(),
-                        sa.getInscripcion().getAlumno().getUsuario().getApellidoMaterno(),
+                        sa.getInscripcion().getUsuario().getNombre(),
+                        sa.getInscripcion().getUsuario().getApellidoPaterno(),
+                        sa.getInscripcion().getUsuario().getApellidoMaterno(),
                         sa.getAsistencia()!=null
                                 ? sa.getAsistencia().getEstado()
                                 : EstadoAsistencia.FALTO
@@ -238,12 +238,12 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
     //consultar sesiones por docente
     @Transactional(readOnly = true)
     public List<SesiondocenteDto>obtenerSesionPorDocente(Long idDocente){
-        Docente docente = docenteRepository.findById(idDocente)
+        Usuario usuario = usuarioRepository.findDocenteById(idDocente)
                 .orElseThrow(() -> new NotFoundException("Docente no encontrado"));
-        if (!docente.getActivo()) {
+        if (!usuario.getActivo()) {
             throw new ResourceDisabledException("Docente deshabilitado");
         }
-        return sesionRepository.findByGrupo_Docente_IdDocente(idDocente)
+        return sesionRepository.findSesionesByDocente(idDocente)
                 .stream()
                 .map(sesion -> new SesiondocenteDto(
                         sesion.getIdSesion(),

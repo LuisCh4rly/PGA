@@ -10,20 +10,20 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long> {
-    Optional<Inscripcion> findByAlumno_IdAlumnoAndEstadoTrue(Long alumnoIdAlumno);
+    Optional<Inscripcion> findByUsuario_IdUsuarioAndEstadoTrue(Long Idusuario);
 
     @Query("""
     SELECT i
     FROM Inscripcion i
-    JOIN FETCH i.alumno
+    JOIN FETCH i.usuario
     WHERE i.estado = true
  """)
     List<Inscripcion>findByEstadoTrue();
 
-    boolean existsByAlumno_IdAlumnoAndTipo(Long idAlumno, tipoInscripcion tipo);
+    boolean existsByUsuario_IdUsuarioAndTipo(Long idUsuario, tipoInscripcion tipo);
 
-    boolean existsByAlumno_IdAlumnoAndGrupo_IdGrupoAndGrupo_Estado(
-            Long idAlumno,
+    boolean existsByUsuario_IdUsuarioAndGrupo_IdGrupoAndGrupo_Estado(
+            Long idUsuario,
             Long idGrupo,
             Estado estado
     );
@@ -32,5 +32,5 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
 
     Optional<Inscripcion>findByIdInscripcionAndGrupo_IdGrupoAndEstadoTrue(Long idInscripcion, Long idGrupo);
 
-   Boolean existsByGrupo_IdGrupoAndEstadoTrue(Long idInscripcion);
+   Boolean existsByGrupo_IdGrupoAndEstadoTrue(Long idGrupo);
 }
