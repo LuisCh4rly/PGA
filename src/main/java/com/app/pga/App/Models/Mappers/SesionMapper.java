@@ -40,9 +40,9 @@ public interface SesionMapper {
 
     //Hijos
     @Mapping(source = "inscripcion.idInscripcion", target = "idInscripcion")
-    @Mapping(source = "inscripcion.alumno.usuario.nombre", target = "nombreAlumno")
-    @Mapping(source = "inscripcion.alumno.usuario.apellidoPaterno", target = "apellidoPaterno")
-    @Mapping(source = "inscripcion.alumno.usuario.apellidoMaterno", target = "apellidoMaterno")
+    @Mapping(source = "inscripcion.usuario.nombre", target = "nombreAlumno")
+    @Mapping(source = "inscripcion.usuario.apellidoPaterno", target = "apellidoPaterno")
+    @Mapping(source = "inscripcion.usuario.apellidoMaterno", target = "apellidoMaterno")
     @Mapping(source = "asistencia.estado", target = "estadoAsistencia")
     SesionAlumnoDetalleDto toAlumnoDetalleDto(SesionAlumno sesionAlumno);
 

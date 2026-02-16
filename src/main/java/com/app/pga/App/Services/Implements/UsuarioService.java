@@ -40,6 +40,7 @@ public class UsuarioService implements IUsuarioService {
         if (usuarioEntity.getCreated_At()==null){
             usuarioEntity.setCreated_At(LocalDate.now());
             usuarioEntity.setActivo(true);//nuevo usuario inicia como activo
+            usuarioEntity.setFechaAlta(LocalDate.now());
         }
         Usuario nuevoUsuario = usuarioRepository.save(usuarioEntity);
 
@@ -90,8 +91,54 @@ public class UsuarioService implements IUsuarioService {
    //Desactivar usuario
     public UsuarioResponseDto desactivarUsuario (Long idUsuario){
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(()-> new NotFoundException("Registro no encontrado: "+ idUsuario));
+        if (usuario.getActivo()==true){
+            usuario.setFechaBaja(LocalDate.now());
+            usuario.setFechaAlta(null);
+        } else{
+          usuario.setFechaAlta(LocalDate.now());
+          usuario.setFechaBaja(null);
+        }
         usuario.setActivo(!usuario.getActivo());//desactivado
         Usuario usuarioDesactivado = usuarioRepository.save(usuario);
         return usuarioMapper.toDto(usuarioDesactivado);
+    }
+
+
+    //----------------DOCENTES---------------------------
+    //docentes activos
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDto>findAllActivosDocentes(){
+        return usuarioRepository.findDocentesActivos()
+                .stream()
+                .map(usuario -> usuarioMapper.toDto(usuario))
+                .collect((Collectors.toList()));
+    }
+
+    //consulta general docentes
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDto>findAllDocentes(){
+        return usuarioRepository.findDocentes()
+                .stream()
+                .map(usuario -> usuarioMapper.toDto(usuario))
+                .collect((Collectors.toList()));
+    }
+
+    //--------ALUMNOS----------------------------------------
+    //alumnos activos
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDto>findAllActivosAlumnos(){
+        return usuarioRepository.findAlumnosActivos()
+                .stream()
+                .map(usuario -> usuarioMapper.toDto(usuario))
+                .collect((Collectors.toList()));
+    }
+
+    //consulta general alumnos
+    @Transactional(readOnly = true)
+    public List<UsuarioResponseDto>findAllAlumnos(){
+        return usuarioRepository.findAlumnos()
+                .stream()
+                .map(usuario -> usuarioMapper.toDto(usuario))
+                .collect((Collectors.toList()));
     }
 }

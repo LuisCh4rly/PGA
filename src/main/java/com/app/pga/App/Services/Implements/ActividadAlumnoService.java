@@ -58,7 +58,7 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
         if (aa.getEstadoTarea() == EstadoTarea.Aprobada)
             throw new IllegalStateException("Tarea ya aprobada");
 
-        String url = storageService.guardarEntrega(inscripcion.getAlumno().getIdAlumno(), inscripcion.getGrupo().getIdGrupo(), aa.getActividadGrupo().getIdActividadGrupo(), archivo);
+        String url = storageService.guardarEntrega(inscripcion.getUsuario().getIdUsuario(), inscripcion.getGrupo().getIdGrupo(), aa.getActividadGrupo().getIdActividadGrupo(), archivo);
 
         aa.setFechaEntrega(LocalDate.now());
         aa.setUrlEntrega(url);

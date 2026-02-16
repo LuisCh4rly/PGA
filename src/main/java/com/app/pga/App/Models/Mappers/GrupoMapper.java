@@ -8,7 +8,7 @@ import org.mapstruct.*;
         componentModel = MappingConstants.ComponentModel.SPRING,
         uses = CursoMapper.class )
 public interface GrupoMapper {
-    @Mapping(target = "docente", ignore = true)
+    @Mapping(target = "usuario", ignore = true)
     @Mapping(target =  "curso", ignore = true)
     Grupo toEntity(GrupoDto grupoDto);
 

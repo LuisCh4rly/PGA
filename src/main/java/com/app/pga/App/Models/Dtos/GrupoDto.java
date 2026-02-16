@@ -1,6 +1,6 @@
 package com.app.pga.App.Models.Dtos;
 
-import com.app.pga.App.Models.Dtos.ResponseDto.DocenteResponseDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.UsuarioResponseDto;
 import com.app.pga.App.Models.Enum.Estado;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,7 +23,7 @@ public record GrupoDto(Long idGrupo,
                        LocalDate created_at,
                        String periodo,
                        CursoDto curso,
-                       DocenteResponseDto docente
+                       UsuarioResponseDto usuario
 
 ) implements Serializable {
 }

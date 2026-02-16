@@ -4,18 +4,16 @@ import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.InscripcionDto;
-import com.app.pga.App.Models.Entities.Alumno;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Inscripcion;
+import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Enum.Estado;
-import com.app.pga.App.Models.Mappers.AlumnoMapper;
 import com.app.pga.App.Models.Mappers.InscripcionMapper;
-import com.app.pga.App.Repositories.IAlumnoRepository;
 import com.app.pga.App.Repositories.IGrupoRepository;
 import com.app.pga.App.Repositories.IInscripcionRepository;
+import com.app.pga.App.Repositories.IUsuarioRepository;
 import com.app.pga.App.Services.Interfaces.IActividadAlumnoService;
 import com.app.pga.App.Services.Interfaces.IInscripcionService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,28 +28,26 @@ public class InscripcionService implements IInscripcionService {
 
     private final InscripcionMapper inscripcionMapper;
     private final IInscripcionRepository inscripcionRepository;
-    private final AlumnoMapper alumnoMapper;
-    private final IAlumnoRepository iAlumnoRepository;
     private final IGrupoRepository grupoRepository;
     private final IActividadAlumnoService actividadAlumnoService;
+    private final IUsuarioRepository usuarioRepository;
 
-    public InscripcionService (InscripcionMapper inscripcionMapper, IInscripcionRepository inscripcionRepository, AlumnoMapper alumnoMapper, IAlumnoRepository iAlumnoRepository, IGrupoRepository grupoRepository, IActividadAlumnoService actividadAlumnoService){
+    public InscripcionService (InscripcionMapper inscripcionMapper, IInscripcionRepository inscripcionRepository, IUsuarioRepository usuarioRepository, IGrupoRepository grupoRepository, IActividadAlumnoService actividadAlumnoService){
         this.inscripcionMapper=inscripcionMapper;
         this.inscripcionRepository=inscripcionRepository;
-        this.alumnoMapper=alumnoMapper;
-        this.iAlumnoRepository = iAlumnoRepository;
+        this.usuarioRepository = usuarioRepository;
         this.grupoRepository = grupoRepository;
         this.actividadAlumnoService= actividadAlumnoService;
     }
     //Crear inscripciones
     public InscripcionDto createInscripcion (InscripcionDto inscripcionDto){
-        Alumno alumno = iAlumnoRepository.findById(inscripcionDto.alumno().idAlumno())
+        Usuario usuario = usuarioRepository.findAlumnoById(inscripcionDto.usuario().idUser())
                 .orElseThrow(()->new NotFoundException("Alumno no encontrado."));
-        if(!alumno.getActivo()){
+        if(!usuario.getActivo()){
             throw new ResourceDisabledException("Alumno deshbilitado");
         }
         //verificar que el alumno no tenga inscripciones activas
-        inscripcionRepository.findByAlumno_IdAlumnoAndEstadoTrue(inscripcionDto.alumno().idAlumno()).ifPresent(InscripcionDto->{
+        inscripcionRepository.findByUsuario_IdUsuarioAndEstadoTrue(inscripcionDto.usuario().idUser()).ifPresent(InscripcionDto->{
             throw new DuplicateResourceException("El alumno tiene una inscripción activa");
         });
 
@@ -59,7 +55,7 @@ public class InscripcionService implements IInscripcionService {
         if (inscripcionEntity.getEstado()==null){
             inscripcionEntity.setEstado(true);
             inscripcionEntity.setFechaInscripcion(LocalDate.now());
-            inscripcionEntity.setAlumno(alumno);
+            inscripcionEntity.setUsuario(usuario);
         }
         Inscripcion nuevaInscripcion = inscripcionRepository.save(inscripcionEntity);
         return inscripcionMapper.toDto(nuevaInscripcion);
@@ -126,8 +122,8 @@ public class InscripcionService implements IInscripcionService {
                 throw new ResourceDisabledException("El grupo no está activo");
             }
 
-            boolean existe = inscripcionRepository.existsByAlumno_IdAlumnoAndGrupo_IdGrupoAndGrupo_Estado(
-                    inscripcion.getAlumno().getIdAlumno(),
+            boolean existe = inscripcionRepository.existsByUsuario_IdUsuarioAndGrupo_IdGrupoAndGrupo_Estado(
+                    inscripcion.getUsuario().getIdUsuario(),
                     grupo.getIdGrupo(),
                     Estado.HABILITADO
             );

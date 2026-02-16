@@ -14,4 +14,8 @@ public interface IUsuarioService {
     UsuarioResponseDto  actualizarUsuario (Long idUsuario, UsuarioRequestDto usuarioRequestDto);
     List< UsuarioResponseDto > findAll();
     List< UsuarioResponseDto >findAllActivos();
+    List<UsuarioResponseDto>findAllActivosDocentes();
+    List<UsuarioResponseDto>findAllDocentes();
+    List<UsuarioResponseDto>findAllActivosAlumnos();
+    List<UsuarioResponseDto>findAllAlumnos();
 }

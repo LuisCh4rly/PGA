@@ -1,12 +1,8 @@
 package com.app.pga.Auth.Service;
 
 import com.app.pga.App.Exception.NotFoundException;
-import com.app.pga.App.Models.Dtos.RequestDto.AlumnoRequestDto;
-import com.app.pga.App.Models.Dtos.RequestDto.DocenteRequestDto;
 import com.app.pga.App.Models.Dtos.RequestDto.UsuarioRequestDto;
 import com.app.pga.App.Models.Entities.Usuario;
-import com.app.pga.App.Services.Implements.AlumnoService;
-import com.app.pga.App.Services.Implements.DocenteService;
 import com.app.pga.App.Services.Implements.UsuarioService;
 import com.app.pga.Auth.Models.Dtos.Request.AuthRegisterDto;
 import com.app.pga.Auth.Models.Dtos.Response.CuentaResponseDto;
@@ -29,8 +25,6 @@ public class CuentaService implements ICuentaService {
     private final ICuentaRepository cuentaRepository;
     private final IRoleRepository roleRepository;
     private final UsuarioService usuarioService;
-    private final AlumnoService alumnoService;
-    private final DocenteService docenteService;
     private final PasswordEncoder encoder;
 
 
@@ -46,15 +40,6 @@ public class CuentaService implements ICuentaService {
         UsuarioRequestDto usuarioDto = new UsuarioRequestDto(dto.nombre(),dto.apellidoPaterno(),dto.apellidoMaterno(),dto.telefono(), dto.direccion());
         Usuario usuarioNuevo = usuarioService.createUsuario(usuarioDto);
 
-       //REGISTRO DE ALUMNOS O DOCENTES
-       if (role.getName().equals(ERole.ALUMNO)){
-           AlumnoRequestDto alumnoDto = new AlumnoRequestDto( dto.universidad(), dto.carrera(),dto.fechaTermino(),usuarioNuevo.getIdUsuario());
-           alumnoService.createAlumno(alumnoDto);
-
-       }else if(role.getName().equals(ERole.DOCENTE)){
-           DocenteRequestDto docenteRequestDto = new DocenteRequestDto(usuarioNuevo.getIdUsuario());
-           docenteService.createDocente(docenteRequestDto);
-       }
        //REGISTRO DE CUENTA
         Cuenta cuenta = Cuenta.builder()
                 .usuario(usuarioNuevo)

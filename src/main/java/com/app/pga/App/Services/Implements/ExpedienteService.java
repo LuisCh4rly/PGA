@@ -4,19 +4,18 @@ import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.ResponseDto.DocumentoExpedienteResponseDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ExpedienteResponseDto;
-import com.app.pga.App.Models.Entities.Alumno;
 import com.app.pga.App.Models.Entities.Documento;
 import com.app.pga.App.Models.Entities.Documento_Expediente;
 import com.app.pga.App.Models.Entities.Expediente;
+import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Enum.EstadoDocumento;
 import com.app.pga.App.Models.Enum.EstadoExpediente;
-import com.app.pga.App.Models.Mappers.DocumentoMapper;
 import com.app.pga.App.Models.Mappers.Documento_ExpedienteMapper;
 import com.app.pga.App.Models.Mappers.ExpedienteMapper;
-import com.app.pga.App.Repositories.IAlumnoRepository;
 import com.app.pga.App.Repositories.IDocumentoRepository;
 import com.app.pga.App.Repositories.IDocumento_ExpedienteRepository;
 import com.app.pga.App.Repositories.IExpedienteRepository;
+import com.app.pga.App.Repositories.IUsuarioRepository;
 import com.app.pga.App.Services.Interfaces.IExpedienteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,10 +31,10 @@ public class ExpedienteService implements IExpedienteService {
 
     private final IExpedienteRepository expedienteRepository;
     private final IDocumento_ExpedienteRepository documento_expedienteRepository;
-    private final IAlumnoRepository alumnoRepository;
     private final ExpedienteMapper expedienteMapper;
     private final Documento_ExpedienteMapper documentoExpedienteMapper;
     private final IDocumentoRepository documentoRepository;
+    private final IUsuarioRepository usuarioRepository;
 
     @Override
     public ExpedienteResponseDto verExpediente(Long idAlumno) {
@@ -57,18 +56,18 @@ public class ExpedienteService implements IExpedienteService {
 
     }
     @Override
-    public Expediente obtenerPorAlumno(Long idAlumno) {
-        return expedienteRepository.findByAlumno_IdAlumno(idAlumno)
-                .orElseGet(() -> crearExpediente(idAlumno));
+    public Expediente obtenerPorAlumno(Long idUsuario) {
+        return expedienteRepository.findExpedienteAlumnoByUsuarioId(idUsuario)
+                .orElseGet(() -> crearExpediente(idUsuario));
     }
     @Override
-    public Expediente crearExpediente(Long idAlumno) {
-        Alumno alumno = alumnoRepository.findById(idAlumno)
+    public Expediente crearExpediente(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findAlumnoById(idUsuario)
                 .orElseThrow(() -> new NotFoundException("Alumno no encontrado"));
-        if(!alumno.getActivo())
+        if(!usuario.getActivo())
             throw new ResourceDisabledException("Alumno Deshabilitado");
         Expediente exp = new Expediente();
-        exp.setAlumno(alumno);
+        exp.setUsuario(usuario);
         exp.setEstado(EstadoExpediente.NO_APROBADO);
 
        List<Documento> catalogo = documentoRepository.findByActivoTrue();

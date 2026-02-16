@@ -21,12 +21,15 @@ public class Inscripcion {
     private LocalDate fechaFin;
     private LocalDate fechaBaja;
     private Boolean estado;
+    private String escuela;
+    private String nivelEstudio;
+    private String carrera;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private tipoInscripcion tipo;
     @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name="idAlumno")
-    private Alumno alumno;
+    @JoinColumn(name="idUsuario")
+    private Usuario usuario;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_grupo", referencedColumnName = "idGrupo")
     private Grupo grupo;

@@ -28,7 +28,11 @@ public record UsuarioResponseDto(
         @Size(message = "Máximo 60 carácteres", max = 60)
         @NotBlank(message = "Campo obligatorio")
         String direccion,
-        Boolean activo
+        Boolean activo,
+        @JsonFormat(pattern = "dd/MM/yyyy")
+        LocalDate fechaAlta,
+        @JsonFormat(pattern = "dd/MM/yyyy")
+        LocalDate fechaBaja
 
 ) implements Serializable {
 }

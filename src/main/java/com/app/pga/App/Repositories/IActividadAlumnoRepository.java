@@ -26,15 +26,14 @@ public interface IActividadAlumnoRepository extends JpaRepository<ActividadAlumn
         COALESCE(au.estadoTarea, com.app.pga.App.Models.Enum.EstadoTarea.Aprobada),
         au.excento,
         au.fechaEntrega,
-        a.idAlumno,
+        u.idUsuario,
         CONCAT(u.nombre, ' ', u.apellidoPaterno, ' ', u.apellidoMaterno)
     )
     FROM ActividadAlumno au
     JOIN au.actividadGrupo ag
     JOIN ag.grupo g
     JOIN au.inscripcion i
-    JOIN i.alumno a
-    JOIN a.usuario u
+    JOIN i.usuario u
     ORDER BY g.idGrupo, ag.idActividadGrupo, u.nombre
 """)
     List<ReporteSeguimientoDto> reporteSeguimientoGeneral();
