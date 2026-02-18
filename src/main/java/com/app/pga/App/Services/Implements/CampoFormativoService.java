@@ -3,13 +3,13 @@ package com.app.pga.App.Services.Implements;
 import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
-import com.app.pga.App.Models.Dtos.CampoFormativoDto;
+import com.app.pga.App.Models.Dtos.RequestDto.CampoRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.CampoResponseDto;
 import com.app.pga.App.Models.Entities.CampoFormativo;
 import com.app.pga.App.Models.Mappers.CampoFormativoMapper;
 import com.app.pga.App.Repositories.ICampoFormativoRepository;
 import com.app.pga.App.Services.Interfaces.ICampoFormativoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +27,13 @@ public class CampoFormativoService implements ICampoFormativoService {
     private final ActividadBaseService actividadBaseService;
 
     @Override
-    public CampoFormativoDto crearCampo(CampoFormativoDto campoFormativoDto) {
+    public CampoResponseDto crearCampo(CampoRequestDto campoRequestDto) {
 
-        if(campoFormativoRepository.existsByNombreEqualsIgnoreCase(campoFormativoDto.nombre())) {
+        if(campoFormativoRepository.existsByNombreEqualsIgnoreCase(campoRequestDto.nombre())) {
             throw new DuplicateResourceException("Campo Formativo existente");
         }
 
-        CampoFormativo campoNuevo = campoFormativoMapper.toEntity(campoFormativoDto);
+        CampoFormativo campoNuevo = campoFormativoMapper.toEntity(campoRequestDto);
 
         if(campoNuevo.getActivo() == null){
             campoNuevo.setActivo(true);
@@ -43,7 +43,7 @@ public class CampoFormativoService implements ICampoFormativoService {
 
     @Override
     @Transactional(readOnly = true)
-    public CampoFormativoDto obtenerCampo(Long idCampo) {
+    public CampoResponseDto  obtenerCampo(Long idCampo) {
         CampoFormativo campoFormativo = campoFormativoRepository.findById(idCampo)
                 .orElseThrow(()->new NotFoundException("Campo Formativo no encontrado"));
         return campoFormativoMapper.toDto(campoFormativo);
@@ -51,7 +51,7 @@ public class CampoFormativoService implements ICampoFormativoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampoFormativoDto> obtenerCampos() {
+    public List<CampoResponseDto > obtenerCampos() {
         List <CampoFormativo>  camposFormativos = campoFormativoRepository.findAll();
 
         return camposFormativos
@@ -62,7 +62,7 @@ public class CampoFormativoService implements ICampoFormativoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampoFormativoDto> obtenerCamposActivos() {
+    public List<CampoResponseDto > obtenerCamposActivos() {
         List <CampoFormativo>  camposFormativosActivos = campoFormativoRepository.findByActivoTrue();
 
         return camposFormativosActivos
@@ -72,7 +72,7 @@ public class CampoFormativoService implements ICampoFormativoService {
     }
 
     @Override
-    public CampoFormativoDto actualizarCampo(CampoFormativoDto campoFormativoDto, Long id) {
+    public CampoResponseDto  actualizarCampo(CampoRequestDto campoRequestDto, Long id) {
             CampoFormativo campoFormativo = campoFormativoRepository.findById(id)
                     .orElseThrow(()-> new NotFoundException("Campo Formativo no encontrado"));
 
@@ -80,13 +80,13 @@ public class CampoFormativoService implements ICampoFormativoService {
                 throw new ResourceDisabledException("Campo Formativo deshabilitado");
             }
 
-            campoFormativo.setDescripcion(campoFormativoDto.descripcion());
+            campoFormativo.setDescripcion(campoRequestDto.descripcion());
 
             return campoFormativoMapper.toDto(campoFormativoRepository.save(campoFormativo));
     }
 
     @Override
-    public CampoFormativoDto habitarDeshabilitar(Long id) {
+    public CampoResponseDto  habitarDeshabilitar(Long id) {
         CampoFormativo campoFormativo = campoFormativoRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException("Campo Formativo no encontrado"));
 

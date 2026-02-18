@@ -1,6 +1,5 @@
 package com.app.pga.App.Controllers;
 
-import com.app.pga.App.Models.Dtos.ActividadBaseDto;
 import com.app.pga.App.Models.Dtos.RequestDto.DocumentoRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.DocumentoResponseDto;
 import com.app.pga.App.Services.Interfaces.IDocumentoService;

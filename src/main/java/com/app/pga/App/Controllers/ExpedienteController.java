@@ -1,6 +1,5 @@
 package com.app.pga.App.Controllers;
 
-import com.app.pga.App.Models.Dtos.ActividadBaseDto;
 import com.app.pga.App.Models.Dtos.RequestDto.ObservacionesExpedienteDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ExpedienteResponseDto;
 import com.app.pga.App.Services.Interfaces.IExpedienteService;
@@ -9,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/expedientes")

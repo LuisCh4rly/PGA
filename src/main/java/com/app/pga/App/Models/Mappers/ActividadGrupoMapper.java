@@ -6,8 +6,11 @@ import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ActividadGrupoMapper {
+
     ActividadGrupo toEntity(ActividadGrupoDto actividadGrupoDto);
 
+    @Mapping(target = "idGrupo", source = "grupo.idGrupo")
+    @Mapping(target = "nombreGrupo", source = "grupo.nombre")
     ActividadGrupoDto toDto(ActividadGrupo actividadGrupo);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

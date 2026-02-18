@@ -2,6 +2,7 @@ package com.app.pga.App.Models.Entities;
 
 
 import com.app.pga.App.Models.Enum.Alcance;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class Sesion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idSesion;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime fecha;
     private String tema;
     @Column (name = "url_sesion")

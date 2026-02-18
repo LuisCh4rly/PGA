@@ -3,7 +3,8 @@ package com.app.pga.App.Services.Implements;
 import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
-import com.app.pga.App.Models.Dtos.ActividadBaseDto;
+import com.app.pga.App.Models.Dtos.RequestDto.ActividadBaseRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadBaseResponseDto;
 import com.app.pga.App.Models.Entities.ActividadBase;
 import com.app.pga.App.Models.Entities.CampoFormativo;
 import com.app.pga.App.Models.Mappers.ActividadBaseMapper;
@@ -11,7 +12,6 @@ import com.app.pga.App.Repositories.IActividadBaseRepository;
 import com.app.pga.App.Repositories.ICampoFormativoRepository;
 import com.app.pga.App.Services.Interfaces.IActividadBaseService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,17 +28,17 @@ class ActividadBaseService implements IActividadBaseService {
     private final ICampoFormativoRepository campoFormativoRepository;
 
     @Override
-    public ActividadBaseDto crearActividadBase(ActividadBaseDto actividadBaseDto) {
-        CampoFormativo campoFormativo = campoFormativoRepository.findById(actividadBaseDto.campoFormativo().idCampo())
+    public ActividadBaseResponseDto crearActividadBase(ActividadBaseRequestDto actividadBaseRequestDto) {
+        CampoFormativo campoFormativo = campoFormativoRepository.findById(actividadBaseRequestDto.idCampoFormativo())
                 .orElseThrow(()-> new NotFoundException("Campo formativo no encontrado"));
         if(!campoFormativo.getActivo()){
             throw new ResourceDisabledException("Campo formativo deshabilitado");
         }
-        if(actividadBaseRepository.existsByTituloEqualsIgnoreCase(actividadBaseDto.titulo())) {
+        if(actividadBaseRepository.existsByTituloEqualsIgnoreCase(actividadBaseRequestDto.titulo())) {
             throw new DuplicateResourceException("Actividad Base existente");
         }
 
-        ActividadBase actividadBaseNueva = actividadBaseMapper.toEntity(actividadBaseDto);
+        ActividadBase actividadBaseNueva = actividadBaseMapper.toEntity(actividadBaseRequestDto);
         actividadBaseNueva.setActivo(true);
         actividadBaseNueva.setCampoFormativo(campoFormativo);
         return actividadBaseMapper.toDto(actividadBaseRepository.save(actividadBaseNueva));
@@ -47,7 +47,7 @@ class ActividadBaseService implements IActividadBaseService {
 
     @Override
     @Transactional(readOnly = true)
-    public ActividadBaseDto obtenerActividadBase(Long idActividadBase) {
+    public ActividadBaseResponseDto obtenerActividadBase(Long idActividadBase) {
         ActividadBase actividadBase = actividadBaseRepository.findById(idActividadBase)
                 .orElseThrow(()-> new NotFoundException("Actividad Base no encontrada"));
         return actividadBaseMapper.toDto(actividadBase);
@@ -55,7 +55,7 @@ class ActividadBaseService implements IActividadBaseService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ActividadBaseDto> obtenerActividadesBaseGeneral() {
+    public List<ActividadBaseResponseDto> obtenerActividadesBaseGeneral() {
         List <ActividadBase> actividadesBase = actividadBaseRepository.findAll();
         return actividadesBase.stream()
                 .map(a->actividadBaseMapper.toDto(a))
@@ -64,7 +64,7 @@ class ActividadBaseService implements IActividadBaseService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ActividadBaseDto> obtenerActividadesBaseActivas() {
+    public List<ActividadBaseResponseDto> obtenerActividadesBaseActivas() {
         List <ActividadBase> actividadeActivas = actividadBaseRepository.findByActivoTrue();
         return actividadeActivas.stream()
                 .map(a-> actividadBaseMapper.toDto(a))
@@ -73,7 +73,7 @@ class ActividadBaseService implements IActividadBaseService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ActividadBaseDto> obtenerActividadesBasePorCampo(Long idCampo) {
+    public List<ActividadBaseResponseDto> obtenerActividadesBasePorCampo(Long idCampo) {
         List <ActividadBase> actividadesCampo = actividadBaseRepository.findByCampoFormativo_IdCampo(idCampo);
         return actividadesCampo.stream()
                 .map(a-> actividadBaseMapper.toDto(a))
@@ -81,18 +81,18 @@ class ActividadBaseService implements IActividadBaseService {
     }
 
     @Override
-    public ActividadBaseDto actualizarActividadBase(ActividadBaseDto actividadBaseDto, Long idActividadBase) {
+    public ActividadBaseResponseDto actualizarActividadBase(ActividadBaseRequestDto actividadBaseRequestDto, Long idActividadBase) {
         ActividadBase actividadBase = actividadBaseRepository.findById(idActividadBase)
                 .orElseThrow(()-> new NotFoundException("Actividad Base no encontrada"));
         if(!actividadBase.getActivo()){
             throw new ResourceDisabledException("No se puede modificar una actividad deshabilitada");
         }
-        actividadBase.setDescripcion(actividadBaseDto.descripcion());
+        actividadBase.setDescripcion(actividadBaseRequestDto.descripcion());
         return actividadBaseMapper.toDto(actividadBaseRepository.save(actividadBase));
     }
 
     @Override
-    public ActividadBaseDto habitarDeshabilitar(Long idActividadBase) {
+    public ActividadBaseResponseDto habitarDeshabilitar(Long idActividadBase) {
        ActividadBase actividadBase = actividadBaseRepository.findById(idActividadBase)
                 .orElseThrow(()-> new NotFoundException("Actividad Base no encontrada"));
 
@@ -108,7 +108,7 @@ class ActividadBaseService implements IActividadBaseService {
     }
 
     @Override
-    public List<ActividadBaseDto> habitarDeshabilitarPorCampo(Long idCampo, boolean estado) {
+    public List<ActividadBaseResponseDto> habitarDeshabilitarPorCampo(Long idCampo, boolean estado) {
         List <ActividadBase> actividadesPorCampo = actividadBaseRepository.findByCampoFormativo_IdCampo(idCampo);
 
         return actividadesPorCampo.stream()

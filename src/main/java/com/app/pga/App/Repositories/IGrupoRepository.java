@@ -1,5 +1,6 @@
 package com.app.pga.App.Repositories;
 
+import com.app.pga.App.Models.Entities.Curso;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Enum.Estado;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,5 @@ public interface IGrupoRepository extends JpaRepository<Grupo, Long> {
     Optional<Grupo> findByIdGrupo(Long idGrupo);
 
     List<Grupo> findByEstado(Estado estado);
+    Boolean existsByEstadoAndCurso_IdCurso(Estado estado, Long id);
 }

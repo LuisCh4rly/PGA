@@ -175,6 +175,10 @@ public class ActividadGrupoService implements IActividadGrupoService {
 
     @Transactional(readOnly = true)
     public List<ActividadGrupoDto> obtenerActividadesGrupales(Long idGrupo){
+        if(!grupoRepository.existsById(idGrupo)){
+            throw new NotFoundException("Grupo no encontrado");
+        }
+
 
         return actividadGrupoRepository
                 .findByGrupo_IdGrupoAndAlcance(idGrupo, Alcance.GRUPAL)
@@ -186,7 +190,9 @@ public class ActividadGrupoService implements IActividadGrupoService {
 
     @Transactional(readOnly = true)
     public List<ActividadGrupoDto> obtenerActividadesIndividuales(Long idGrupo){
-
+        if(!grupoRepository.existsById(idGrupo)){
+            throw new NotFoundException("Grupo no encontrado");
+        }
         return actividadGrupoRepository
                 .findByGrupo_IdGrupoAndAlcance(idGrupo, Alcance.INDIVIDUAL)
                 .stream()

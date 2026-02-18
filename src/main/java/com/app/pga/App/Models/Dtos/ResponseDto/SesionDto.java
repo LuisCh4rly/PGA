@@ -1,6 +1,5 @@
 package com.app.pga.App.Models.Dtos.ResponseDto;
 
-import com.app.pga.App.Models.Dtos.GrupoDto;
 import com.app.pga.App.Models.Enum.Alcance;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -19,6 +18,6 @@ public record SesionDto(//Response
         String urlSesion,
         Alcance alcance,
         String plataforma,
-        GrupoDto grupo)
+        GrupoResponseDto grupo)
         implements Serializable {
 }

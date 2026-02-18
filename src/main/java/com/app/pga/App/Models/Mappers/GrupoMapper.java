@@ -1,31 +1,26 @@
 package com.app.pga.App.Models.Mappers;
 
-import com.app.pga.App.Models.Dtos.GrupoDto;
+import com.app.pga.App.Models.Dtos.RequestDto.GrupoRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.GrupoResponseDto;
 import com.app.pga.App.Models.Entities.Grupo;
 import org.mapstruct.*;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = CursoMapper.class )
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface GrupoMapper {
+
     @Mapping(target = "usuario", ignore = true)
     @Mapping(target =  "curso", ignore = true)
-    Grupo toEntity(GrupoDto grupoDto);
+    Grupo toEntity(GrupoRequestDto grupoDto);
 
     @Named("GrupoSimple")
-    @Mapping(target = "curso", source = "curso", qualifiedByName = "simple")
-    GrupoDto toDtoSimple(Grupo grupo);
-
-    @Named("GrupoconActividades")
-    @Mapping(target = "curso", source = "curso", qualifiedByName = "conActividades")
-    GrupoDto toDtoActividades(Grupo grupo);
-
-    @Named("ResumenGrupo")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "idGrupo", source = "idGrupo")
-    @Mapping(target = "nombre", source = "nombre")
-    GrupoDto toDtoResumen(Grupo grupo);
+    @Mapping(target = "idCurso", source = "curso.idCurso")
+    @Mapping(target = "nombreCurso", source = "curso.nombre")
+    @Mapping(target = "docente",  expression = "java(grupo.getUsuario().getNombre() + \" \" + " +
+            "grupo.getUsuario().getApellidoPaterno() + \" \" + " +
+            "grupo.getUsuario().getApellidoMaterno())"
+    )
+    GrupoResponseDto toDto(Grupo grupo);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Grupo partialUpdate(GrupoDto grupoDto, @MappingTarget Grupo grupo);
+    Grupo partialUpdate(GrupoRequestDto grupoRequestDto, @MappingTarget Grupo grupo);
 }

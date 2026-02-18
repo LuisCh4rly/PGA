@@ -1,5 +1,6 @@
 package com.app.pga.Auth.Service;
 
+import com.app.pga.App.Exception.BadRequestException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Models.Dtos.RequestDto.UsuarioRequestDto;
 import com.app.pga.App.Models.Entities.Usuario;
@@ -121,7 +122,7 @@ public class CuentaService implements ICuentaService {
 
 
         if (!encoder.matches(request.actualPassword(), cuenta.getPassword())) {
-            throw new RuntimeException("Contraseña actual incorrecta");
+            throw new BadRequestException("Contraseña actual incorrecta");
         }
 
         cuenta.setPassword( encoder.encode(request.nuevaPassword()));

@@ -1,5 +1,6 @@
 package com.app.pga.App.Services.Implements;
 
+import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.*;
@@ -59,7 +60,7 @@ public class SesionService implements ISesionService {
         //verifiicar que el docente no tenga sesion a esa hora
         boolean existe = sesionRepository.existsSesionActivaDocente(grupo.getUsuario().getIdUsuario(), dto.fecha());
         if (existe) {
-            throw new IllegalStateException("El docente ya tiene una sesión en ese horario");
+            throw new DuplicateResourceException("El docente ya tiene una sesión en ese horario");
         }
 
         Sesion sesion = sesionMapper.toEntiity(dto);
@@ -218,7 +219,7 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
                 sesion.getTema(),
                 sesion.getAlcance(),
                 sesion.getPlataforma(),
-                grupoMapper.toDtoSimple(sesion.getGrupo()),
+                grupoMapper.toDto(sesion.getGrupo()),
                 alumnos);
     }
 

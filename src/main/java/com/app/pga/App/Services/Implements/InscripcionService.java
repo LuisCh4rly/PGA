@@ -3,7 +3,8 @@ package com.app.pga.App.Services.Implements;
 import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
-import com.app.pga.App.Models.Dtos.InscripcionDto;
+import com.app.pga.App.Models.Dtos.RequestDto.InscripcionRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionResponseDto;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Inscripcion;
 import com.app.pga.App.Models.Entities.Usuario;
@@ -40,14 +41,14 @@ public class InscripcionService implements IInscripcionService {
         this.actividadAlumnoService= actividadAlumnoService;
     }
     //Crear inscripciones
-    public InscripcionDto createInscripcion (InscripcionDto inscripcionDto){
-        Usuario usuario = usuarioRepository.findAlumnoById(inscripcionDto.usuario().idUser())
+    public InscripcionResponseDto createInscripcion (InscripcionRequestDto inscripcionDto){
+        Usuario usuario = usuarioRepository.findAlumnoById(inscripcionDto.idUsuario())
                 .orElseThrow(()->new NotFoundException("Alumno no encontrado."));
         if(!usuario.getActivo()){
             throw new ResourceDisabledException("Alumno deshbilitado");
         }
         //verificar que el alumno no tenga inscripciones activas
-        inscripcionRepository.findByUsuario_IdUsuarioAndEstadoTrue(inscripcionDto.usuario().idUser()).ifPresent(InscripcionDto->{
+        inscripcionRepository.findByUsuario_IdUsuarioAndEstadoTrue(inscripcionDto.idUsuario()).ifPresent(InscripcionDto->{
             throw new DuplicateResourceException("El alumno tiene una inscripción activa");
         });
 
@@ -63,7 +64,7 @@ public class InscripcionService implements IInscripcionService {
 
     //consulta para inscripciones activas
     @Transactional(readOnly = true)
-    public List<InscripcionDto>findAllActivos(){
+    public List<InscripcionResponseDto>findAllActivos(){
         return inscripcionRepository.findByEstadoTrue()
                 .stream()
                 .map(inscripcion ->inscripcionMapper.toDto(inscripcion))
@@ -73,24 +74,24 @@ public class InscripcionService implements IInscripcionService {
 
     //consulta general
     @Transactional(readOnly = true)
-    public List<InscripcionDto>findAll(){
+    public List<InscripcionResponseDto>findAll(){
         return inscripcionRepository.findAll()
                 .stream()
-                .map(inscripcion ->inscripcionMapper.toDtoResumen(inscripcion))
+                .map(inscripcion ->inscripcionMapper.toDto(inscripcion))
                 .collect(Collectors.toList());
     }
 
 
     //consulta por id
     @Transactional(readOnly = true)
-    public InscripcionDto finfById(Long idInscripcion){
+    public InscripcionResponseDto finfById(Long idInscripcion){
         Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion)
                 .orElseThrow(()->new NotFoundException("Registro no encontrado: "+idInscripcion));
         return inscripcionMapper.toDto(inscripcion);
     }
 
     //activar desactivar
-    public InscripcionDto desactivarActivarInscripcion(Long idInscripcion){
+    public InscripcionResponseDto desactivarActivarInscripcion(Long idInscripcion){
         Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion)
                 .orElseThrow(()->new NotFoundException("Registro no encontrado: "+idInscripcion));
         if(inscripcion.getEstado()==true){
@@ -107,36 +108,37 @@ public class InscripcionService implements IInscripcionService {
 
 
     //Asignar grupo
-    public InscripcionDto asignarGrupo (InscripcionDto inscripcionDto){
-        Inscripcion inscripcion = inscripcionRepository.findById(inscripcionDto.idInscripcion())
-                .orElseThrow(()->new NotFoundException("Inscripción no encontrada: "+inscripcionDto.idInscripcion()));
+    public InscripcionResponseDto asignarGrupo (Long idInscripcion, Long idGrupo){
+        Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion)
+                .orElseThrow(()->new NotFoundException("Inscripción no encontrada: " + idInscripcion));
 
-            if (!inscripcion.getEstado()) {
-                throw new ResourceDisabledException("La inscripción no está activa");
-            }
+        if (!inscripcion.getEstado()) {
+            throw new ResourceDisabledException("La inscripción no está activa");
+        }
 
-            Grupo grupo = grupoRepository.findById(inscripcionDto.grupo().idGrupo())
-                    .orElseThrow(() -> new NotFoundException("Grupo no encontrado"));
+        Grupo grupo = grupoRepository.findById(idGrupo)
+                .orElseThrow(() -> new NotFoundException("Grupo no encontrado"));
+        if (grupo.getEstado() == Estado.DESHABILITADO) {
+            throw new ResourceDisabledException("El grupo no está activo");
+        }
 
-            if (grupo.getEstado() == Estado.DESHABILITADO) {
-                throw new ResourceDisabledException("El grupo no está activo");
-            }
-
-            boolean existe = inscripcionRepository.existsByUsuario_IdUsuarioAndGrupo_IdGrupoAndGrupo_Estado(
-                    inscripcion.getUsuario().getIdUsuario(),
-                    grupo.getIdGrupo(),
-                    Estado.HABILITADO
-            );
-
+        boolean existe = inscripcionRepository.existsByUsuario_IdUsuarioAndGrupo_IdGrupoAndGrupo_Estado(
+                inscripcion.getUsuario().getIdUsuario(),
+                grupo.getIdGrupo(),
+                Estado.HABILITADO);
 
         if (existe) {
                 throw new DuplicateResourceException("El alumno ya está inscrito en este grupo");
-            }
+        }
+        Grupo grupoAnterior = inscripcion.getGrupo();
 
-            inscripcion.setGrupo(grupo);
-            actividadAlumnoService.asignarActividadesGrupalesPorInscripcion(inscripcion.getIdInscripcion());
+        if (grupoAnterior != null) {
+            throw new DuplicateResourceException("Inscripción ya cuenta con grupo asociado");
+        }
 
-            return inscripcionMapper.toDtoResumen(inscripcionRepository.save(inscripcion));
+        inscripcion.setGrupo(grupo);
+        actividadAlumnoService.asignarActividadesGrupalesPorInscripcion(inscripcion.getIdInscripcion());
+        return inscripcionMapper.toDto(inscripcionRepository.save(inscripcion));
         }
 
     }

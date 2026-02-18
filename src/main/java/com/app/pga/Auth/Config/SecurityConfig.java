@@ -87,19 +87,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         //  RUTAS PÚBLICAS
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/usuario").permitAll()
-                        .requestMatchers("/api/cuentas").permitAll()
-                        .requestMatchers("/api/actividades-alumnos").permitAll()
-                        .requestMatchers("//api/actividadBase").permitAll()
-                        .requestMatchers("/api/grupo").permitAll()
-                        .requestMatchers("/api/campo").permitAll()
-                        .requestMatchers("/api/curso").permitAll()
-                        .requestMatchers("/api/documentos").permitAll()
-                        .requestMatchers("/api/expedientes").permitAll()
-                        .requestMatchers("/api/expedientes").permitAll()
-                        .requestMatchers("/api/grupo**").permitAll()
-                        .requestMatchers("/api/inscripcion").permitAll()
-                        .requestMatchers("/api/sesiones").permitAll()
+                        .requestMatchers("/api/usuario/**").permitAll()
+                        .requestMatchers("/api/cuentas/**").permitAll()
+                        .requestMatchers("/api/actividades-alumnos/**").permitAll()
+                        .requestMatchers("/api/actividadBase/**").permitAll()
+                        .requestMatchers("/api/grupo/**").permitAll()
+                        .requestMatchers("/api/campo/**").permitAll()
+                        .requestMatchers("/api/curso/**").permitAll()
+                        .requestMatchers("/api/documentos/**").permitAll()
+                        .requestMatchers("/api/expedientes/**").permitAll()
+                        .requestMatchers("/api/expedientes/**").permitAll()
+                        .requestMatchers("/api/grupo/**").permitAll()
+                        .requestMatchers("/api/inscripcion/**").permitAll()
+                        .requestMatchers("/api/sesiones/**").permitAll()
                         // RUTAS DE ADMIN
                         //RUTAS ALUMNO
                         //RUTAS DOCENTE

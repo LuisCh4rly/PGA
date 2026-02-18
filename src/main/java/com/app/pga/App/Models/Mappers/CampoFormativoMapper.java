@@ -1,17 +1,19 @@
 package com.app.pga.App.Models.Mappers;
 
-import com.app.pga.App.Models.Dtos.CampoFormativoDto;
+import com.app.pga.App.Models.Dtos.RequestDto.CampoRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.CampoResponseDto;
 import com.app.pga.App.Models.Entities.CampoFormativo;
 import org.mapstruct.*;
 
 @Mapper( unmappedTargetPolicy = ReportingPolicy.IGNORE,componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CampoFormativoMapper {
 
-    CampoFormativo toEntity(CampoFormativoDto campoFormativoDto);
+    CampoFormativo toEntity(CampoRequestDto campoRequestDto);
 
-    CampoFormativoDto toDto(CampoFormativo campoFormativo);
+    @Named("toDto")
+    CampoResponseDto toDto(CampoFormativo campoFormativo);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     //si un dto trae un campo null no lo copies sobre la entidad
-    CampoFormativo partialUpdate(CampoFormativoDto campoFormativoDto, @MappingTarget CampoFormativo campoFormativo);
+    CampoFormativo partialUpdate(CampoRequestDto campoRequestDto, @MappingTarget CampoFormativo campoFormativo);
 }

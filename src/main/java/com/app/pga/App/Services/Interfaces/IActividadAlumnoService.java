@@ -18,5 +18,5 @@ public interface IActividadAlumnoService {
     void cambiarEstado ( Long idActividadAlumno,CambiarEstadoTareaDto cambiarEstadoTareaDto);
     void asignarActividadesGrupalesPorInscripcion(Long idInscripcion);
     Resource visualizarEntrega(Long idActividadAlumno);
-
+    void eliminarActividadesPorInscripcion(Long idInscripcion);
 }

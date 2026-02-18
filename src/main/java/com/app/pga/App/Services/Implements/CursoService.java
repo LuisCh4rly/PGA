@@ -4,17 +4,20 @@ package com.app.pga.App.Services.Implements;
 import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
-import com.app.pga.App.Models.Dtos.ActividadBaseDto;
-import com.app.pga.App.Models.Dtos.CursoDto;
+
+import com.app.pga.App.Models.Dtos.RequestDto.AgregarActividadesCursoDto;
+import com.app.pga.App.Models.Dtos.RequestDto.CursoRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.CursoResponseDto;
 import com.app.pga.App.Models.Entities.ActividadBase;
 
 import com.app.pga.App.Models.Entities.Curso;
 import com.app.pga.App.Models.Entities.Curso_ActividadBase;
-import com.app.pga.App.Models.Mappers.ActividadBaseMapper;
+import com.app.pga.App.Models.Enum.Estado;
 import com.app.pga.App.Models.Mappers.CursoMapper;
 import com.app.pga.App.Repositories.IActividadBaseRepository;
 import com.app.pga.App.Repositories.ICursoRepository;
 import com.app.pga.App.Repositories.ICurso_ActividadBaseRepository;
+import com.app.pga.App.Repositories.IGrupoRepository;
 import com.app.pga.App.Services.Interfaces.ICursoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,21 +36,22 @@ class CursoService implements ICursoService {
     private final CursoMapper cursoMapper;
     private final IActividadBaseRepository actividadBaseRepository;
     private final ICurso_ActividadBaseRepository cursoActividadBaseRepository;
+    private final IGrupoRepository grupoRepository;
 
 
     @Override
-    public CursoDto crearCurso(CursoDto cursoDto) {
-        if (cursoRepository.existsByNombreEqualsIgnoreCase(cursoDto.nombre())) {
-            throw new IllegalArgumentException("Curso existente");
+    public CursoResponseDto crearCurso(CursoRequestDto cursoRequestDto) {
+        if (cursoRepository.existsByNombreEqualsIgnoreCase(cursoRequestDto.nombre())) {
+            throw new DuplicateResourceException("Curso existente");
         }
-        Curso cursoNuevo = cursoMapper.toEntity(cursoDto);
+        Curso cursoNuevo = cursoMapper.toEntity(cursoRequestDto);
         cursoNuevo.setActivo(true);
         cursoNuevo.setFechaAlta(LocalDate.now());
         cursoNuevo.setActividades(new ArrayList<Curso_ActividadBase>());
 
-        if (!cursoDto.actividades().isEmpty()) {
-            for (ActividadBaseDto a : cursoDto.actividades()) {
-                ActividadBase ab = actividadBaseRepository.findById(a.idActividad())
+        if (!cursoRequestDto.idActividadesBase().isEmpty()) {
+            for (Long id : cursoRequestDto.idActividadesBase()) {
+                ActividadBase ab = actividadBaseRepository.findById(id)
                         .orElseThrow(() -> new NotFoundException("Actividad Base no encontrada"));
                 if (!ab.getActivo()) {
                     throw new ResourceDisabledException("Actividad: " + ab.getTitulo() + " está deshabilitada");
@@ -66,7 +70,7 @@ class CursoService implements ICursoService {
 
     @Override
     @Transactional(readOnly = true)
-    public CursoDto obtenerCurso(Long idCurso) {
+    public CursoResponseDto obtenerCurso(Long idCurso) {
         Curso curso = cursoRepository.findById(idCurso)
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
         return cursoMapper.toDtoConActividades(curso);
@@ -74,7 +78,7 @@ class CursoService implements ICursoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CursoDto> obtenerCursosGeneral() {
+    public List<CursoResponseDto> obtenerCursosGeneral() {
         List<Curso> cursos = cursoRepository.findAll();
         return cursos.stream()
                 .map(c -> cursoMapper.toDtoSimple(c))
@@ -83,7 +87,7 @@ class CursoService implements ICursoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CursoDto> obtenerCursosActivos() {
+    public List<CursoResponseDto> obtenerCursosActivos() {
         List<Curso> cursos = cursoRepository.findByActivoTrue();
         return cursos.stream()
                 .map(c -> cursoMapper.toDtoSimple(c))
@@ -91,22 +95,25 @@ class CursoService implements ICursoService {
     }
 
     @Override
-    public CursoDto actualizarCurso(CursoDto cursoDto, Long idCurso) {
+    public CursoResponseDto actualizarCurso(CursoRequestDto cursoRequestDto, Long idCurso) {
         Curso curso = cursoRepository.findById(idCurso)
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
         if (!curso.getActivo()) {
             throw new ResourceDisabledException("No se puede modificar un curso deshabilitado");
         }
-        curso.setDescripcion(cursoDto.descripcion());
+        curso.setDescripcion(cursoRequestDto.descripcion());
         return cursoMapper.toDtoSimple(cursoRepository.save(curso));
     }
 
 
     @Override
-    public CursoDto habitarDeshabilitar(Long idCurso) {
+    public CursoResponseDto habitarDeshabilitar(Long idCurso) {
         Curso curso = cursoRepository.findById(idCurso)
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
         if (curso.getActivo()) {
+            if (grupoRepository.existsByEstadoAndCurso_IdCurso(Estado.HABILITADO, idCurso)){
+                throw new ResourceDisabledException("Existen grupos activos aun");
+            }
             curso.setActivo(false);
             curso.setFechaBaja(LocalDate.now());
         } else {
@@ -117,15 +124,15 @@ class CursoService implements ICursoService {
     }
 
     @Override
-    public CursoDto asignarActividades(Long idCurso, List<ActividadBaseDto> actividades) {
+    public CursoResponseDto asignarActividades(Long idCurso, AgregarActividadesCursoDto agregarActividadesCursoDto) {
         Curso curso = cursoRepository.findById(idCurso)
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
 
         if (!curso.getActivo()){
             throw new ResourceDisabledException("No se puede asignar actividades a un curso deshabilitado");
         }
-        for (ActividadBaseDto a : actividades) {
-            ActividadBase ab = actividadBaseRepository.findById(a.idActividad())
+        for (Long id : agregarActividadesCursoDto.idsActividadesBase()) {
+            ActividadBase ab = actividadBaseRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Actividad Base no encontrada"));
 
             if (!ab.getActivo()) {

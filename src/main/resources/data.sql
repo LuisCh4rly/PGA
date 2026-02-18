@@ -147,8 +147,8 @@ INSERT INTO cursos_actividades (curso_id, actividad_base_id) VALUES (1, 9),
 
 
 --Tabla Grupo
-INSERT INTO grupos (nombre, estado,created_at, periodo, id_curso, id_usuario) VALUES ('Grupo1', 'HABILITADO',current_timestamp, 'Marzo-Septiembre', 1, 1),
-                                                                                     ('Grupo2', 'HABILITADO',current_timestamp, 'Marzo-Septiembre', 2, 1),
+INSERT INTO grupos (nombre, estado,created_at, periodo, id_curso, id_usuario) VALUES ('Grupo1', 'HABILITADO',current_timestamp, 'Marzo-Septiembre', 1, 3),
+                                                                                     ('Grupo2', 'HABILITADO',current_timestamp, 'Marzo-Septiembre', 2, 3),
                                                                                      ('Grupo3', 'HABILITADO', current_timestamp, 'Marzo-Septiembre', 3, 2),
                                                                                      ('Grupo4', 'HABILITADO', current_timestamp, 'Marzo-Septiembre', 4, 4),
                                                                                      ('Grupo5', 'HABILITADO', current_timestamp, 'Marzo-Septiembre', 5, 3);

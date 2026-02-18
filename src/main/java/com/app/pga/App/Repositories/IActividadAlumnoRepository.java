@@ -13,6 +13,7 @@ public interface IActividadAlumnoRepository extends JpaRepository<ActividadAlumn
     List<ActividadAlumno> findByInscripcion_IdInscripcion(Long inscripcionIdInscripcion);
     boolean existsByActividadGrupo_IdActividadGrupoAndInscripcion_IdInscripcion(Long idActividadGrupo, Long idInscripcion
     );
+    void deleteByInscripcion_IdInscripcion(Long idInscripcion);
 
     @Query("""
     SELECT new com.app.pga.App.Models.Dtos.ReporteSeguimientoDto(

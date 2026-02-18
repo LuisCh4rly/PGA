@@ -1,20 +1,20 @@
 package com.app.pga.App.Services.Interfaces;
 
-import com.app.pga.App.Models.Dtos.ActividadBaseDto;
-import com.app.pga.App.Models.Dtos.CampoFormativoDto;
+import com.app.pga.App.Models.Dtos.RequestDto.ActividadBaseRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadBaseResponseDto;
 
 import java.util.List;
 
 public interface IActividadBaseService {
 
-    ActividadBaseDto crearActividadBase (ActividadBaseDto actividadBaseDto);
-    ActividadBaseDto obtenerActividadBase (Long idActividadBase);
-    List<ActividadBaseDto> obtenerActividadesBaseGeneral ();
+    ActividadBaseResponseDto crearActividadBase (ActividadBaseRequestDto actividadBaseRequestDto);
+    ActividadBaseResponseDto obtenerActividadBase (Long idActividadBase);
+    List<ActividadBaseResponseDto> obtenerActividadesBaseGeneral ();
 
-    List<ActividadBaseDto> obtenerActividadesBaseActivas ();
-    List<ActividadBaseDto> obtenerActividadesBasePorCampo (Long idCampo);
-    ActividadBaseDto actualizarActividadBase( ActividadBaseDto actividadBaseDto, Long idActividadBase);
+    List<ActividadBaseResponseDto> obtenerActividadesBaseActivas ();
+    List<ActividadBaseResponseDto> obtenerActividadesBasePorCampo (Long idCampo);
+    ActividadBaseResponseDto actualizarActividadBase( ActividadBaseRequestDto actividadBaseRequestDto, Long idActividadBase);
 
-    ActividadBaseDto habitarDeshabilitar(Long idActividadBase);
-    List<ActividadBaseDto> habitarDeshabilitarPorCampo (Long idCampo,boolean estado);
+    ActividadBaseResponseDto habitarDeshabilitar(Long idActividadBase);
+    List<ActividadBaseResponseDto> habitarDeshabilitarPorCampo (Long idCampo,boolean estado);
 }

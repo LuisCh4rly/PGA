@@ -6,6 +6,7 @@ import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ActividadAlumnoMapper {
+
     ActividadAlumno toEntity(ActividadAlumnoDto actividadAlumnoDto);
 
     @Mapping(target = "idInscripcion", source = "inscripcion.idInscripcion")

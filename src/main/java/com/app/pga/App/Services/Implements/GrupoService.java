@@ -1,8 +1,10 @@
 package com.app.pga.App.Services.Implements;
 
+import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
-import com.app.pga.App.Models.Dtos.GrupoDto;
+import com.app.pga.App.Models.Dtos.RequestDto.GrupoRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.GrupoResponseDto;
 import com.app.pga.App.Models.Entities.Curso;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Usuario;
@@ -32,18 +34,18 @@ class GrupoService implements IGrupoService {
 
     @Override
 
-    public GrupoDto crear(GrupoDto dto) {
+    public GrupoResponseDto crear(GrupoRequestDto dto) {
         if (grupoRepository.existsByNombreEqualsIgnoreCase(dto.nombre())) {
-            throw new IllegalArgumentException("Grupo existente");
+            throw new DuplicateResourceException("Grupo existente");
         }
-        Curso curso = cursoRepository.findById(dto.curso().idCurso())
+        Curso curso = cursoRepository.findById(dto.idCurso())
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
         if (!curso.getActivo()) {
             throw new ResourceDisabledException("Curso deshabilitado");
         }
 
         //se verifica que tenga rol docente
-       Usuario usuario = iUsuarioRepository.findDocenteById(dto.usuario().idUser())
+       Usuario usuario = iUsuarioRepository.findDocenteById(dto.idDocente())
                 .orElseThrow(() -> new NotFoundException("Docente no encontrado"));
         if (!usuario.getActivo()) {
             throw new ResourceDisabledException("Docente deshabilitado");
@@ -55,54 +57,54 @@ class GrupoService implements IGrupoService {
         grupo.setUsuario(usuario);
         Grupo nuevo = grupoRepository.save(grupo);
         actividadGrupoService.precargarDesdeCurso(nuevo.getIdGrupo());
-        return grupoMapper.toDtoActividades(grupoRepository.save(grupo));
+        return grupoMapper.toDto(grupoRepository.save(grupo));
 
 
     }
     @Transactional(readOnly = true)
-    public GrupoDto obtenerPorId(Long idGrupo) {
+    public GrupoResponseDto obtenerPorId(Long idGrupo) {
         Grupo grupo = grupoRepository.findById(idGrupo)
                 .orElseThrow(() -> new NotFoundException("Grupo no encontrado"));
-        return grupoMapper.toDtoActividades(grupo);
+        return grupoMapper.toDto(grupo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<GrupoDto> obtenerGrupoGeneral() {
+    public List<GrupoResponseDto> obtenerGrupoGeneral() {
         List <Grupo> grupos = grupoRepository.findAll();
         return grupos.stream()
-                .map(a->grupoMapper.toDtoSimple(a))
+                .map(a->grupoMapper.toDto(a))
                 .collect(Collectors.toList());
     }
     @Override
     @Transactional(readOnly = true)
-    public List<GrupoDto> obtenerGruposActivos() {
+    public List<GrupoResponseDto> obtenerGruposActivos() {
         List<Grupo> grupos = grupoRepository.findByEstado(Estado.HABILITADO);
         return grupos.stream()
-                .map(c -> grupoMapper.toDtoSimple(c))
+                .map(c -> grupoMapper.toDto(c))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<GrupoDto> obtenerPorCurso(Long idCurso) {
+    public List<GrupoResponseDto> obtenerPorCurso(Long idCurso) {
         return grupoRepository.findByCursoIdCurso(idCurso)
                 .stream()
-                .map(c->grupoMapper.toDtoSimple(c))
+                .map(c->grupoMapper.toDto(c))
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<GrupoDto> obtenerPorDocente(Long idDocente) {
+    public List<GrupoResponseDto> obtenerPorDocente(Long idDocente) {
         return  grupoRepository.findGruposByDocente(idDocente)
                 .stream()
-                .map(c->grupoMapper.toDtoSimple(c))
+                .map(c->grupoMapper.toDto(c))
                 .toList();
     }
 
     @Override
-    public GrupoDto cambiarEstado(Long idGrupo) {
+    public GrupoResponseDto cambiarEstado(Long idGrupo) {
         Grupo grupo = grupoRepository.findById(idGrupo)
                 .orElseThrow(() -> new NotFoundException(" Grupo no encontrado"));
 
@@ -112,15 +114,15 @@ class GrupoService implements IGrupoService {
         grupo.setEstado(Estado.HABILITADO);
     }
 
-        return grupoMapper.toDtoSimple(grupoRepository.save(grupo));
+        return grupoMapper.toDto(grupoRepository.save(grupo));
     }
 
     @Override
-    public GrupoDto cambiarDocente(GrupoDto dto) {
-        Grupo grupo = grupoRepository.findById(dto.idGrupo())
+    public GrupoResponseDto cambiarDocente(Long idGrupo, Long idDocente) {
+        Grupo grupo = grupoRepository.findById(idGrupo)
                 .orElseThrow(() -> new NotFoundException("Grupo no encontrado"));
 
-        Usuario usuario = iUsuarioRepository.findDocenteById(dto.usuario().idUser())
+        Usuario usuario = iUsuarioRepository.findDocenteById(idDocente)
                 .orElseThrow(() -> new NotFoundException("Docente no encontrado"));
 
         if (!usuario.getActivo()) {
@@ -128,6 +130,6 @@ class GrupoService implements IGrupoService {
         }
 
         grupo.setUsuario(usuario);
-        return grupoMapper.toDtoSimple(grupoRepository.save(grupo));
+        return grupoMapper.toDto(grupoRepository.save(grupo));
     }
 }

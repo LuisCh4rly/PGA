@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 public record UsuarioResponseDto(
-        Long idUser,
+        Long idUsuario,
         @Size(message = "Máximo 30 carácteres", max = 30)
         @NotBlank(message = "Campo obligatorio")
         String nombre,

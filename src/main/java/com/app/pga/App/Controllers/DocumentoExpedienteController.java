@@ -21,8 +21,8 @@ import java.util.List;
 class DocumentoExpedienteController {
     private final IDocumentoExpedienteService documentoExpedienteService;
 
-    @PostMapping( "/{idExpediente}/documentos/{tipo}")
-    public ResponseEntity<DocumentoExpedienteResponseDto> subirDocumento(@PathVariable("idExpediente") Long idExpediente, @RequestParam MultipartFile archivo, @PathVariable("tipo") String tipo) {
+    @PostMapping( "/{idAlumno}/documentos/{tipo}")
+    public ResponseEntity<DocumentoExpedienteResponseDto> subirDocumento(@PathVariable("idAlumno") Long idExpediente, @RequestParam MultipartFile archivo, @PathVariable("tipo") String tipo) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(documentoExpedienteService.subirDocumento(idExpediente, tipo, archivo));
     }

@@ -101,7 +101,7 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
                 .orElseThrow(() -> new NotFoundException("Actividad alumno no encontrada"));
 
         if (aa.getUrlEntrega() != null)
-            throw new NotFoundException("Exite una entrega del alumno");
+            throw new ResourceDisabledException("Exite una entrega del alumno");
         aa.setExcento(true);
         aa.setMotivoExencion(cambiarEstadoTareaDto.mensaje());
         aa.setEstadoTarea(EstadoTarea.Exenta);
@@ -117,10 +117,10 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
             throw new ResourceDisabledException("Actividad Excenta");
 
         if (aa.getActividadGrupo().getReqEntrega() && cambiarEstadoTareaDto.estado() == EstadoTarea.Completada && aa.getUrlEntrega()==null)
-            throw new IllegalStateException("Primero debe asignar una entrega");
+            throw new ResourceDisabledException("Primero debe asignar una entrega");
 
         if (aa.getEstadoTarea() == EstadoTarea.Aprobada)
-            throw new IllegalStateException("Tarea ya aprobada");
+            throw new ResourceDisabledException("Tarea ya aprobada");
 
         aa.setEstadoTarea(cambiarEstadoTareaDto.estado());
         aa.setComentarios(cambiarEstadoTareaDto.mensaje());
@@ -163,10 +163,13 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
 
         ActividadAlumno aa = actividadAlumnoRepository.findById(idActividadAlumno)
                 .orElseThrow(() -> new NotFoundException("Actividad del alumno no encontrada"));
-
+        if (!aa.getActividadGrupo().getReqEntrega()) {
+            throw new ResourceDisabledException("La actividad  no requiere entrega");
+        }
         if (aa.getUrlEntrega() == null || aa.getUrlEntrega().isBlank()) {
             throw new NotFoundException("La actividad aún no tiene entrega");
         }
+
 
         return storageService.loadAsResource(aa.getUrlEntrega());
     }
@@ -174,6 +177,10 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
     @Transactional(readOnly = true)
     public List<ReporteSeguimientoDto>obtenerReporteSeguimientoGrupo(){
         return actividadAlumnoRepository.reporteSeguimientoGeneral();
+    }
+
+    public void eliminarActividadesPorInscripcion(Long idInscripcion) {
+        actividadAlumnoRepository.deleteByInscripcion_IdInscripcion(idInscripcion);
     }
 }
 

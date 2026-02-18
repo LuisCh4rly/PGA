@@ -8,7 +8,7 @@ import org.mapstruct.*;
 public interface ExpedienteMapper {
     Expediente toEntity(ExpedienteResponseDto expedienteResponseDto);
 
-
+    @Mapping(target = "idAlumno" , source = "usuario.idUsuario")
     ExpedienteResponseDto toDto(Expediente expediente);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

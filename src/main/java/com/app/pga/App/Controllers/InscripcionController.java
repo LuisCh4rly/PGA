@@ -1,6 +1,7 @@
 package com.app.pga.App.Controllers;
 
-import com.app.pga.App.Models.Dtos.InscripcionDto;
+import com.app.pga.App.Models.Dtos.RequestDto.InscripcionRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionResponseDto;
 import com.app.pga.App.Services.Implements.InscripcionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -22,8 +23,8 @@ public class InscripcionController {
 
     //---crear---
     @PostMapping
-    public ResponseEntity<InscripcionDto>createInscripcion(@Valid @RequestBody InscripcionDto inscripcionDto, UriComponentsBuilder uriComponentsBuilder){
-        InscripcionDto createInscripcion = inscripcionService.createInscripcion(inscripcionDto);
+    public ResponseEntity<InscripcionResponseDto>createInscripcion(@Valid @RequestBody InscripcionRequestDto inscripcionDto, UriComponentsBuilder uriComponentsBuilder){
+        InscripcionResponseDto createInscripcion = inscripcionService.createInscripcion(inscripcionDto);
         URI location = uriComponentsBuilder.path("/api/inscripcion/{id}")
                 .buildAndExpand(createInscripcion.getClass()).toUri();
         return ResponseEntity.created(location).body(createInscripcion);
@@ -31,30 +32,30 @@ public class InscripcionController {
 
     //---consulta por id---
     @GetMapping("/{id}")
-    public ResponseEntity<InscripcionDto>consultaId(@PathVariable @Min(1) Long id){
+    public ResponseEntity<InscripcionResponseDto>consultaId(@PathVariable @Min(1) Long id){
         return ResponseEntity.ok(inscripcionService.finfById(id));
     }
 
     //---consulta activos---
     @GetMapping("/activos")
-    public ResponseEntity<List<InscripcionDto>> consultaActivos(){
+    public ResponseEntity<List<InscripcionResponseDto>> consultaActivos(){
         return ResponseEntity.ok(inscripcionService.findAllActivos());
     }
 
     //---consulta ---
     @GetMapping
-    public ResponseEntity<List<InscripcionDto>> listarResumen() {
+    public ResponseEntity<List<InscripcionResponseDto>> listarResumen() {
         return ResponseEntity.ok(inscripcionService.findAll());
     }
 
     //---consulta por id---
     @PutMapping("/desactivar/{id}")
-    public ResponseEntity<InscripcionDto>desactivarActivar(@PathVariable @Min(1) Long id){
-        InscripcionDto inscripcionDes = inscripcionService.desactivarActivarInscripcion(id);
+    public ResponseEntity<InscripcionResponseDto>desactivarActivar(@PathVariable @Min(1) Long id){
+        InscripcionResponseDto inscripcionDes = inscripcionService.desactivarActivarInscripcion(id);
         return ResponseEntity.ok(inscripcionDes);
     }
-    @PutMapping("/asignarGrupo")
-    public ResponseEntity<InscripcionDto>asignarGrupo(@RequestBody InscripcionDto dto){
-        return ResponseEntity.ok(inscripcionService.asignarGrupo(dto));
+    @PutMapping("{idInscripcion}/asignarGrupo/{idGrupo}")
+    public ResponseEntity<InscripcionResponseDto>asignarGrupo(@PathVariable @Min(1) Long idInscripcion,@PathVariable @Min(1) Long idGrupo){
+        return ResponseEntity.ok(inscripcionService.asignarGrupo(idInscripcion,idGrupo));
     }
 }

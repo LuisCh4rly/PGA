@@ -14,6 +14,7 @@ import java.time.LocalDate;
  * DTO for {@link com.app.pga.App.Models.Entities.ActividadGrupo}
  */
 public record ActividadGrupoDto(
+
         Long idActividadGrupo,
         @NotBlank
         String titulo,
@@ -24,8 +25,9 @@ public record ActividadGrupoDto(
         LocalDate FechaAsignacion,
         Boolean reqEntrega,
 
-
         Alcance alcance,
-        @NotNull GrupoDto grupo
+        Long  idGrupo,
+        String nombreGrupo
+
 ) implements Serializable {
 }

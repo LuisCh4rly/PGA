@@ -1,6 +1,6 @@
 package com.app.pga.App.Services.Implements;
 
-import com.app.pga.App.Models.Dtos.ActividadBaseDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadBaseResponseDto;
 import com.app.pga.App.Models.Entities.ActividadBase;
 import com.app.pga.App.Models.Entities.Curso;
 import com.app.pga.App.Models.Entities.Curso_ActividadBase;
@@ -24,10 +24,10 @@ class CursoActividadBaseService implements ICursoActividadBaseService {
 
 
     @Override
-    public void asignarActividadABCurso(Curso curso, List<ActividadBaseDto> actividades) {
+    public void asignarActividadABCurso(Curso curso, List<ActividadBaseResponseDto> actividades) {
 
 
-        for (ActividadBaseDto a : actividades) {
+        for (ActividadBaseResponseDto a : actividades) {
             ActividadBase ab = actividadBaseRepository.findById(a.idActividad())
                     .orElseThrow(() -> new RuntimeException("Actividad base no encontrada"));
 
