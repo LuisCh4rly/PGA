@@ -63,10 +63,11 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                 Boolean debeCambiarPassword = claims.get("debeCambiarPassword", Boolean.class);
                 String uri = request.getRequestURI();
                 boolean isChangePasswordEndpoint = uri.equals("/api/auth/cambiar-password");
+                boolean isGetCurrentUserEndPoint = uri.equals("/api/auth/usuario-actual");
 
 
                 // bloqueo de endpoints para forzar cambio de contraseña
-                if (Boolean.TRUE.equals(debeCambiarPassword) && !isChangePasswordEndpoint) {
+                if (Boolean.TRUE.equals(debeCambiarPassword) && !(isChangePasswordEndpoint||isGetCurrentUserEndPoint)) {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     response.getWriter()
                             .write("Debes cambiar tu contraseña");

@@ -86,7 +86,8 @@ public class SecurityConfig {
                 // Definir qué rutas son públicas o privadas
                 .authorizeHttpRequests(auth -> auth
                         //  RUTAS PÚBLICAS
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/login",
+                                        "/api/auth/register").permitAll()
                         .requestMatchers("/api/usuario/**").permitAll()
                         .requestMatchers("/api/cuentas/**").permitAll()
                         .requestMatchers("/api/actividades-alumnos/**").permitAll()
