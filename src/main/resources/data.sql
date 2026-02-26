@@ -35,7 +35,7 @@ INSERT INTO usuarios (nombre, apellido_paterno, apellido_materno, created_At, te
 --tabla de cuentas
 INSERT INTO cuentas (password, role_id, usuario_id, email) VALUES
 -- ADMIN (solo uno)
-('$2a$10$7sZqk2m4P1tNf8FJr6bZ6e9CqR8cGkP6E1G5Zc8hN9v1mFQ2PzKSe', 1, 1, 'admin@pga.com'),
+('$2a$12$kBtOBRVsElpkT1yoO9//XuFgA9evlQiu/KF0mG2dgXC6O0n9S89gW', 1, 1, 'admin@pga.com'),
 
 -- DOCENTES (usuarios 2,3,4)
 ('$2a$10$X8n8KxZP8r7MZ1QF9z9xUu0x0YvR7Kp8Q0JzM5kQnYQk2sF9D2L7m', 2, 2, 'docente1@pga.com'),

@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody AuthRegisterDto request) {
+    public ResponseEntity<Map <String,Object>> register(@Valid @RequestBody AuthRegisterDto request) {
         var user = cuentaService.register(request);
         return ResponseEntity.ok(Map.of("message","Usuario registrado","Email", user.email()));
     }

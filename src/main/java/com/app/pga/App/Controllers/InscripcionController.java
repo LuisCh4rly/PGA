@@ -2,9 +2,12 @@ package com.app.pga.App.Controllers;
 
 import com.app.pga.App.Models.Dtos.RequestDto.InscripcionRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionResponseDto;
+import com.app.pga.App.Models.Filtros.InscripcionFiltro;
 import com.app.pga.App.Services.Implements.InscripcionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +47,8 @@ public class InscripcionController {
 
     //---consulta ---
     @GetMapping
-    public ResponseEntity<List<InscripcionResponseDto>> listarResumen() {
-        return ResponseEntity.ok(inscripcionService.findAll());
+    public ResponseEntity<Page<InscripcionResponseDto>> listar(InscripcionFiltro filtro, Pageable pageable) {
+        return ResponseEntity.ok(inscripcionService.findAll(filtro, pageable));
     }
 
     //---consulta por id---
