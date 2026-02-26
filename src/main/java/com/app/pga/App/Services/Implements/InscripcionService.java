@@ -9,12 +9,16 @@ import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Inscripcion;
 import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Enum.Estado;
+import com.app.pga.App.Models.Filtros.InscripcionFiltro;
 import com.app.pga.App.Models.Mappers.InscripcionMapper;
+import com.app.pga.App.Models.Specification.InscripcionSpecification;
 import com.app.pga.App.Repositories.IGrupoRepository;
 import com.app.pga.App.Repositories.IInscripcionRepository;
 import com.app.pga.App.Repositories.IUsuarioRepository;
 import com.app.pga.App.Services.Interfaces.IActividadAlumnoService;
 import com.app.pga.App.Services.Interfaces.IInscripcionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,11 +78,10 @@ public class InscripcionService implements IInscripcionService {
 
     //consulta general
     @Transactional(readOnly = true)
-    public List<InscripcionResponseDto>findAll(){
-        return inscripcionRepository.findAll()
-                .stream()
-                .map(inscripcion ->inscripcionMapper.toDto(inscripcion))
-                .collect(Collectors.toList());
+    public Page<InscripcionResponseDto> findAll(InscripcionFiltro filtro, Pageable pageable){
+        return inscripcionRepository.findAll(InscripcionSpecification.filtrar(filtro), pageable)
+                .map(inscripcion ->inscripcionMapper.toDto(inscripcion));
+
     }
 
 

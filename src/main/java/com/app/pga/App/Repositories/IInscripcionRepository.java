@@ -3,13 +3,19 @@ package com.app.pga.App.Repositories;
 import com.app.pga.App.Models.Entities.Inscripcion;
 import com.app.pga.App.Models.Enum.Estado;
 import com.app.pga.App.Models.Enum.tipoInscripcion;
+import com.app.pga.App.Models.Mappers.CursoMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+
 
 import java.util.List;
 import java.util.Optional;
-
-public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long> {
+//jpaSpecification Executor para los filtros dinamicos
+public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>, JpaSpecificationExecutor<Inscripcion> {
     Optional<Inscripcion> findByUsuario_IdUsuarioAndEstadoTrue(Long Idusuario);
 
     @Query("""
@@ -33,4 +39,6 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
     Optional<Inscripcion>findByIdInscripcionAndGrupo_IdGrupoAndEstadoTrue(Long idInscripcion, Long idGrupo);
 
    Boolean existsByGrupo_IdGrupoAndEstadoTrue(Long idGrupo);
+
+    Page <Inscripcion> findAll(Specification<Inscripcion> filtrar, Pageable pageable);
 }
