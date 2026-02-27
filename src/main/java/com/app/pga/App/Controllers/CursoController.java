@@ -19,7 +19,7 @@ import java.util.List;
 class CursoController {
     private final ICursoService cursoService;
     @PostMapping
-    public ResponseEntity<CursoResponseDto> crearActividadBase (@RequestBody @Valid CursoRequestDto dto){
+    public ResponseEntity<CursoResponseDto> crearCurso (@RequestBody @Valid CursoRequestDto dto){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(cursoService.crearCurso(dto));

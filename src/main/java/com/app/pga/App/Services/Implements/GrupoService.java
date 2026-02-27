@@ -9,12 +9,17 @@ import com.app.pga.App.Models.Entities.Curso;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Enum.Estado;
+import com.app.pga.App.Models.Filtros.GrupoFiltro;
 import com.app.pga.App.Models.Mappers.GrupoMapper;
+import com.app.pga.App.Models.Specification.GrupoSpecification;
 import com.app.pga.App.Repositories.ICursoRepository;
 import com.app.pga.App.Repositories.IGrupoRepository;
 import com.app.pga.App.Repositories.IUsuarioRepository;
 import com.app.pga.App.Services.Interfaces.IGrupoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,5 +136,13 @@ class GrupoService implements IGrupoService {
 
         grupo.setUsuario(usuario);
         return grupoMapper.toDto(grupoRepository.save(grupo));
+    }
+
+    //lista con paginacion y uso de api criteria
+    public Page<GrupoResponseDto> findAll(GrupoFiltro filtro, Pageable pageable){
+
+        Specification<Grupo> spec = GrupoSpecification.filtrarGrupos(filtro);
+        Page<Grupo> grupos = grupoRepository.findAll(spec, pageable);
+        return grupos.map(grupoMapper::toDto);
     }
 }

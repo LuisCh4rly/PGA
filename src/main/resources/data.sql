@@ -32,7 +32,7 @@ INSERT INTO usuarios (nombre, apellido_paterno, apellido_materno, created_At, te
                                                                                                                   ('PATRICIA', 'VEGA', 'CARRILLO', current_timestamp, 5599900011, 'AV. OBSERVATORIO 380', true),
                                                                                                                   ('EDUARDO', 'CORTES', 'MIRANDA', current_timestamp, 5510101010, 'CALLE TOLUCA 90', true);
 
---tabla de cuentas
+--tabla de cuentasagbgvhj
 INSERT INTO cuentas (password, role_id, usuario_id, email) VALUES
 -- ADMIN (solo uno)
 ('$2a$12$kBtOBRVsElpkT1yoO9//XuFgA9evlQiu/KF0mG2dgXC6O0n9S89gW', 1, 1, 'admin@pga.com'),
