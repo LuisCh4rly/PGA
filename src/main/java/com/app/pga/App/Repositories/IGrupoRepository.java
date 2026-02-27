@@ -4,13 +4,14 @@ import com.app.pga.App.Models.Entities.Curso;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Enum.Estado;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface IGrupoRepository extends JpaRepository<Grupo, Long> {
+public interface IGrupoRepository extends JpaRepository<Grupo, Long>, JpaSpecificationExecutor {
     boolean existsByNombreEqualsIgnoreCase(String nombre);
     List<Grupo> findByCursoIdCurso(Long idCurso);
 
