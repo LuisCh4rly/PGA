@@ -19,6 +19,7 @@ public interface InscripcionMapper {
     )
     @Mapping(target = "idGrupo", source = "grupo.idGrupo")
     @Mapping(target = "nombreGrupo", source = "grupo.nombre")
+    @Mapping(target = "idUsuario", source = "usuario.idUsuario")
     InscripcionResponseDto toDto(Inscripcion inscripcion);
 
 
