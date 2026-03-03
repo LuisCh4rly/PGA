@@ -101,6 +101,10 @@ public class InscripcionService implements IInscripcionService {
             inscripcion.setFechaBaja(LocalDate.now());
             inscripcion.setFechaInscripcion(null);
         }else{
+            inscripcionRepository.findByUsuario_IdUsuarioAndEstadoTrue(inscripcion.getUsuario().getIdUsuario())
+                    .ifPresent(InscripcionDto->{
+                throw new DuplicateResourceException("El alumno tiene una inscripción activa");
+            });
             inscripcion.setFechaBaja(null);
             inscripcion.setFechaInscripcion(LocalDate.now());
         }

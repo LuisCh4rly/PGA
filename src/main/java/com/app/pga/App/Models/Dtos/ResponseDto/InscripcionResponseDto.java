@@ -34,6 +34,7 @@ public record InscripcionResponseDto(
         tipoInscripcion tipo,
         @NotNull
         String alumno,
+        Long idUsuario,
         Long idGrupo,
         String nombreGrupo
 ) implements Serializable {
