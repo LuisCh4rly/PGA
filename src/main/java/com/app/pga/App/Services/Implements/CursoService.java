@@ -13,13 +13,18 @@ import com.app.pga.App.Models.Entities.ActividadBase;
 import com.app.pga.App.Models.Entities.Curso;
 import com.app.pga.App.Models.Entities.Curso_ActividadBase;
 import com.app.pga.App.Models.Enum.Estado;
+import com.app.pga.App.Models.Filtros.CursoFiltro;
 import com.app.pga.App.Models.Mappers.CursoMapper;
+import com.app.pga.App.Models.Specification.CursoSpecification;
 import com.app.pga.App.Repositories.IActividadBaseRepository;
 import com.app.pga.App.Repositories.ICursoRepository;
 import com.app.pga.App.Repositories.ICurso_ActividadBaseRepository;
 import com.app.pga.App.Repositories.IGrupoRepository;
 import com.app.pga.App.Services.Interfaces.ICursoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,7 +117,7 @@ class CursoService implements ICursoService {
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
         if (curso.getActivo()) {
             if (grupoRepository.existsByEstadoAndCurso_IdCurso(Estado.HABILITADO, idCurso)){
-                throw new ResourceDisabledException("Existen grupos activos aun");
+                throw new ResourceDisabledException("Existen grupos activos");
             }
             curso.setActivo(false);
             curso.setFechaBaja(LocalDate.now());
@@ -155,9 +160,15 @@ class CursoService implements ICursoService {
         Curso_ActividadBase cab = cursoActividadBaseRepository.findByCurso_IdCursoAndActividadBase_IdActividad(idCurso, idActividad)
                 .orElseThrow(()->new NotFoundException("La actividad no está asignada al curso"));
         cursoActividadBaseRepository.delete(cab);
+    }
 
 
+    //lista con paginacion y uso de api criteria
+    public Page<CursoResponseDto> findAll(CursoFiltro filtro, Pageable pageable){
 
+        Specification<Curso> spec = CursoSpecification.filtrarCursos(filtro);
+        Page<Curso> cursos = cursoRepository.findAll(spec, pageable);
+        return cursos.map(cursoMapper::toDtoSimple);
     }
 
 }
