@@ -4,9 +4,13 @@ package com.app.pga.App.Controllers;
 import com.app.pga.App.Models.Dtos.RequestDto.AgregarActividadesCursoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.CursoRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.CursoResponseDto;
+import com.app.pga.App.Models.Filtros.CursoFiltro;
 import com.app.pga.App.Services.Interfaces.ICursoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,6 +70,13 @@ class CursoController {
         return ResponseEntity
                 .noContent()
                 .build();
+    }
+
+    //consulta con paginacion
+    @GetMapping("/listPage")
+    public ResponseEntity<Page<CursoResponseDto>> consultaGeneralPage(@ModelAttribute CursoFiltro filtro, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(cursoService.findAll(filtro, pageable));
     }
 
 
