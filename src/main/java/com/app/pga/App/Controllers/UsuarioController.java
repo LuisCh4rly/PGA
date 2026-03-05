@@ -2,9 +2,12 @@ package com.app.pga.App.Controllers;
 
 import com.app.pga.App.Models.Dtos.RequestDto.UsuarioRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.UsuarioResponseDto;
+import com.app.pga.App.Models.Filtros.UsuarioFiltro;
 import com.app.pga.App.Services.Implements.UsuarioService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -57,9 +60,9 @@ public class UsuarioController {
 
     //----Consulta general----
     @GetMapping
-    public ResponseEntity<List<UsuarioResponseDto>>Consulta(){
+    public ResponseEntity<Page<UsuarioResponseDto>>Consulta(UsuarioFiltro filtro, Pageable pageable){
 
-        return ResponseEntity.ok(usuarioService.findAll());
+        return ResponseEntity.ok(usuarioService.findAll(filtro, pageable));
     }
 
 
@@ -79,8 +82,8 @@ public class UsuarioController {
 
     //-------consulta DOCENTES
     @GetMapping("/docentes")
-    public ResponseEntity<List<UsuarioResponseDto>>consultaDocentes(){
-        return ResponseEntity.ok(usuarioService.findAllDocentes());
+    public ResponseEntity<Page<UsuarioResponseDto>>consultaDocentes(UsuarioFiltro filtro, Pageable pageable){
+        return ResponseEntity.ok(usuarioService.findAllDocentes(filtro, pageable));
     }
 
     //-----------ALUMNOS--------
@@ -93,8 +96,8 @@ public class UsuarioController {
 
     //-------consulta ALUMNOS
     @GetMapping("/alumnos")
-    public ResponseEntity<List<UsuarioResponseDto>>consultaAlumnos(){
-        return ResponseEntity.ok(usuarioService.findAllAlumnos());
+    public ResponseEntity<Page<UsuarioResponseDto>>consultaAlumnos(UsuarioFiltro filtro, Pageable pageable){
+        return ResponseEntity.ok(usuarioService.findAllAlumnos(filtro, pageable));
     }
 
 }

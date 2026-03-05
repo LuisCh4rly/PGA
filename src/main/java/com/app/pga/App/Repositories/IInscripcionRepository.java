@@ -41,4 +41,13 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
    Boolean existsByGrupo_IdGrupoAndEstadoTrue(Long idGrupo);
 
     Page <Inscripcion> findAll(Specification<Inscripcion> filtrar, Pageable pageable);
+
+    @Query("""
+    SELECT COUNT(i) > 0
+    FROM Inscripcion i
+    WHERE i.usuario.idUsuario = :idUsuario
+      AND i.usuario.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.ALUMNO
+      AND i.estado = true
+""")
+    Boolean alumnosInscripcionesActivas (Long idUsuario);
 }
