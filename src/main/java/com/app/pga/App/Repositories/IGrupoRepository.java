@@ -26,4 +26,13 @@ public interface IGrupoRepository extends JpaRepository<Grupo, Long>, JpaSpecifi
 
     List<Grupo> findByEstado(Estado estado);
     Boolean existsByEstadoAndCurso_IdCurso(Estado estado, Long id);
+
+    @Query("""
+    SELECT COUNT(g) > 0
+    FROM Grupo g
+    WHERE g.usuario.idUsuario = :idUsuario
+      AND g.usuario.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.DOCENTE
+      AND g.estado = com.app.pga.App.Models.Enum.Estado.HABILITADO
+""")
+    Boolean docenteGruposActivos (Long idUsuario);
 }

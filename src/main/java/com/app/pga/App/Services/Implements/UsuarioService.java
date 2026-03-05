@@ -1,12 +1,19 @@
 package com.app.pga.App.Services.Implements;
 
 import com.app.pga.App.Exception.NotFoundException;
+import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.RequestDto.UsuarioRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.UsuarioResponseDto;
 import com.app.pga.App.Models.Entities.Usuario;
+import com.app.pga.App.Models.Filtros.UsuarioFiltro;
 import com.app.pga.App.Models.Mappers.UsuarioMapper;
+import com.app.pga.App.Models.Specification.UsuarioSpecification;
+import com.app.pga.App.Repositories.IGrupoRepository;
+import com.app.pga.App.Repositories.IInscripcionRepository;
 import com.app.pga.App.Repositories.IUsuarioRepository;
 import com.app.pga.App.Services.Interfaces.IUsuarioService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +29,14 @@ public class UsuarioService implements IUsuarioService {
 
     private final UsuarioMapper usuarioMapper;
     private final IUsuarioRepository usuarioRepository;
+    private final IGrupoRepository iGrupoRepository;
+    private final IInscripcionRepository inscripcionRepository;
 
-    public UsuarioService(UsuarioMapper usuarioMapper, IUsuarioRepository usuarioRepository){
+    public UsuarioService(UsuarioMapper usuarioMapper, IUsuarioRepository usuarioRepository, IGrupoRepository iGrupoRepository , IInscripcionRepository inscripcionRepository){
         this.usuarioMapper=usuarioMapper;
         this.usuarioRepository=usuarioRepository;
+        this.iGrupoRepository = iGrupoRepository;
+        this.inscripcionRepository = inscripcionRepository;
     }
 
 
@@ -75,10 +86,9 @@ public class UsuarioService implements IUsuarioService {
 
     //Consulta general
     @Transactional(readOnly = true)
-    public List<UsuarioResponseDto> findAll(){
-        return usuarioRepository.findAll()
-                .stream().map(usuario -> usuarioMapper.toDto(usuario))
-                .collect(Collectors.toList());
+    public Page<UsuarioResponseDto> findAll(UsuarioFiltro filtro , Pageable pageable){
+        return usuarioRepository.findAll(UsuarioSpecification.filtrar(filtro),pageable)
+                .map(usuario -> usuarioMapper.toDto(usuario));
     }
 
    //Consulta por id
@@ -92,6 +102,12 @@ public class UsuarioService implements IUsuarioService {
     public UsuarioResponseDto desactivarUsuario (Long idUsuario){
         Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(()-> new NotFoundException("Registro no encontrado: "+ idUsuario));
         if (usuario.getActivo()==true){
+            if (iGrupoRepository.docenteGruposActivos(usuario.getIdUsuario())){
+                throw  new ResourceDisabledException("El Docente cuenta con grupos activos");
+            }
+            if (inscripcionRepository.alumnosInscripcionesActivas(usuario.getIdUsuario())){
+                throw  new ResourceDisabledException("El alumno cuenta con inscripciones activas");
+            }
             usuario.setFechaBaja(LocalDate.now());
             usuario.setFechaAlta(null);
         } else{
@@ -116,11 +132,9 @@ public class UsuarioService implements IUsuarioService {
 
     //consulta general docentes
     @Transactional(readOnly = true)
-    public List<UsuarioResponseDto>findAllDocentes(){
-        return usuarioRepository.findDocentes()
-                .stream()
-                .map(usuario -> usuarioMapper.toDto(usuario))
-                .collect((Collectors.toList()));
+    public Page<UsuarioResponseDto> findAllDocentes(UsuarioFiltro filtro , Pageable pageable){
+        return usuarioRepository.findDocentes(UsuarioSpecification.filtrar(filtro) , pageable)
+                .map(usuario -> usuarioMapper.toDto(usuario));
     }
 
     //--------ALUMNOS----------------------------------------
@@ -135,10 +149,8 @@ public class UsuarioService implements IUsuarioService {
 
     //consulta general alumnos
     @Transactional(readOnly = true)
-    public List<UsuarioResponseDto>findAllAlumnos(){
-        return usuarioRepository.findAlumnos()
-                .stream()
-                .map(usuario -> usuarioMapper.toDto(usuario))
-                .collect((Collectors.toList()));
+    public Page<UsuarioResponseDto>findAllAlumnos(UsuarioFiltro filtro , Pageable pageable){
+        return usuarioRepository.findAlumnos( UsuarioSpecification.filtrar(filtro) , pageable)
+                .map(usuario -> usuarioMapper.toDto(usuario));
     }
 }

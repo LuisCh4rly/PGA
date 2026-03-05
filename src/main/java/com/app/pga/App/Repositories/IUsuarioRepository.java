@@ -1,13 +1,18 @@
 package com.app.pga.App.Repositories;
 
 import com.app.pga.App.Models.Entities.Usuario;
+import com.app.pga.App.Models.Specification.UsuarioSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface IUsuarioRepository extends JpaRepository<Usuario, Long> {
+public interface IUsuarioRepository extends JpaRepository<Usuario, Long>, JpaSpecificationExecutor<Usuario> {
 
     Optional<Usuario> findByNombreAndApellidoPaternoAndApellidoMaterno(String Nombre, String ApellidoPaterno, String ApellidoMaterno);
     List<Usuario> findByActivoTrue();
@@ -29,7 +34,7 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Long> {
     SELECT u FROM Usuario u
     WHERE u.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.DOCENTE
 """)
-    List<Usuario> findDocentes();
+    Page<Usuario> findDocentes( Specification<Usuario> filtrar, Pageable pageable);
 
     //--busqueda particular de un docente
     @Query("""
@@ -54,7 +59,7 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Long> {
     SELECT u FROM Usuario u
     WHERE u.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.ALUMNO
 """)
-    List<Usuario> findAlumnos();
+    Page<Usuario> findAlumnos(Specification<Usuario> filtrar, Pageable pageable);
 
     //BUSQUEDA PARTICULAR DE UN ALUMNO
     @Query("""
@@ -64,5 +69,5 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Long> {
 """)
     Optional<Usuario> findAlumnoById(Long id);
 
-
+    Page <Usuario> findAll ( Specification <Usuario> filtar , Pageable pageable);
 }
