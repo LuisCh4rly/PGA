@@ -27,7 +27,7 @@ public class Documento_Expediente {
     @Enumerated(EnumType.STRING)
     private EstadoDocumento estadoDocumento;
     private LocalDate fechaRevision;
-    private String observaciones;
+    private String observacion;
     private LocalDate fechaCarga;
 
     @ManyToOne(fetch = FetchType.LAZY)

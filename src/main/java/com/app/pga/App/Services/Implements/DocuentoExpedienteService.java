@@ -60,7 +60,7 @@ class DocuentoExpedienteService implements IDocumentoExpedienteService {
                 .orElseThrow(() -> new NotFoundException("Documento no encontrado"));
 
         doc.setEstadoDocumento(dto.estadoDocumento());
-        doc.setObservaciones(dto.observaciones());
+        doc.setObservacion(dto.observacion());
         doc.setFechaRevision(LocalDate.now());
         recalcularEstadoExpediente(doc.getExpediente());
     }

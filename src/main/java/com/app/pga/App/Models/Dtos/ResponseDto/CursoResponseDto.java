@@ -26,6 +26,10 @@ public record CursoResponseDto(
 
         Boolean activo,
 
+        @JsonFormat (pattern = "dd/MM/yyyy")
+        LocalDate created_At
+        ,
+
         List<ActividadBaseResponseDto> actividades
 
 ) implements Serializable {
