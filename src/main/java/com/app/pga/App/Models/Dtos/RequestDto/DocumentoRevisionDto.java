@@ -11,7 +11,7 @@ import java.io.Serializable;
 public record DocumentoRevisionDto(
         @NotNull(message = "Campo Obligatorio")
         EstadoDocumento estadoDocumento,
-        String observaciones
+        String observacion
 
 ) implements Serializable {
 }

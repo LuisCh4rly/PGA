@@ -9,12 +9,17 @@ import com.app.pga.App.Models.Entities.Documento;
 import com.app.pga.App.Models.Entities.Documento_Expediente;
 import com.app.pga.App.Models.Entities.Expediente;
 import com.app.pga.App.Models.Enum.EstadoDocumento;
+import com.app.pga.App.Models.Filtros.DocumentoFiltro;
 import com.app.pga.App.Models.Mappers.DocumentoMapper;
+import com.app.pga.App.Models.Specification.DocumentoSpecification;
 import com.app.pga.App.Repositories.IDocumentoRepository;
 import com.app.pga.App.Repositories.IDocumento_ExpedienteRepository;
 import com.app.pga.App.Repositories.IExpedienteRepository;
 import com.app.pga.App.Services.Interfaces.IDocumentoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,6 +100,11 @@ class DocumentoService implements IDocumentoService {
         }
     }
 
-
+    //lista con paginacion y uso de api criteria
+    public Page<DocumentoResponseDto> findAll(DocumentoFiltro filtro, Pageable pageable){
+        Specification<Documento> spec = DocumentoSpecification.filtrarDocumentos(filtro);
+        Page<Documento> documentos = documentoRepository.findAll(spec, pageable);
+        return documentos.map(documentoMapper::toDto);
+    }
 
 }

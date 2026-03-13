@@ -25,6 +25,7 @@ public class Curso {
     private LocalDate fechaAlta;
     private LocalDate fechaBaja;
     private Boolean activo;
+    private LocalDate created_At;
 
     @OneToMany(
             mappedBy = "curso",

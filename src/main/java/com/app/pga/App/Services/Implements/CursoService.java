@@ -52,6 +52,7 @@ class CursoService implements ICursoService {
         Curso cursoNuevo = cursoMapper.toEntity(cursoRequestDto);
         cursoNuevo.setActivo(true);
         cursoNuevo.setFechaAlta(LocalDate.now());
+        cursoNuevo.setCreated_At(LocalDate.now());
         cursoNuevo.setActividades(new ArrayList<Curso_ActividadBase>());
 
         if (!cursoRequestDto.idActividadesBase().isEmpty()) {
@@ -121,9 +122,11 @@ class CursoService implements ICursoService {
             }
             curso.setActivo(false);
             curso.setFechaBaja(LocalDate.now());
+            curso.setFechaAlta(null);
         } else {
             curso.setActivo(true);
             curso.setFechaAlta(LocalDate.now());
+            curso.setFechaBaja(null);
         }
         return cursoMapper.toDtoSimple(cursoRepository.save(curso));
     }
