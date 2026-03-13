@@ -99,7 +99,6 @@ public class InscripcionService implements IInscripcionService {
                 .orElseThrow(()->new NotFoundException("Registro no encontrado: "+idInscripcion));
         if(inscripcion.getEstado()==true){
             inscripcion.setFechaBaja(LocalDate.now());
-            inscripcion.setFechaInscripcion(null);
         }else{
             inscripcionRepository.findByUsuario_IdUsuarioAndEstadoTrue(inscripcion.getUsuario().getIdUsuario())
                     .ifPresent(InscripcionDto->{
@@ -147,6 +146,11 @@ public class InscripcionService implements IInscripcionService {
         actividadAlumnoService.asignarActividadesGrupalesPorInscripcion(inscripcion.getIdInscripcion());
         return inscripcionMapper.toDto(inscripcionRepository.save(inscripcion));
         }
+
+
+    public List<Inscripcion> obtenerPorAlumno(Long idAlumno){
+        return inscripcionRepository.obtenerInscripcionesAlumno(idAlumno);
+    }
 
     }
 

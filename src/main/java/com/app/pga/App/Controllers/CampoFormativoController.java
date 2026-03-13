@@ -2,9 +2,12 @@ package com.app.pga.App.Controllers;
 
 import com.app.pga.App.Models.Dtos.RequestDto.CampoRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.CampoResponseDto;
+import com.app.pga.App.Models.Filtros.CampoFiltro;
 import com.app.pga.App.Services.Interfaces.ICampoFormativoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,10 +36,10 @@ public class CampoFormativoController {
                 .body(campoFormativoService.obtenerCampo(id));
     }
     @GetMapping()
-    public ResponseEntity< List <CampoResponseDto > > obtenerCampos (){
+    public ResponseEntity<Page<CampoResponseDto >> obtenerCampos (CampoFiltro filtro, Pageable pageable){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(campoFormativoService.obtenerCampos());
+                .body(campoFormativoService.obtenerCampos(filtro, pageable));
     }
     @GetMapping("/activos")
     public ResponseEntity< List <CampoResponseDto > > obtenerCamposActivos (){

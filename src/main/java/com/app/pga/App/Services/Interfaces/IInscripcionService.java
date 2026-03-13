@@ -2,6 +2,7 @@ package com.app.pga.App.Services.Interfaces;
 
 import com.app.pga.App.Models.Dtos.RequestDto.InscripcionRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionResponseDto;
+import com.app.pga.App.Models.Entities.Inscripcion;
 import com.app.pga.App.Models.Filtros.InscripcionFiltro;
 import com.app.pga.App.Models.Specification.InscripcionSpecification;
 import org.springframework.data.domain.Page;
@@ -15,4 +16,5 @@ public interface IInscripcionService {
     Page<InscripcionResponseDto> findAll(InscripcionFiltro filtro, Pageable pageable);
     InscripcionResponseDto finfById(Long idInscripcion);
     InscripcionResponseDto desactivarActivarInscripcion(Long idInscripcion);
+    List<Inscripcion> obtenerPorAlumno(Long idAlumno);
 }

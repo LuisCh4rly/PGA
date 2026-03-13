@@ -9,6 +9,7 @@ public interface Documento_ExpedienteMapper {
     Documento_Expediente toEntity(DocumentoExpedienteResponseDto documentoExpedienteResponseDto);
 
     @Mapping(target = "tipoDocumento", source = "documento.tipo")
+
     DocumentoExpedienteResponseDto toDto(Documento_Expediente documento_Expediente);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
