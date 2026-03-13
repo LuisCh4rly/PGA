@@ -50,4 +50,17 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
       AND i.estado = true
 """)
     Boolean alumnosInscripcionesActivas (Long idUsuario);
+
+
+    @Query("""
+    SELECT i
+    FROM Inscripcion i
+    LEFT JOIN FETCH i.grupo g
+    LEFT JOIN FETCH g.curso C
+    WHERE i.usuario.idUsuario = :idAlumno
+    ORDER BY i.fechaInscripcion DESC, i.estado DESC
+    """)
+    List<Inscripcion> obtenerInscripcionesAlumno(Long idAlumno);
+
+
 }

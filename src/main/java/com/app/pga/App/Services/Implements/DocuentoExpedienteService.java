@@ -34,6 +34,7 @@ class DocuentoExpedienteService implements IDocumentoExpedienteService {
 
     @Override
     public DocumentoExpedienteResponseDto subirDocumento(Long idAlumno, String tipoDocumento, MultipartFile archivo) {
+
         Documento tipo = documentoRepository.findByTipo (tipoDocumento)
                 .orElseThrow(() -> new NotFoundException("Tipo de documento no válido"));
         Expediente expediente = expedienteService.obtenerPorAlumno(idAlumno);
