@@ -3,7 +3,9 @@ package com.app.pga.Auth.Service;
 import com.app.pga.App.Exception.BadRequestException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Models.Dtos.RequestDto.UsuarioRequestDto;
+import com.app.pga.App.Models.Entities.Expediente;
 import com.app.pga.App.Models.Entities.Usuario;
+import com.app.pga.App.Services.Implements.ExpedienteService;
 import com.app.pga.App.Services.Implements.UsuarioService;
 import com.app.pga.Auth.JWT.JWTService;
 import com.app.pga.Auth.Models.Dtos.Request.AuthRegisterDto;
@@ -35,6 +37,7 @@ public class CuentaService implements ICuentaService {
     private final JWTService jwtService;
     private final PasswordEncoder encoder;
     private final EmailService emailService;
+    private final ExpedienteService expedienteService;
 
 
     @Override
@@ -49,6 +52,7 @@ public class CuentaService implements ICuentaService {
         UsuarioRequestDto usuarioDto = new UsuarioRequestDto(dto.nombre(), dto.apellidoPaterno(), dto.apellidoMaterno(), dto.telefono(), dto.direccion());
         Usuario usuarioNuevo = usuarioService.createUsuario(usuarioDto);
 
+
         String passwordTemporal = generate(8);
 
         Cuenta cuenta = Cuenta.builder()
@@ -59,6 +63,10 @@ public class CuentaService implements ICuentaService {
                 .debeCambiarPassword(true)
                 .build();
         cuentaRepository.save(cuenta);
+        if(cuenta.getRole().getName().equals(ERole.ALUMNO)){
+            Expediente expediente = expedienteService.obtenerPorAlumno(cuenta.getUsuario().getIdUsuario());
+            expedienteService.sincronizarExpediente(expediente);
+        }
         emailService.sendEmail(cuenta.getEmail(), "Alta Usuario", passwordTemporal);
 
         return new CuentaResponseDto(

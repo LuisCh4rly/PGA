@@ -4,6 +4,7 @@ import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.RequestDto.UsuarioRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.UsuarioResponseDto;
+import com.app.pga.App.Models.Entities.Expediente;
 import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Filtros.UsuarioFiltro;
 import com.app.pga.App.Models.Mappers.UsuarioMapper;
@@ -12,6 +13,7 @@ import com.app.pga.App.Repositories.IGrupoRepository;
 import com.app.pga.App.Repositories.IInscripcionRepository;
 import com.app.pga.App.Repositories.IUsuarioRepository;
 import com.app.pga.App.Services.Interfaces.IUsuarioService;
+import com.app.pga.Auth.Models.Enum.ERole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,12 +33,14 @@ public class UsuarioService implements IUsuarioService {
     private final IUsuarioRepository usuarioRepository;
     private final IGrupoRepository iGrupoRepository;
     private final IInscripcionRepository inscripcionRepository;
+    private final ExpedienteService expedienteService;
 
-    public UsuarioService(UsuarioMapper usuarioMapper, IUsuarioRepository usuarioRepository, IGrupoRepository iGrupoRepository , IInscripcionRepository inscripcionRepository){
+    public UsuarioService(UsuarioMapper usuarioMapper, IUsuarioRepository usuarioRepository, IGrupoRepository iGrupoRepository , IInscripcionRepository inscripcionRepository, ExpedienteService expedienteService){
         this.usuarioMapper=usuarioMapper;
         this.usuarioRepository=usuarioRepository;
         this.iGrupoRepository = iGrupoRepository;
         this.inscripcionRepository = inscripcionRepository;
+        this.expedienteService = expedienteService;
     }
 
 
@@ -46,6 +50,7 @@ public class UsuarioService implements IUsuarioService {
         usuarioRepository.findByNombreAndApellidoPaternoAndApellidoMaterno(usuarioRequesDto.nombre(), usuarioRequesDto.apellidoPaterno(), usuarioRequesDto.apellidoMaterno()).ifPresent(UsuarioDto -> {
             throw new IllegalArgumentException("El registro ya existe");
         });
+
 
         Usuario usuarioEntity = usuarioMapper.toEntity(usuarioRequesDto);
         if (usuarioEntity.getCreated_At()==null){
@@ -111,6 +116,10 @@ public class UsuarioService implements IUsuarioService {
             usuario.setFechaBaja(LocalDate.now());
             usuario.setFechaAlta(null);
         } else{
+            if(usuario.getCuenta().getRole().getName().equals(ERole.ALUMNO)){
+                Expediente expediente = expedienteService.obtenerPorAlumno(usuario.getIdUsuario());
+                expedienteService.sincronizarExpediente(expediente);
+            }
           usuario.setFechaAlta(LocalDate.now());
           usuario.setFechaBaja(null);
         }
