@@ -122,7 +122,6 @@ public class ExpedienteService implements IExpedienteService {
             exp.setEstado(EstadoExpediente.APROBADO);
         }else {
             exp.setEstado(EstadoExpediente.NO_APROBADO);
-            exp.setObservaciones("");
         }
     }
 
