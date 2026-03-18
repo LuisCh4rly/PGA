@@ -66,8 +66,10 @@ class DocuentoExpedienteService implements IDocumentoExpedienteService {
     }
 
     public Resource verDocumento(Long idDocumentoExpediente){
+
         Documento_Expediente doc = documento_expedienteRepository.findById(idDocumentoExpediente)
                 .orElseThrow(()-> new NotFoundException("Archivo no encontrado"));
+
         if(doc.getUrlDocumento()== null || doc.getUrlDocumento().isBlank()){
             throw new NotFoundException("No se ha subido el documento");
         }

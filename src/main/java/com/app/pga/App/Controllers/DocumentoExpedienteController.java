@@ -34,7 +34,7 @@ class DocumentoExpedienteController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "inline; filename=\"" + doc.getFilename() + "\"")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM )
                 .body(new InputStreamResource(doc));
     }
 
