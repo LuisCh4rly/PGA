@@ -40,8 +40,9 @@ public class ExpedienteService implements IExpedienteService {
 
     @Override
     public ExpedienteResponseDto verExpediente(Long idAlumno) {
-        Expediente exp = obtenerPorAlumno(idAlumno);
 
+        Expediente exp = obtenerPorAlumno(idAlumno);
+        recalcularEstadoExpediente(exp);
         List<DocumentoExpedienteResponseDto> docs =
                 documento_expedienteRepository.findByExpediente(exp)
                         .stream()
