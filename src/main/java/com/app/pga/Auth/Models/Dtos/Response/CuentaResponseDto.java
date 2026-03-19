@@ -3,7 +3,8 @@ package com.app.pga.Auth.Models.Dtos.Response;
 import com.app.pga.Auth.Models.Entities.Role;
 
 public record CuentaResponseDto(
-
+        Long idCuenta,
+        Long idUsuario,
         String nombre,
         String apellidoPaterno,
         String apellidoMaterno,

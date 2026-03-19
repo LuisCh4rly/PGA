@@ -70,6 +70,8 @@ public class CuentaService implements ICuentaService {
         emailService.sendEmail(cuenta.getEmail(), "Alta Usuario", passwordTemporal);
 
         return new CuentaResponseDto(
+                cuenta.getIdCuenta(),
+                cuenta.getUsuario().getIdUsuario(),
                 cuenta.getUsuario().getNombre(),
                 cuenta.getUsuario().getApellidoPaterno(),
                 cuenta.getUsuario().getApellidoMaterno(),
@@ -85,6 +87,8 @@ public class CuentaService implements ICuentaService {
 
         return cuentas.stream()
                 .map(c -> new CuentaResponseDto(
+                        c.getIdCuenta(),
+                        c.getUsuario().getIdUsuario(),
                         c.getUsuario().getNombre(),
                         c.getUsuario().getApellidoPaterno(),
                         c.getUsuario().getApellidoMaterno(),
@@ -99,6 +103,8 @@ public class CuentaService implements ICuentaService {
         Cuenta cuenta = cuentaRepository.findById(id)
                 .orElseThrow(()->new NotFoundException("Cuenta No encontrada"));
         return new CuentaResponseDto(
+                cuenta.getUsuario().getIdUsuario(),
+                cuenta.getUsuario().getIdUsuario(),
                 cuenta.getUsuario().getNombre(),
                 cuenta.getUsuario().getApellidoPaterno(),
                 cuenta.getUsuario().getApellidoMaterno(),
