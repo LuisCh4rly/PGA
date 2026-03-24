@@ -1,6 +1,7 @@
 package com.app.pga.App.Controllers;
 
 import com.app.pga.App.Models.Dtos.RequestDto.GrupoRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.GrupoResponseDashboardDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.GrupoResponseDto;
 import com.app.pga.App.Models.Filtros.GrupoFiltro;
 import com.app.pga.App.Services.Interfaces.IGrupoService;
@@ -48,7 +49,7 @@ class GrupoController {
     }
 
     @GetMapping("/porDocente/{id}")
-    public ResponseEntity<List<GrupoResponseDto>> obtenerGruposPorDocente(@PathVariable Long id){
+    public ResponseEntity<List<GrupoResponseDashboardDto>> obtenerGruposPorDocente(@PathVariable Long id){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(grupoService.obtenerPorDocente(id));
