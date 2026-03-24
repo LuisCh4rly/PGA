@@ -4,6 +4,7 @@ import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.RequestDto.GrupoRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.GrupoResponseDashboardDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.GrupoResponseDto;
 import com.app.pga.App.Models.Entities.Curso;
 import com.app.pga.App.Models.Entities.Grupo;
@@ -101,11 +102,9 @@ class GrupoService implements IGrupoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GrupoResponseDto> obtenerPorDocente(Long idDocente) {
-        return  grupoRepository.findGruposByDocente(idDocente)
-                .stream()
-                .map(c->grupoMapper.toDto(c))
-                .toList();
+    public List<GrupoResponseDashboardDto> obtenerPorDocente(Long idDocente) {
+        return  grupoRepository.findGruposByDocente(idDocente);
+
     }
 
     @Override
