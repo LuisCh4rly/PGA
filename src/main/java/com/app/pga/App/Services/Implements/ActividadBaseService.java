@@ -84,7 +84,7 @@ class ActividadBaseService implements IActividadBaseService {
                 .collect(Collectors.toList());
     }
 
-    @Override
+    @Override  
     public ActividadBaseResponseDto actualizarActividadBase(ActividadBaseRequestDto actividadBaseRequestDto, Long idActividadBase) {
         ActividadBase actividadBase = actividadBaseRepository.findById(idActividadBase)
                 .orElseThrow(()-> new NotFoundException("Actividad Base no encontrada"));

@@ -40,6 +40,8 @@ public class ActividadGrupo {
     @Enumerated(EnumType.STRING)
     private Origen origen;
 
+    String campo;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_grupo", referencedColumnName = "idGrupo")
     private Grupo grupo;
