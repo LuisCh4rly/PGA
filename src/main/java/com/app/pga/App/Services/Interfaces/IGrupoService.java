@@ -18,4 +18,5 @@ public interface IGrupoService {
     GrupoResponseDto cambiarEstado(Long idGrupo);
     GrupoResponseDto cambiarDocente(Long idGrupo, Long idDocente);
     Page<GrupoResponseDto> findAll(GrupoFiltro filtro , Pageable pageable);
+    List<GrupoResponseDto> obtenerActivosPorDocente(Long idDocente);
 }

@@ -22,6 +22,14 @@ public interface IGrupoRepository extends JpaRepository<Grupo, Long>, JpaSpecifi
 """)
     List<Grupo> findGruposByDocente(@Param("idUsuario") Long idUsuario);
 
+    @Query("""
+    SELECT g FROM Grupo g
+    WHERE g.usuario.idUsuario = :idUsuario
+    AND g.usuario.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.DOCENTE
+    AND g.estado = com.app.pga.App.Models.Enum.Estado.HABILITADO
+""")
+    List<Grupo> findGruposActivosByDocente(@Param("idUsuario") Long idUsuario);
+
     Optional<Grupo> findByIdGrupo(Long idGrupo);
 
     List<Grupo> findByEstado(Estado estado);

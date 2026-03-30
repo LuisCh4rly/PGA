@@ -1,6 +1,7 @@
 package com.app.pga.App.Controllers;
 
 import com.app.pga.App.Models.Dtos.RequestDto.InscripcionRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.AlumnoGrupoDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionResponseDto;
 import com.app.pga.App.Models.Filtros.InscripcionFiltro;
 import com.app.pga.App.Services.Implements.InscripcionService;
@@ -43,6 +44,12 @@ public class InscripcionController {
     @GetMapping("/activos")
     public ResponseEntity<List<InscripcionResponseDto>> consultaActivos(){
         return ResponseEntity.ok(inscripcionService.findAllActivos());
+    }
+
+    //-----consulta de alumnos por grupo
+    @GetMapping("/grupo/{idGrupo}/alumnos")
+    public ResponseEntity<List<AlumnoGrupoDto>> obtenerAlumnosPorGrupo(@PathVariable Long idGrupo){
+        return ResponseEntity.ok(inscripcionService.obtenerAlumnosPorGrupo(idGrupo));
     }
 
     //---consulta ---

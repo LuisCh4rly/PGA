@@ -54,6 +54,13 @@ class GrupoController {
                 .body(grupoService.obtenerPorDocente(id));
     }
 
+    @GetMapping("/Activos/porDocente/{id}")
+    public ResponseEntity<List<GrupoResponseDto>> obtenerGruposActivosPorDocente(@PathVariable Long id){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(grupoService.obtenerActivosPorDocente(id));
+    }
+
     @PutMapping("habilitarDeshabilitar/{id}")
     public ResponseEntity< GrupoResponseDto > habilitarDeshabilitarGrupo (@PathVariable Long id){
         return ResponseEntity

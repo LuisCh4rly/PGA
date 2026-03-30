@@ -38,16 +38,16 @@ INSERT INTO cuentas (password, role_id, usuario_id, email) VALUES
 ('$2a$12$kBtOBRVsElpkT1yoO9//XuFgA9evlQiu/KF0mG2dgXC6O0n9S89gW', 1, 1, 'admin@pga.com'),
 
 -- DOCENTES (usuarios 2,3,4)
-('$2a$10$X8n8KxZP8r7MZ1QF9z9xUu0x0YvR7Kp8Q0JzM5kQnYQk2sF9D2L7m', 2, 2, 'docente1@pga.com'),
-('$2a$10$X8n8KxZP8r7MZ1QF9z9xUu0x0YvR7Kp8Q0JzM5kQnYQk2sF9D2L7m', 2, 3, 'docente2@pga.com'),
-('$2a$10$X8n8KxZP8r7MZ1QF9z9xUu0x0YvR7Kp8Q0JzM5kQnYQk2sF9D2L7m', 2, 4, 'docente3@pga.com'),
+('$2a$12$IP3DujAzq7Pjrgq5H3VKQ..yruUOovvYAmloXni/Va6418clX4kka', 2, 2, 'docente1@pga.com'),
+('$2a$12$IP3DujAzq7Pjrgq5H3VKQ..yruUOovvYAmloXni/Va6418clX4kka', 2, 3, 'docente2@pga.com'),
+('$2a$12$IP3DujAzq7Pjrgq5H3VKQ..yruUOovvYAmloXni/Va6418clX4kka', 2, 4, 'docente3@pga.com'),
 
 -- ALUMNOS (usuarios 5 en adelante)
-('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 5, 'alumno5@pga.com'),
-('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 6, 'alumno6@pga.com'),
-('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 7, 'alumno7@pga.com'),
-('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 8, 'alumno8@pga.com'),
-('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 9, 'alumno9@pga.com'),
+('$2a$12$XioGYJm2.s7.k16i4VynUeNm5maf8jCXsfck0Hgamz/WJX4hph.M2', 3, 5, 'alumno5@pga.com'),
+('$2a$12$XioGYJm2.s7.k16i4VynUeNm5maf8jCXsfck0Hgamz/WJX4hph.M2', 3, 6, 'alumno6@pga.com'),
+('$2a$12$XioGYJm2.s7.k16i4VynUeNm5maf8jCXsfck0Hgamz/WJX4hph.M2', 3, 7, 'alumno7@pga.com'),
+('$2a$12$XioGYJm2.s7.k16i4VynUeNm5maf8jCXsfck0Hgamz/WJX4hph.M2', 3, 8, 'alumno8@pga.com'),
+('$2a$12$XioGYJm2.s7.k16i4VynUeNm5maf8jCXsfck0Hgamz/WJX4hph.M2', 3, 9, 'alumno9@pga.com'),
 ('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 10,'alumno10@pga.com'),
 ('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 11,'alumno11@pga.com'),
 ('$2a$10$M4F5vZPZ8s9y6WQKJk7H2NQF9K0P3mZrD8vLQ6Hf7Ue1x5A9R0pK', 3, 12, 'alumno12@pga.com'),

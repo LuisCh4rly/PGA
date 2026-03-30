@@ -9,6 +9,7 @@ import com.app.pga.App.Models.Dtos.ResponseDto.SesionDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.SesiondocenteDto;
 import com.app.pga.App.Models.Entities.Sesion;
 import com.app.pga.App.Models.Enum.EstadoAsistencia;
+import com.app.pga.App.Models.Filtros.SesionFiltro;
 import com.app.pga.App.Models.Mappers.InscripcionMapper;
 import com.app.pga.App.Repositories.ISesionAlumnoRepository;
 import com.app.pga.App.Repositories.ISesionRepository;
@@ -16,6 +17,9 @@ import com.app.pga.App.Services.Implements.SesionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -99,6 +103,10 @@ class SesionController {
         return ResponseEntity.ok(sesionService.obtenerReporteAsistenciaGrupo());
     }
 
-
+    @GetMapping("/docente/{id}/sesiones")
+    public ResponseEntity<Page<SesiondocenteDto>> listar(@PathVariable Long id, SesionFiltro filtro,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(sesionService.obtenerSesionesFiltradas(id, filtro, pageable));
+    }
 
 }

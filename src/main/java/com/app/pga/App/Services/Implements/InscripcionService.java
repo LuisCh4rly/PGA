@@ -4,6 +4,7 @@ import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.RequestDto.InscripcionRequestDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.AlumnoGrupoDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionResponseDto;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Inscripcion;
@@ -75,6 +76,23 @@ public class InscripcionService implements IInscripcionService {
                 .collect(Collectors.toList());
     }
 
+    //consulta de alumnos por grupo
+    @Transactional(readOnly = true)
+    public List<AlumnoGrupoDto> obtenerAlumnosPorGrupo(Long idGrupo){
+        List<Inscripcion> inscripciones = inscripcionRepository.findByGrupo_IdGrupoAndEstadoTrue(idGrupo);
+        if(inscripciones.isEmpty()){
+            throw new NotFoundException("No hay alumnos en este grupo");
+        }
+
+        return inscripciones.stream()
+                .map(ins -> new AlumnoGrupoDto(
+                        ins.getIdInscripcion(),
+                        ins.getUsuario().getNombre(),
+                        ins.getUsuario().getApellidoPaterno(),
+                        ins.getUsuario().getApellidoMaterno()
+                ))
+                .toList();
+    }
 
     //consulta general
     @Transactional(readOnly = true)

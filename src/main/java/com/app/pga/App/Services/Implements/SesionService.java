@@ -14,10 +14,15 @@ import com.app.pga.App.Models.Entities.*;
 import com.app.pga.App.Models.Enum.Alcance;
 import com.app.pga.App.Models.Enum.Estado;
 import com.app.pga.App.Models.Enum.EstadoAsistencia;
+import com.app.pga.App.Models.Filtros.SesionFiltro;
 import com.app.pga.App.Models.Mappers.GrupoMapper;
 import com.app.pga.App.Models.Mappers.SesionMapper;
+import com.app.pga.App.Models.Specification.SesionSpecification;
 import com.app.pga.App.Repositories.*;
 import com.app.pga.App.Services.Interfaces.ISesionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,8 +132,10 @@ public class SesionService implements ISesionService {
         }
 
         // borrar relaciones actuales
+        asistenciaRepository.deleteBySesionAlumnoSesionIdSesion(idSesion);
+        asistenciaRepository.flush();
         sesionAlumnoRepository.deleteBySesionIdSesion(idSesion);
-
+        sesionAlumnoRepository.flush(); //oblga a jpa a ejecutar los delete eb la bd antes de procesar los nuevos
         // crear nuevas relaciones
         List<SesionAlumno> nuevasRelaciones = nuevosIdsInscripcion.stream()
                 .distinct()
@@ -143,16 +150,16 @@ public class SesionService implements ISesionService {
                 })
                 .toList();
 
-        sesionAlumnoRepository.saveAll(nuevasRelaciones);
+        List<SesionAlumno> guardados = sesionAlumnoRepository.saveAll(nuevasRelaciones);
 
-        List<Asistencia>asistencias = nuevasRelaciones.stream().map(sa->{
+        List<Asistencia>nuevasAsistencias = guardados.stream().map(sa->{
                     Asistencia a =new Asistencia();
                     a.setSesionAlumno(sa);
                     a.setEstado(EstadoAsistencia.SIN_INICIAR);
                     return a;
                 })
                 .toList();
-        asistenciaRepository.saveAll(asistencias);
+        asistenciaRepository.saveAll(nuevasAsistencias);
 
         return sesionMapper.toDetalleDto(sesion);
     }
@@ -219,6 +226,7 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
                 sesion.getTema(),
                 sesion.getAlcance(),
                 sesion.getPlataforma(),
+                sesion.getUrlSesion(),
                 grupoMapper.toDto(sesion.getGrupo()),
                 alumnos);
     }
@@ -297,5 +305,27 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
     @Transactional(readOnly = true)
     public List<ReporteAsistenciaGrupoDto>obtenerReporteAsistenciaGrupo(){
         return sesionRepository.reporteAsistenciaGeneral();
+    }
+
+    //lista con paginacion y so de api criteria
+    @Transactional(readOnly = true)
+    public Page<SesiondocenteDto> obtenerSesionesFiltradas(Long idDocente, SesionFiltro filtro, Pageable pageable){
+        Usuario usuario = usuarioRepository.findDocenteById(idDocente)
+                .orElseThrow(() -> new NotFoundException("Docente no encontrado"));
+        if (!usuario.getActivo()) {
+            throw new ResourceDisabledException("Docente deshabilitado");
+        }
+        // 2. Crear la especificación pasando el idDocente
+        Specification<Sesion> spec = SesionSpecification.filtrarSesiones(filtro, idDocente);
+
+        // 3. Ejecutar la consulta paginada
+        Page<Sesion> paginaSesiones = sesionRepository.findAll(spec, pageable);
+
+        return paginaSesiones.map(sesion -> new SesiondocenteDto(
+                    sesion.getIdSesion(),
+                    sesion.getFecha(),
+                    sesion.getTema(),
+                    sesion.getPlataforma(),
+                    sesion.getGrupo().getNombre()));
     }
 }
