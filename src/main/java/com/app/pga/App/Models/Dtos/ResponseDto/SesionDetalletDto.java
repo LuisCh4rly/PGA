@@ -17,6 +17,7 @@ public record SesionDetalletDto(
         String tema,
         Alcance alcance,
         String plataforma,
+        String url,
         GrupoResponseDto grupo,
         List<SesionAlumnoDetalleDto>alumnos)
         implements Serializable {

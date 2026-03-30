@@ -108,6 +108,15 @@ class GrupoService implements IGrupoService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<GrupoResponseDto> obtenerActivosPorDocente(Long idDocente) {
+        return  grupoRepository.findGruposActivosByDocente(idDocente)
+                .stream()
+                .map(c->grupoMapper.toDto(c))
+                .toList();
+    }
+
+    @Override
     public GrupoResponseDto cambiarEstado(Long idGrupo) {
         Grupo grupo = grupoRepository.findById(idGrupo)
                 .orElseThrow(() -> new NotFoundException(" Grupo no encontrado"));
