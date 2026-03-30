@@ -23,4 +23,5 @@ public interface IExpedienteRepository extends JpaRepository<Expediente, Long> {
     AND e.usuario.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.ALUMNO
 """)
     List<Expediente> findExpedientesAlumnoActivo();
+
 }

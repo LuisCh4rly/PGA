@@ -36,10 +36,13 @@ public class ExpedienteService implements IExpedienteService {
     private final IDocumentoRepository documentoRepository;
     private final IUsuarioRepository usuarioRepository;
 
+
+
     @Override
     public ExpedienteResponseDto verExpediente(Long idAlumno) {
-        Expediente exp = obtenerPorAlumno(idAlumno);
 
+        Expediente exp = obtenerPorAlumno(idAlumno);
+        recalcularEstadoExpediente(exp);
         List<DocumentoExpedienteResponseDto> docs =
                 documento_expedienteRepository.findByExpediente(exp)
                         .stream()
@@ -109,8 +112,17 @@ public class ExpedienteService implements IExpedienteService {
                 documento_expedienteRepository.save(nuevo);
             }
         }
+        recalcularEstadoExpediente(expediente);
+
     }
 
-
+    private void recalcularEstadoExpediente(Expediente exp) {
+        boolean todosAprobados = documento_expedienteRepository.existsByExpedienteAndEstadoDocumentoNot( exp, EstadoDocumento.APROBADO) == false;
+        if (todosAprobados){
+            exp.setEstado(EstadoExpediente.APROBADO);
+        }else {
+            exp.setEstado(EstadoExpediente.NO_APROBADO);
+        }
+    }
 
 }

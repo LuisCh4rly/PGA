@@ -1,5 +1,6 @@
 package com.app.pga.App.Repositories;
 
+import com.app.pga.App.Models.Dtos.ResponseDto.GrupoResponseDashboardDto;
 import com.app.pga.App.Models.Entities.Curso;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Enum.Estado;
@@ -16,11 +17,20 @@ public interface IGrupoRepository extends JpaRepository<Grupo, Long>, JpaSpecifi
     List<Grupo> findByCursoIdCurso(Long idCurso);
 
     @Query("""
-    SELECT g FROM Grupo g
+    SELECT new com.app.pga.App.Models.Dtos.ResponseDto.GrupoResponseDashboardDto(
+    g.idGrupo,
+    g.nombre,
+    c.nombre,
+    count(i),
+    g.estado)
+    FROM Grupo g
+    LEFT JOIN g.curso c
+    LEFT JOIN Inscripcion i ON i.grupo.idGrupo = g.idGrupo
     WHERE g.usuario.idUsuario = :idUsuario
     AND g.usuario.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.DOCENTE
+    GROUP BY g.idGrupo, g.nombre, c.nombre, g.estado
 """)
-    List<Grupo> findGruposByDocente(@Param("idUsuario") Long idUsuario);
+    List<GrupoResponseDashboardDto> findGruposByDocente(@Param("idUsuario") Long idUsuario);
 
     @Query("""
     SELECT g FROM Grupo g

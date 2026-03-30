@@ -6,10 +6,15 @@ import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.RequestDto.CampoRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.CampoResponseDto;
 import com.app.pga.App.Models.Entities.CampoFormativo;
+import com.app.pga.App.Models.Filtros.CampoFiltro;
 import com.app.pga.App.Models.Mappers.CampoFormativoMapper;
+import com.app.pga.App.Models.Specification.CampoSpecification;
 import com.app.pga.App.Repositories.ICampoFormativoRepository;
 import com.app.pga.App.Services.Interfaces.ICampoFormativoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,13 +56,11 @@ public class CampoFormativoService implements ICampoFormativoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampoResponseDto > obtenerCampos() {
-        List <CampoFormativo>  camposFormativos = campoFormativoRepository.findAll();
-
+    public Page<CampoResponseDto > obtenerCampos(CampoFiltro filtro, Pageable pageable) {
+        Page<CampoFormativo>  camposFormativos = campoFormativoRepository.findAll(CampoSpecification.filtrar(filtro), pageable);
         return camposFormativos
-                .stream()
-                .map(c-> campoFormativoMapper.toDto(c))
-                .collect(Collectors.toList());
+                .map(c-> campoFormativoMapper.toDto(c));
+
     }
 
     @Override

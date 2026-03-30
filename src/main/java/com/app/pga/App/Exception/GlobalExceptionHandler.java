@@ -180,6 +180,20 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
     }
+    @ExceptionHandler(ReporteException.class)
+    public ResponseEntity<ApiError> handleReporteException(ReporteException ex, HttpServletRequest req) {
+
+        ApiError err = new ApiError(
+                OffsetDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Report Generation Error",
+                ex.getMessage(),
+                req.getRequestURI(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+    }
 
 
 }

@@ -33,7 +33,7 @@ public interface ISesionRepository extends JpaRepository<Sesion, Long>, JpaSpeci
 """)
     List<Sesion> findSesionesByDocente(Long idUsuario);
 
-
+ 
     @Query("""
     SELECT new com.app.pga.App.Models.Dtos.ReporteAsistenciaGrupoDto(
         g.idGrupo,

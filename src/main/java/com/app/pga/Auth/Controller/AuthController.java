@@ -5,6 +5,10 @@ import com.app.pga.Auth.Models.Dtos.Request.AuthRegisterDto;
 import com.app.pga.Auth.Models.Dtos.Request.AuthRequestDto;
 import com.app.pga.Auth.Models.Dtos.Request.cambioPasswordRequestDto;
 import com.app.pga.Auth.Models.Dtos.Response.AuthResponseDto;
+import com.app.pga.Auth.Models.Dtos.Response.CuentaResponseDto;
+import com.app.pga.Auth.Models.Dtos.Response.UsuarioActualDto;
+import com.app.pga.Auth.Models.Entities.Cuenta;
+import com.app.pga.Auth.Security.UserDetailsImp;
 import com.app.pga.Auth.Security.UserDetailsServiceImp;
 import com.app.pga.Auth.Service.CuentaService;
 import jakarta.validation.Valid;
@@ -48,8 +52,17 @@ public class AuthController {
     }
     @GetMapping("/usuario-actual")
 
-    public UserDetails getCurrentUser (Principal principal){
-        return userDetailsService.loadUserByUsername(principal.getName());
+    public UsuarioActualDto getCurrentUser (Principal principal){
+        UserDetailsImp userDetails = (UserDetailsImp) userDetailsService.loadUserByUsername(principal.getName());
+        CuentaResponseDto cuenta = cuentaService.cuentaById(userDetails.getId());
+        return UsuarioActualDto.builder()
+                .id(cuenta.idUsuario())
+                .email(userDetails.getEmail())
+                .debeCambiarPassword(userDetails.getDebeCambiarPassword())
+                .authorities(userDetails.getAuthorities())
+                .username(userDetails.getUsername())
+                .build();
+
     }
 
     @PutMapping("/cambiar-password")

@@ -179,7 +179,7 @@ INSERT INTO inscripciones
 
 
 -- Precargar actividades por grupo (desde el curso)
-INSERT INTO actividades_grupos (titulo,descripcion,fecha_asignacion,req_entrega,alcance,origen,id_grupo)
+INSERT INTO actividades_grupos (titulo,descripcion,fecha_asignacion,req_entrega,alcance,origen,id_grupo,campo)
 SELECT
     ab.titulo,
     ab.descripcion,
@@ -187,12 +187,15 @@ SELECT
     TRUE,
     'GRUPAL',
     'CURSO',
-    g.id_grupo
+    g.id_grupo,
+    cf.nombre
 FROM grupos g
          JOIN cursos_actividades ca
               ON ca.curso_id = g.id_curso
          JOIN actividades_base ab
               ON  ab.id_actividad = ca.actividad_base_id
+         JOIN campos_formativos cf
+              ON  cf.id_campo = ab.id_campo_formativo
 WHERE g.estado = 'HABILITADO' AND ab.activo = true;
 
 

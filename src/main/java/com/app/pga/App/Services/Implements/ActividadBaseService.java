@@ -7,11 +7,15 @@ import com.app.pga.App.Models.Dtos.RequestDto.ActividadBaseRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ActividadBaseResponseDto;
 import com.app.pga.App.Models.Entities.ActividadBase;
 import com.app.pga.App.Models.Entities.CampoFormativo;
+import com.app.pga.App.Models.Filtros.ActividadBaseFiltro;
 import com.app.pga.App.Models.Mappers.ActividadBaseMapper;
+import com.app.pga.App.Models.Specification.ActividadBaseSpecification;
 import com.app.pga.App.Repositories.IActividadBaseRepository;
 import com.app.pga.App.Repositories.ICampoFormativoRepository;
 import com.app.pga.App.Services.Interfaces.IActividadBaseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,11 +59,11 @@ class ActividadBaseService implements IActividadBaseService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ActividadBaseResponseDto> obtenerActividadesBaseGeneral() {
-        List <ActividadBase> actividadesBase = actividadBaseRepository.findAll();
-        return actividadesBase.stream()
-                .map(a->actividadBaseMapper.toDto(a))
-                .collect(Collectors.toList());
+    public Page<ActividadBaseResponseDto> obtenerActividadesBaseGeneral(ActividadBaseFiltro filtro, Pageable pageable) {
+        Page <ActividadBase> actividadesBase = actividadBaseRepository.findAll(ActividadBaseSpecification.filtrar(filtro), pageable);
+        return actividadesBase
+                .map(a->actividadBaseMapper.toDto(a));
+
     }
 
     @Override
@@ -80,7 +84,7 @@ class ActividadBaseService implements IActividadBaseService {
                 .collect(Collectors.toList());
     }
 
-    @Override
+    @Override  
     public ActividadBaseResponseDto actualizarActividadBase(ActividadBaseRequestDto actividadBaseRequestDto, Long idActividadBase) {
         ActividadBase actividadBase = actividadBaseRepository.findById(idActividadBase)
                 .orElseThrow(()-> new NotFoundException("Actividad Base no encontrada"));

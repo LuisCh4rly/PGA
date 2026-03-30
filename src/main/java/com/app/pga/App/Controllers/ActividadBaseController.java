@@ -2,10 +2,13 @@ package com.app.pga.App.Controllers;
 
 import com.app.pga.App.Models.Dtos.RequestDto.ActividadBaseRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ActividadBaseResponseDto;
+import com.app.pga.App.Models.Filtros.ActividadBaseFiltro;
 import com.app.pga.App.Services.Interfaces.IActividadBaseService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +34,10 @@ class ActividadBaseController {
                 .body(actividadBaseService.obtenerActividadBase(id));
     }
     @GetMapping()
-    public ResponseEntity<List<ActividadBaseResponseDto>> obtenerActividades (){
+    public ResponseEntity<Page<ActividadBaseResponseDto>> obtenerActividades (ActividadBaseFiltro filtro, Pageable pageable){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(actividadBaseService.obtenerActividadesBaseGeneral());
+                .body(actividadBaseService.obtenerActividadesBaseGeneral(filtro, pageable));
     }
     @GetMapping ("/activas")
     public ResponseEntity< List <ActividadBaseResponseDto> > obtenerActividadesBaseActivas (){
