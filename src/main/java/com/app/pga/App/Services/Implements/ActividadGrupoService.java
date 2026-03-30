@@ -62,6 +62,7 @@ public class ActividadGrupoService implements IActividadGrupoService {
             ag.setReqEntrega(true);
             ag.setAlcance(Alcance.GRUPAL);
             ag.setOrigen(Origen.CURSO);
+            ag.setCampo(ab.getCampoFormativo().getNombre());
             ag.setGrupo(grupo);
 
             actividadGrupoRepository.save(ag);
@@ -90,6 +91,7 @@ public class ActividadGrupoService implements IActividadGrupoService {
             ag.setReqEntrega(dto.reqEntrega());
             ag.setAlcance(dto.alcance());
             ag.setOrigen(Origen.CATALOGO);
+            ag.setCampo(ab.getCampoFormativo().getNombre());
             ag.setGrupo(grupo);
 
             actividadGrupoRepository.save(ag);

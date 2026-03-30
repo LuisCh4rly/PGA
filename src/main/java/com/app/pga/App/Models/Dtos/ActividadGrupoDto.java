@@ -22,12 +22,13 @@ public record ActividadGrupoDto(
 
         @PastOrPresent
         @NotNull
-        LocalDate FechaAsignacion,
+        LocalDate fechaAsignacion,
         Boolean reqEntrega,
 
         Alcance alcance,
         Long  idGrupo,
-        String nombreGrupo
+        String nombreGrupo,
+        String campo
 
 ) implements Serializable {
 }
