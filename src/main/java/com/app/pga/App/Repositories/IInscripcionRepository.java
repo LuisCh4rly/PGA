@@ -36,6 +36,8 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
 
     List<Inscripcion> findByGrupo_IdGrupoAndEstadoTrue(Long idGrupo);
 
+    List<Inscripcion> findByGrupo_IdGrupo(Long idGrupo);
+
     Optional<Inscripcion>findByIdInscripcionAndGrupo_IdGrupoAndEstadoTrue(Long idInscripcion, Long idGrupo);
 
    Boolean existsByGrupo_IdGrupoAndEstadoTrue(Long idGrupo);

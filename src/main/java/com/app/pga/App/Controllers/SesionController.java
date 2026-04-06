@@ -45,7 +45,7 @@ class SesionController {
     //crear
     @PostMapping("/grupo/{idGrupo}")
     public ResponseEntity<SesionDto> crearSesion(@PathVariable Long idGrupo,  @Valid @RequestBody SesionRequestDto dto) {
-        SesionDto sesion = sesionService.createSesion(dto, idGrupo);
+        SesionDto sesion = sesionService.createSesion(idGrupo, dto);
         return new ResponseEntity<>(sesion, HttpStatus.CREATED);
     }
 

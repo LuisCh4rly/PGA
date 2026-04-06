@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class SesionFiltro {
     private Long idUsuario;
+    private Long idGrupo;
     private MomentoSesion momentoSesion;
     private Alcance alcance;
 }

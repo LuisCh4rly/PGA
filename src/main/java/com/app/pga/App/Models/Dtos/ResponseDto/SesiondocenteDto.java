@@ -1,5 +1,6 @@
 package com.app.pga.App.Models.Dtos.ResponseDto;
 
+import com.app.pga.App.Models.Enum.Alcance;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ public record SesiondocenteDto(
         LocalDateTime fecha,
         String tema,
         String plataforma,
-        String nombreGrupo)
+        String nombreGrupo,
+        Alcance alcance)
         implements Serializable {
 }

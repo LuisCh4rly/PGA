@@ -20,6 +20,7 @@ public record UsuarioResponseDto(
         @Size(message = "Máximo 30 caráteres", max = 30)
         @NotBlank(message = "Camppo obligatorio")
         String apellidoMaterno,
+        String email,
         @JsonFormat(pattern = "dd/MM/yyyy")
         LocalDate created_At,
         @Pattern(message = "Debe tener exactamente 10 dígitos", regexp = "^\\d{10}$")

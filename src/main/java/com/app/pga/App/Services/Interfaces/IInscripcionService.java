@@ -18,5 +18,6 @@ public interface IInscripcionService {
     InscripcionResponseDto finfById(Long idInscripcion);
     InscripcionResponseDto desactivarActivarInscripcion(Long idInscripcion);
     List<AlumnoGrupoDto> obtenerAlumnosPorGrupo(Long idGrupo);
+    List<AlumnoGrupoDto> obtenerAlumnosPorGrupoGeneral(Long idGrupo);
     List<Inscripcion> obtenerPorAlumno(Long idAlumno);
 }
