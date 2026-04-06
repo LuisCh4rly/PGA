@@ -5,6 +5,7 @@ import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.ActividadGrupoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.AsignarActividadCatalogoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.AsignarActividadExtraDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadGrupoDashboardDto;
 import com.app.pga.App.Models.Entities.*;
 import com.app.pga.App.Models.Enum.Alcance;
 import com.app.pga.App.Models.Enum.Estado;
@@ -240,6 +241,11 @@ public class ActividadGrupoService implements IActividadGrupoService {
 
             actividadAlumnoRepository.save(aa);
         }
+    }
+
+    @Override
+    public ActividadGrupoDashboardDto obtenerActividadPorId(Long idActividad) {
+        return actividadGrupoRepository.obtenerPorId(idActividad).orElseThrow( () -> new NotFoundException("Actividad no encontrada "));
     }
 
     private void asignarAGrupo(ActividadGrupo actividadGrupo, Long idGrupo) {

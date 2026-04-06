@@ -5,6 +5,7 @@ import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.ActividadAlumnoDto;
 import com.app.pga.App.Models.Dtos.ReporteSeguimientoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.CambiarEstadoTareaDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadAlumnoResponseDTO;
 import com.app.pga.App.Models.Entities.ActividadAlumno;
 import com.app.pga.App.Models.Entities.ActividadGrupo;
 import com.app.pga.App.Models.Entities.Grupo;
@@ -181,6 +182,16 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
 
     public void eliminarActividadesPorInscripcion(Long idInscripcion) {
         actividadAlumnoRepository.deleteByInscripcion_IdInscripcion(idInscripcion);
+    }
+
+    @Override
+    public List<ActividadAlumnoResponseDTO> verAsignaciones(Long idActividadGrupo) {
+
+        return actividadAlumnoRepository
+                .findByActividadGrupo_IdActividadGrupo(idActividadGrupo)
+                .stream()
+                .map(aa-> actividadAlumnoMapper.toDtoResponse(aa))
+                .collect(Collectors.toList());
     }
 }
 

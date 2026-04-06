@@ -3,6 +3,7 @@ package com.app.pga.App.Controllers;
 import com.app.pga.App.Models.Dtos.ActividadAlumnoDto;
 import com.app.pga.App.Models.Dtos.ReporteSeguimientoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.CambiarEstadoTareaDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadAlumnoResponseDTO;
 import com.app.pga.App.Models.Enum.EstadoTarea;
 import com.app.pga.App.Services.Implements.ActividadAlumnoService;
 import lombok.RequiredArgsConstructor;
@@ -64,5 +65,12 @@ public class ActividadAlumnoController {
     @GetMapping("/grupos/seguimiento")
     public ResponseEntity<List<ReporteSeguimientoDto>>reporteSeguimientoGrupo(){
         return ResponseEntity.ok(actividadAlumnoService.obtenerReporteSeguimientoGrupo());
+    }
+
+    @GetMapping("/actividad/{idActividadGrupo}")
+    public ResponseEntity<List<ActividadAlumnoResponseDTO>> verAsignaciones(@PathVariable Long idActividadGrupo) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(actividadAlumnoService.verAsignaciones(idActividadGrupo));
     }
 }

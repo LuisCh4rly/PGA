@@ -4,6 +4,8 @@ import com.app.pga.App.Models.Dtos.*;
 import com.app.pga.App.Models.Dtos.RequestDto.AgregarInscripcionesDto;
 import com.app.pga.App.Models.Dtos.RequestDto.AsignarActividadCatalogoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.AsignarActividadExtraDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadGrupoDashboardDto;
+import com.app.pga.App.Models.Entities.ActividadGrupo;
 import com.app.pga.App.Services.Interfaces.IActividadGrupoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +55,12 @@ public class ActividadGrupoController {
     public void agregarInscripcionesActividad( @PathVariable Long idActividadGrupo,  @RequestBody AgregarInscripcionesDto dto){
         actividadGrupoService.agregarInscripcionesActividad(idActividadGrupo, dto.idsInscripciones()
         );
+    }
+    @GetMapping("/actividad/{idActividad}")
+    public ResponseEntity<ActividadGrupoDashboardDto> obtenerPorId (@PathVariable Long idActividad){
+       return ResponseEntity
+               .status(HttpStatus.OK)
+               .body(actividadGrupoService.obtenerActividadPorId(idActividad));
     }
 
 

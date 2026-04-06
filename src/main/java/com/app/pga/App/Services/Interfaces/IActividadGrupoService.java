@@ -3,6 +3,8 @@ package com.app.pga.App.Services.Interfaces;
 import com.app.pga.App.Models.Dtos.ActividadGrupoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.AsignarActividadCatalogoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.AsignarActividadExtraDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadGrupoDashboardDto;
+import com.app.pga.App.Models.Entities.ActividadGrupo;
 
 import java.util.List;
 
@@ -13,4 +15,7 @@ public interface IActividadGrupoService {
     List<ActividadGrupoDto> obtenerActividadesGrupales(Long idGrupo);
     List<ActividadGrupoDto> obtenerActividadesIndividuales(Long idGrupo);
     void agregarInscripcionesActividad(Long idActividadGrupo, List<Long> nuevasInscripciones);
+
+    ActividadGrupoDashboardDto obtenerActividadPorId (Long idActividad);
+
 }

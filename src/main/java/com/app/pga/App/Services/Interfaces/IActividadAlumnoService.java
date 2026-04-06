@@ -3,6 +3,7 @@ package com.app.pga.App.Services.Interfaces;
 import com.app.pga.App.Models.Dtos.ActividadAlumnoDto;
 import com.app.pga.App.Models.Dtos.ActividadGrupoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.CambiarEstadoTareaDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadAlumnoResponseDTO;
 import com.app.pga.App.Models.Enum.EstadoTarea;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,4 +20,5 @@ public interface IActividadAlumnoService {
     void asignarActividadesGrupalesPorInscripcion(Long idInscripcion);
     Resource visualizarEntrega(Long idActividadAlumno);
     void eliminarActividadesPorInscripcion(Long idInscripcion);
+    List<ActividadAlumnoResponseDTO> verAsignaciones (Long idActividadGrupo);
 }

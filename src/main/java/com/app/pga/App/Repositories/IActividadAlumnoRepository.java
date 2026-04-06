@@ -39,4 +39,5 @@ public interface IActividadAlumnoRepository extends JpaRepository<ActividadAlumn
 """)
     List<ReporteSeguimientoDto> reporteSeguimientoGeneral();
 
+
 }
