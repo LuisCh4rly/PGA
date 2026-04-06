@@ -52,6 +52,12 @@ public class InscripcionController {
         return ResponseEntity.ok(inscripcionService.obtenerAlumnosPorGrupo(idGrupo));
     }
 
+    //-----consulta de alumnos por grupo general
+    @GetMapping("/grupo/{idGrupo}/alumnos/general")
+    public ResponseEntity<List<AlumnoGrupoDto>> obtenerAlumnosPorGrupoGeneral(@PathVariable Long idGrupo){
+        return ResponseEntity.ok(inscripcionService.obtenerAlumnosPorGrupoGeneral(idGrupo));
+    }
+
     //---consulta ---
     @GetMapping
     public ResponseEntity<Page<InscripcionResponseDto>> listar(InscripcionFiltro filtro, Pageable pageable) {

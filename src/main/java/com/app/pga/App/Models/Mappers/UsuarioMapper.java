@@ -13,6 +13,7 @@ public interface UsuarioMapper {
     Usuario toEntity(UsuarioRequestDto usuarioDto);
 
     @Named("ResumenUsuario")
+    @Mapping(source = "cuenta.email", target = "email")
     UsuarioResponseDto toDto(Usuario usuario);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)//los nulos se ignoran

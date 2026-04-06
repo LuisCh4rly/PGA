@@ -57,7 +57,7 @@ public class SesionService implements ISesionService {
         this.usuarioRepository= usuarioRepository;
     }
 //crear sesion
-    public SesionDto createSesion (SesionRequestDto dto, Long idGrupo){
+    public SesionDto createSesion (Long idGrupo, SesionRequestDto dto){
         Grupo grupo= iGrupoRepository.findByIdGrupo(idGrupo).orElseThrow(()->new NotFoundException("Grupo no encontrado."));
         if(grupo.getEstado()== Estado.DESHABILITADO){
             throw new ResourceDisabledException("Grupo deshbilitado");
@@ -259,7 +259,8 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
                         sesion.getFecha(),
                         sesion.getTema(),
                         sesion.getPlataforma(),
-                        sesion.getGrupo().getNombre()
+                        sesion.getGrupo().getNombre(),
+                        sesion.getAlcance()
                 )).toList();
     }
     //consultar sesiones por alumno
@@ -281,7 +282,8 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
                         s.getFecha(),
                         s.getTema(),
                         s.getPlataforma(),
-                        s.getGrupo().getNombre()
+                        s.getGrupo().getNombre(),
+                        s.getAlcance()
                 );}).toList();
     }
 
@@ -293,6 +295,11 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
         //validamos que la sesion no sea pasada
         if(!sesion.getFecha().isAfter(LocalDateTime.now())){
             throw new IllegalStateException("No se puede modificar una sesión que ya inició o finalizó");
+        }
+        //verifiicar que el docente no tenga sesion a esa hora
+        boolean existe = sesionRepository.existsSesionActivaDocenteExcluyendoSesion(sesion.getGrupo().getUsuario().getIdUsuario(), dto.fecha(), idSesion);
+        if (existe) {
+            throw new DuplicateResourceException("El docente ya tiene una sesión en ese horario");
         }
         sesion.setFecha(dto.fecha());
         sesion.setTema(dto.tema());
@@ -326,6 +333,7 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
                     sesion.getFecha(),
                     sesion.getTema(),
                     sesion.getPlataforma(),
-                    sesion.getGrupo().getNombre()));
+                    sesion.getGrupo().getNombre(),
+                    sesion.getAlcance()));
     }
 }
