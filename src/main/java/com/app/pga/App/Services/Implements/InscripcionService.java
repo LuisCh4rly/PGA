@@ -89,7 +89,27 @@ public class InscripcionService implements IInscripcionService {
                         ins.getIdInscripcion(),
                         ins.getUsuario().getNombre(),
                         ins.getUsuario().getApellidoPaterno(),
-                        ins.getUsuario().getApellidoMaterno()
+                        ins.getUsuario().getApellidoMaterno(),
+                        ins.getEstado()
+                ))
+                .toList();
+    }
+
+    //consulta de alumnos por grupo general
+    @Transactional(readOnly = true)
+    public List<AlumnoGrupoDto> obtenerAlumnosPorGrupoGeneral(Long idGrupo){
+        List<Inscripcion> inscripciones = inscripcionRepository.findByGrupo_IdGrupo(idGrupo);
+        if(inscripciones.isEmpty()){
+            throw new NotFoundException("No hay alumnos en este grupo");
+        }
+
+        return inscripciones.stream()
+                .map(ins -> new AlumnoGrupoDto(
+                        ins.getIdInscripcion(),
+                        ins.getUsuario().getNombre(),
+                        ins.getUsuario().getApellidoPaterno(),
+                        ins.getUsuario().getApellidoMaterno(),
+                        ins.getEstado()
                 ))
                 .toList();
     }

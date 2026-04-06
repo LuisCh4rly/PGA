@@ -1,8 +1,10 @@
 package com.app.pga.App.Models.Specification;
 
+import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Sesion;
 import com.app.pga.App.Models.Enum.MomentoSesion;
 import com.app.pga.App.Models.Filtros.SesionFiltro;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -20,8 +22,13 @@ public class SesionSpecification {
             // 1. Join de Sesion con Grupo
             // 2. Join de Grupo con Usuario (Docente)
             // 3. Filtrar por el ID del Usuario
-            predicados.add(cb.equal(root.join("grupo").join("usuario").get("idUsuario"), idUsuario));
+            Join<Sesion, Grupo> grupoJoin = root.join("grupo");
+            predicados.add(cb.equal(grupoJoin.join("usuario").get("idUsuario"), idUsuario));
 
+            if (filtro.getIdGrupo() != null) {
+                // Navegación: Sesion -> Grupo -> idGrupo (o el nombre de tu PK en Grupo, ej: "id")
+                predicados.add(cb.equal(grupoJoin.get("idGrupo"), filtro.getIdGrupo()));
+            }
 
             //filtro por fecha
             if(filtro.getMomentoSesion()!=null){

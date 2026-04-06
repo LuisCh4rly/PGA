@@ -23,7 +23,18 @@ public interface ISesionRepository extends JpaRepository<Sesion, Long>, JpaSpeci
 """)
     Boolean existsSesionActivaDocente(Long idUsuario, LocalDateTime fecha);
 
+    @Query("""
+    SELECT COUNT(s) > 0
+    FROM Sesion s
+    WHERE s.grupo.usuario.idUsuario = :idUsuario
+    AND s.grupo.usuario.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.DOCENTE
+    AND s.fecha = :fecha
+    AND s.idSesion <> :idSesion
+""")
+    Boolean existsSesionActivaDocenteExcluyendoSesion(@Param("idUsuario") Long idUsuario, @Param("fecha") LocalDateTime fecha, @Param("idSesion") Long idSesion);
+
     Boolean existsByGrupo_Usuario_IdUsuarioAndFecha(Long idUsuario, LocalDateTime fecha);
+
     List<Sesion> findByGrupo_IdGrupo(Long idGrupo);
     @Query("""
     SELECT s

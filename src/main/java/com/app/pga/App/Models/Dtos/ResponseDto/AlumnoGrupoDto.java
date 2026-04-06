@@ -4,5 +4,6 @@ public record AlumnoGrupoDto(
    Long idInscripcion,
    String nombre,
    String apellidoPaterno,
-   String apellidoMaterno
+   String apellidoMaterno,
+   Boolean estado
 ) {}
