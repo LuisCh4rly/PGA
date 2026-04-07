@@ -1,6 +1,7 @@
 package com.app.pga.App.Models.Dtos;
 
 import com.app.pga.App.Models.Enum.Alcance;
+import com.app.pga.App.Models.Enum.Origen;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
@@ -28,7 +29,8 @@ public record ActividadGrupoDto(
         Alcance alcance,
         Long  idGrupo,
         String nombreGrupo,
-        String campo
+        String campo,
+        Origen origen
 
 ) implements Serializable {
 }

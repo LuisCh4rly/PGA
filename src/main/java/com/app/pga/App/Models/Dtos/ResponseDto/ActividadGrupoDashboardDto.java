@@ -1,6 +1,7 @@
 package com.app.pga.App.Models.Dtos.ResponseDto;
 
 import com.app.pga.App.Models.Enum.Alcance;
+import com.app.pga.App.Models.Enum.Origen;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -17,6 +18,7 @@ public record ActividadGrupoDashboardDto(
         Long  idGrupo,
         String nombreGrupo,
         String campo,
+        Origen origen,
 
         Long asignadas,
         Long entregadas,

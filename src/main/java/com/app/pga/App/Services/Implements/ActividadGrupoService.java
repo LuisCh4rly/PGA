@@ -245,7 +245,8 @@ public class ActividadGrupoService implements IActividadGrupoService {
 
     @Override
     public ActividadGrupoDashboardDto obtenerActividadPorId(Long idActividad) {
-        return actividadGrupoRepository.obtenerPorId(idActividad).orElseThrow( () -> new NotFoundException("Actividad no encontrada "));
+        return actividadGrupoRepository
+                .obtenerPorId(idActividad).orElseThrow( () -> new NotFoundException("Actividad no encontrada "));
     }
 
     private void asignarAGrupo(ActividadGrupo actividadGrupo, Long idGrupo) {

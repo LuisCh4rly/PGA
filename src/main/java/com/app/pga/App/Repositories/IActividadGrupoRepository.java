@@ -26,6 +26,7 @@ public interface IActividadGrupoRepository extends JpaRepository<ActividadGrupo,
         ag.grupo.idGrupo,
         ag.grupo.nombre,
         ag.campo,
+        ag.origen,
 
         CAST( (SELECT COUNT(aa)
         FROM ActividadAlumno aa
