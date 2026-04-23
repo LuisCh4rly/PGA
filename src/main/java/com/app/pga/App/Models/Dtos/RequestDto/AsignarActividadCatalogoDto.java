@@ -20,5 +20,6 @@ public record AsignarActividadCatalogoDto(
         Alcance alcance,
 
         List<Long> idInscripciones
+
         ) implements Serializable {
 }

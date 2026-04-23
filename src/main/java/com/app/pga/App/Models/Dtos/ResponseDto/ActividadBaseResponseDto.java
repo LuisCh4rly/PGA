@@ -17,6 +17,7 @@ public record ActividadBaseResponseDto(
 
         Boolean activo,
 
-        CampoResponseDto campoFormativo
+        CampoResponseDto campoFormativo,
+        String urlInstrucciones
 
 ) implements Serializable{}

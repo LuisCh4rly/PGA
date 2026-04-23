@@ -20,11 +20,15 @@ public record ActividadGrupoDashboardDto(
         String campo,
         Origen origen,
 
+        String urlInstrucciones,
         Long asignadas,
         Long entregadas,
         Long aprobadas,
         Long incompletas,
-        Long excentadas
+        Long excentadas,
+        Long progreso,
+        Long espera,
+        Long noIniciadas
 
 ) {
 }

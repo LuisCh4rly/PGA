@@ -5,6 +5,7 @@ import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.RequestDto.ActividadBaseRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ActividadBaseResponseDto;
+import com.app.pga.App.Models.Entities.ActividadAlumno;
 import com.app.pga.App.Models.Entities.ActividadBase;
 import com.app.pga.App.Models.Entities.CampoFormativo;
 import com.app.pga.App.Models.Filtros.ActividadBaseFiltro;
@@ -14,10 +15,12 @@ import com.app.pga.App.Repositories.IActividadBaseRepository;
 import com.app.pga.App.Repositories.ICampoFormativoRepository;
 import com.app.pga.App.Services.Interfaces.IActividadBaseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,9 +33,10 @@ class ActividadBaseService implements IActividadBaseService {
     private final IActividadBaseRepository actividadBaseRepository;
     private final ActividadBaseMapper actividadBaseMapper;
     private final ICampoFormativoRepository campoFormativoRepository;
+    private final StorageService storageService;
 
     @Override
-    public ActividadBaseResponseDto crearActividadBase(ActividadBaseRequestDto actividadBaseRequestDto) {
+    public ActividadBaseResponseDto crearActividadBase(ActividadBaseRequestDto actividadBaseRequestDto, MultipartFile archivo) {
         CampoFormativo campoFormativo = campoFormativoRepository.findById(actividadBaseRequestDto.idCampoFormativo())
                 .orElseThrow(()-> new NotFoundException("Campo formativo no encontrado"));
         if(!campoFormativo.getActivo()){
@@ -45,6 +49,12 @@ class ActividadBaseService implements IActividadBaseService {
         ActividadBase actividadBaseNueva = actividadBaseMapper.toEntity(actividadBaseRequestDto);
         actividadBaseNueva.setActivo(true);
         actividadBaseNueva.setCampoFormativo(campoFormativo);
+        actividadBaseRepository.save(actividadBaseNueva);
+        actividadBaseNueva.setUrlInstrucciones(storageService.guardarInstruccionesActividadBase(
+                actividadBaseNueva.getIdActividad(),
+                archivo,
+                actividadBaseNueva.getTitulo())
+        );
         return actividadBaseMapper.toDto(actividadBaseRepository.save(actividadBaseNueva));
     }
 
@@ -67,6 +77,17 @@ class ActividadBaseService implements IActividadBaseService {
     }
 
     @Override
+    public Resource visualizarInstrucciones(Long idActividadBase) {
+        ActividadBase ab = actividadBaseRepository.findById(idActividadBase)
+                .orElseThrow(() -> new NotFoundException("Actividad base no encontrada"));
+
+        if (ab.getUrlInstrucciones() == null || ab.getUrlInstrucciones().isBlank()) {
+            throw new NotFoundException("La actividad aún no tiene instrucciones");
+        }
+        return storageService.loadAsResource(ab.getUrlInstrucciones());
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<ActividadBaseResponseDto> obtenerActividadesBaseActivas() {
         List <ActividadBase> actividadeActivas = actividadBaseRepository.findByActivoTrue();
@@ -85,13 +106,16 @@ class ActividadBaseService implements IActividadBaseService {
     }
 
     @Override  
-    public ActividadBaseResponseDto actualizarActividadBase(ActividadBaseRequestDto actividadBaseRequestDto, Long idActividadBase) {
+    public ActividadBaseResponseDto actualizarActividadBase(ActividadBaseRequestDto actividadBaseRequestDto, Long idActividadBase, MultipartFile archivo) {
         ActividadBase actividadBase = actividadBaseRepository.findById(idActividadBase)
                 .orElseThrow(()-> new NotFoundException("Actividad Base no encontrada"));
         if(!actividadBase.getActivo()){
             throw new ResourceDisabledException("No se puede modificar una actividad deshabilitada");
         }
         actividadBase.setDescripcion(actividadBaseRequestDto.descripcion());
+        if(archivo != null && !archivo.isEmpty()) {
+            actividadBase.setUrlInstrucciones(storageService.guardarInstruccionesActividadBase(actividadBase.getIdActividad(), archivo, actividadBase.getTitulo()));
+        }
         return actividadBaseMapper.toDto(actividadBaseRepository.save(actividadBase));
     }
 

@@ -27,6 +27,7 @@ public interface IActividadGrupoRepository extends JpaRepository<ActividadGrupo,
         ag.grupo.nombre,
         ag.campo,
         ag.origen,
+        ag.urlInstrucciones,
 
         CAST( (SELECT COUNT(aa)
         FROM ActividadAlumno aa
@@ -50,7 +51,20 @@ public interface IActividadGrupoRepository extends JpaRepository<ActividadGrupo,
         CAST( (SELECT COUNT(aa)
         FROM ActividadAlumno aa
         WHERE aa.actividadGrupo = ag
-        AND aa.estadoTarea = com.app.pga.App.Models.Enum.EstadoTarea.Exenta)AS Long)
+        AND aa.estadoTarea = com.app.pga.App.Models.Enum.EstadoTarea.Exenta)AS Long),
+        CAST( (SELECT COUNT(aa)
+        FROM ActividadAlumno aa
+        WHERE aa.actividadGrupo = ag
+        AND aa.estadoTarea = com.app.pga.App.Models.Enum.EstadoTarea.En_Progreso)AS Long),
+        CAST( (SELECT COUNT(aa)
+        FROM ActividadAlumno aa
+        WHERE aa.actividadGrupo = ag
+        AND aa.estadoTarea = com.app.pga.App.Models.Enum.EstadoTarea.En_Espera)AS Long),
+        CAST( (SELECT COUNT(aa)
+        FROM ActividadAlumno aa
+        WHERE aa.actividadGrupo = ag
+        AND aa.estadoTarea = com.app.pga.App.Models.Enum.EstadoTarea.Sin_Iniciar)AS Long)
+            
         )
         FROM ActividadGrupo ag
         WHERE ag.idActividadGrupo = :idActividad

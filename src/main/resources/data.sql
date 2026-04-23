@@ -79,31 +79,31 @@ INSERT INTO campos_formativos (nombre, descripcion, activo) VALUES ('Arquitectur
 
 
 -- Tabla de Activides
-INSERT INTO actividades_base (titulo, descripcion, activo, id_campo_formativo) VALUES ('Crear Endpoint REST', 'Desarrollo de una ruta POST para recibir archivos JSON.', true, 1),
-                                                                                      ('Validar DTOs', 'Implementación de validaciones de entrada en Java Spring.', true, 1),
-                                                                                      ('Manejo de Excepciones', 'Crear un controlador global para errores HTTP en la API.', true, 1),
-                                                                                      ('Documentar con Swagger', 'Generar la documentación técnica de los endpoints en Java.', true, 1),
-                                                                                      ('Diseñar Modelo ER', 'Creación del diagrama entidad relación para el proyecto.', true, 2),
-                                                                                      ('Script de Carga SQL', 'Escribir comandos INSERT masivos para poblar la base.', true, 2),
-                                                                                      ('Optimizar Consultas', 'Uso de índices en Postgres para búsquedas más rápidas.', true, 2),
-                                                                                      ('Backups Automatizados', 'Programar respaldos periódicos de la base de datos SQL.', true,  2),
-                                                                                      ('Consumo de API', 'Uso de Fetch API para mostrar datos en tablas dinámicas.', true, 3),
-                                                                                      ('Componente de Carga', 'Crear un botón que dispare el proceso de importación.', true, 3),
-                                                                                      ('Estado Global Redux', 'Gestionar datos compartidos entre múltiples componentes.', true, 3),
-                                                                                      ('Diseño Responsivo', 'Adaptar la interfaz para móviles usando CSS Grid o Flex.', true, 3),
-                                                                                      ('Configurar JWT', 'Implementar tokens para proteger las rutas del backend.', true, 4),
-                                                                                      ('Sanitizar Entradas', 'Evitar inyección SQL validando caracteres especiales.', true, 4),
-                                                                                      ('Encriptar Passwords', 'Uso de BCrypt en Java para guardar claves de forma segura.', true, 4),
-                                                                                      ('Politicas CORS', 'Configurar el acceso restringido a dominios conocidos.', true, 4),
-                                                                                      ('Dockerizar App', 'Crear una imagen de Docker para la API de Java y Postgres.', true, 5),
-                                                                                      ('Configurar Railway', 'Despliegue automático de la base de datos en la nube.', true, 5),
-                                                                                      ('Monitorizar Logs', 'Implementar rastreo de errores en el servidor de producción.', true, 5),
-                                                                                      ('Variables de Entorno', 'Gestionar credenciales sensibles de forma segura en la nube.', true, 5),
-                                                                                      ('Versionado de API', 'Implementar versiones v1 y v2 para mantener compatibilidad.', true, 1),
-                                                                                      ('Mapeo con MapStruct', 'Convertir entidades a DTOs usando mapeo automático.', true, 1),
-                                                                                      ('Normalización de Datos', 'Aplicar reglas de normalización para evitar redundancia.', true, 2),
-                                                                                      ('Lazy Loading UI', 'Cargar componentes bajo demanda para mejorar rendimiento.', true, 3),
-                                                                                      ('Rate Limiting', 'Limitar solicitudes por usuario para prevenir abuso del sistema.', true, 4);
+INSERT INTO actividades_base (titulo, descripcion, activo, id_campo_formativo, url_instrucciones) VALUES ('Crear Endpoint REST', 'Desarrollo de una ruta POST para recibir archivos JSON.', true, 1, 'actividades/actividades-base/actividad-1/Crear_Endpoint_REST.pdf'),
+                                                                                      ('Validar DTOs', 'Implementación de validaciones de entrada en Java Spring.', true, 1, 'actividades/actividades-base/actividad-2/Validar_DTOs.pdf'),
+                                                                                      ('Manejo de Excepciones', 'Crear un controlador global para errores HTTP en la API.', true, 1, 'actividades/actividades-base/actividad-3/Manejo_de_Excepciones.pdf'),
+                                                                                      ('Documentar con Swagger', 'Generar la documentación técnica de los endpoints en Java.', true, 1, 'actividades/actividades-base/actividad-4/Documentar_con_Swagger.pdf'),
+                                                                                      ('Diseñar Modelo ER', 'Creación del diagrama entidad relación para el proyecto.', true, 2, 'actividades/actividades-base/actividad-5/Diseñar_Modelo_ER.pdf'),
+                                                                                      ('Script de Carga SQL', 'Escribir comandos INSERT masivos para poblar la base.', true, 2, 'actividades/actividades-base/actividad-6/Script_de_Carga_SQL.pdf'),
+                                                                                      ('Optimizar Consultas', 'Uso de índices en Postgres para búsquedas más rápidas.', true, 2, 'actividades/actividades-base/actividad-7/Optimizar_Consultas.pdf'),
+                                                                                      ('Backups Automatizados', 'Programar respaldos periódicos de la base de datos SQL.', true,  2, 'actividades/actividades-base/actividad-8/Backups_Automatizados.pdf'),
+                                                                                      ('Consumo de API', 'Uso de Fetch API para mostrar datos en tablas dinámicas.', true, 3, 'actividades/actividades-base/actividad-9/Consumo_de_API.pdf'),
+                                                                                      ('Componente de Carga', 'Crear un botón que dispare el proceso de importación.', true, 3, 'actividades/actividades-base/actividad-10/Componente_de_Carga.pdf'),
+                                                                                      ('Estado Global Redux', 'Gestionar datos compartidos entre múltiples componentes.', true, 3, 'actividades/actividades-base/actividad-11/Estado_Global_Redux.pdf'),
+                                                                                      ('Diseño Responsivo', 'Adaptar la interfaz para móviles usando CSS Grid o Flex.', true, 3, 'actividades/actividades-base/actividad-12/Diseño_Responsivo.pdf'),
+                                                                                      ('Configurar JWT', 'Implementar tokens para proteger las rutas del backend.', true, 4, 'actividades/actividades-base/actividad-13/Configurar_JWT.pdf'),
+                                                                                      ('Sanitizar Entradas', 'Evitar inyección SQL validando caracteres especiales.', true, 4, 'actividades/actividades-base/actividad-14/Sanitizar_Entradas.pdf'),
+                                                                                      ('Encriptar Passwords', 'Uso de BCrypt en Java para guardar claves de forma segura.', true, 4, 'actividades/actividades-base/actividad-15/Encriptar_Passwords.pdf'),
+                                                                                      ('Politicas CORS', 'Configurar el acceso restringido a dominios conocidos.', true, 4, 'actividades/actividades-base/actividad-16/Politicas_CORS.pdf'),
+                                                                                      ('Dockerizar App', 'Crear una imagen de Docker para la API de Java y Postgres.', true, 5, 'actividades/actividades-base/actividad-17/Dockerizar_App.pdf'),
+                                                                                      ('Configurar Railway', 'Despliegue automático de la base de datos en la nube.', true, 5, 'actividades/actividades-base/actividad-18/Configurar_Railway.pdf'),
+                                                                                      ('Monitorizar Logs', 'Implementar rastreo de errores en el servidor de producción.', true, 5, 'actividades/actividades-base/actividad-19/Monitorizar_Logs.pdf'),
+                                                                                      ('Variables de Entorno', 'Gestionar credenciales sensibles de forma segura en la nube.', true, 5, 'actividades/actividades-base/actividad-20/Variables_de_Entorno.pdf'),
+                                                                                      ('Versionado de API', 'Implementar versiones v1 y v2 para mantener compatibilidad.', true, 1, 'actividades/actividades-base/actividad-21/Versionado_de_API.pdf'),
+                                                                                      ('Mapeo con MapStruct', 'Convertir entidades a DTOs usando mapeo automático.', true, 1, 'actividades/actividades-base/actividad-22/Mapeo_con_MapStruct.pdf'),
+                                                                                      ('Normalización de Datos', 'Aplicar reglas de normalización para evitar redundancia.', true, 2, 'actividades/actividades-base/actividad-23/Normalización_de_Datos.pdf'),
+                                                                                      ('Lazy Loading UI', 'Cargar componentes bajo demanda para mejorar rendimiento.', true, 3, 'actividades/actividades-base/actividad-24/Lazy_Loading_UI.pdf'),
+                                                                                      ('Rate Limiting', 'Limitar solicitudes por usuario para prevenir abuso del sistema.', true, 4, 'actividades/actividades-base/actividad-25/Rate_Limiting.pdf');
 
 --Tabla de Curso
 INSERT INTO cursos (nombre, descripcion, fecha_alta, activo) VALUES ( 'Diseño de Interfaces','Curso de diseño de interfaces y experiencia de usuario',CURRENT_DATE,true),
@@ -179,7 +179,7 @@ INSERT INTO inscripciones
 
 
 -- Precargar actividades por grupo (desde el curso)
-INSERT INTO actividades_grupos (titulo,descripcion,fecha_asignacion,req_entrega,alcance,origen,id_grupo,campo)
+INSERT INTO actividades_grupos (titulo,descripcion,fecha_asignacion,req_entrega,alcance,origen,id_grupo,campo, url_instrucciones)
 SELECT
     ab.titulo,
     ab.descripcion,
@@ -188,7 +188,8 @@ SELECT
     'GRUPAL',
     'CURSO',
     g.id_grupo,
-    cf.nombre
+    cf.nombre,
+    ab.url_instrucciones
 FROM grupos g
          JOIN cursos_actividades ca
               ON ca.curso_id = g.id_curso

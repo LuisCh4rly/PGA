@@ -31,6 +31,5 @@ public record ActividadGrupoDto(
         String nombreGrupo,
         String campo,
         Origen origen
-
 ) implements Serializable {
 }

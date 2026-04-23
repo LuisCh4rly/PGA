@@ -46,4 +46,6 @@ public class ActividadGrupo {
     @JoinColumn(name = "id_grupo", referencedColumnName = "idGrupo")
     private Grupo grupo;
 
+    private String urlInstrucciones;
+
 }
