@@ -1,5 +1,6 @@
 package com.app.pga.App.Repositories;
 
+import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionReporteDto;
 import com.app.pga.App.Models.Entities.Inscripcion;
 import com.app.pga.App.Models.Enum.Estado;
 import com.app.pga.App.Models.Enum.tipoInscripcion;
@@ -65,4 +66,21 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
     List<Inscripcion> obtenerInscripcionesAlumno(Long idAlumno);
 
 
+    @Query("""
+    SELECT  new com.app.pga.App.Models.Dtos.ResponseDto.InscripcionReporteDto(
+        i.idInscripcion,
+        i.estado,
+        CONCAT(u.nombre, ' ', u.apellidoPaterno, ' ', u.apellidoMaterno),
+        g.nombre,
+        c.nombre,
+        CONCAT(d.nombre, ' ', d.apellidoPaterno, ' ', d.apellidoMaterno),
+        g.estado
+        )
+    FROM Inscripcion i
+    JOIN i.usuario u
+    JOIN i.grupo g
+    JOIN g.curso c
+    JOIN g.usuario d
+    """)
+    List<InscripcionReporteDto> obtenerInscripcionReporte();
 }

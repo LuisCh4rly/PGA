@@ -2,6 +2,7 @@ package com.app.pga.App.Services.Interfaces;
 
 import com.app.pga.App.Models.Dtos.ActividadAlumnoDto;
 import com.app.pga.App.Models.Dtos.ActividadGrupoDto;
+import com.app.pga.App.Models.Dtos.ReporteSeguimientoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.CambiarEstadoTareaDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ActividadAlumnoResponseDTO;
 import com.app.pga.App.Models.Enum.EstadoTarea;
@@ -21,4 +22,5 @@ public interface IActividadAlumnoService {
     Resource visualizarEntrega(Long idActividadAlumno);
     void eliminarActividadesPorInscripcion(Long idInscripcion);
     List<ActividadAlumnoResponseDTO> verAsignaciones (Long idActividadGrupo);
+    List<ReporteSeguimientoDto>obtenerReporteSeguimientoPorGrupo(Long idGrupo);
 }

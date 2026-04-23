@@ -2,6 +2,7 @@ package com.app.pga.App.Controllers;
 
 import com.app.pga.App.Models.Dtos.RequestDto.InscripcionRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.AlumnoGrupoDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionReporteDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionResponseDto;
 import com.app.pga.App.Models.Filtros.InscripcionFiltro;
 import com.app.pga.App.Services.Implements.InscripcionService;
@@ -62,6 +63,9 @@ public class InscripcionController {
     @GetMapping
     public ResponseEntity<Page<InscripcionResponseDto>> listar(InscripcionFiltro filtro, Pageable pageable) {
         return ResponseEntity.ok(inscripcionService.findAll(filtro, pageable));
+    }@GetMapping ("reporte/inscripciones")
+    public ResponseEntity<List<InscripcionReporteDto>>reporteInscripciones(){
+        return ResponseEntity.ok(inscripcionService.findAll());
     }
 
     //---consulta por id---
@@ -74,4 +78,6 @@ public class InscripcionController {
     public ResponseEntity<InscripcionResponseDto>asignarGrupo(@PathVariable @Min(1) Long idInscripcion,@PathVariable @Min(1) Long idGrupo){
         return ResponseEntity.ok(inscripcionService.asignarGrupo(idInscripcion,idGrupo));
     }
+
+
 }

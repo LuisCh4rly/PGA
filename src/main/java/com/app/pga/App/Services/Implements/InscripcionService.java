@@ -5,6 +5,7 @@ import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.RequestDto.InscripcionRequestDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.AlumnoGrupoDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionReporteDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionResponseDto;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Inscripcion;
@@ -24,7 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -188,6 +191,25 @@ public class InscripcionService implements IInscripcionService {
 
     public List<Inscripcion> obtenerPorAlumno(Long idAlumno){
         return inscripcionRepository.obtenerInscripcionesAlumno(idAlumno);
+    }
+
+    //consulta para inscripciones generales reporte
+    @Transactional(readOnly = true)
+    public List<InscripcionReporteDto>findAll(){
+        return inscripcionRepository.obtenerInscripcionReporte();
+    }
+
+    public int obtenerAlumnosActivosConteo() {
+        return usuarioRepository.countAlumnosActivos();
+    }
+    public int obtenerAlumnosInactivosConteo() {
+        return usuarioRepository.countAlumnosInactivos();
+    }
+    public int obtenerDocentesActivosConteo() {
+        return usuarioRepository.countDocentesActivos();
+    }
+    public int obtenerDocentesInactivosConteo() {
+        return usuarioRepository.countDocentesInactivos();
     }
 
     }

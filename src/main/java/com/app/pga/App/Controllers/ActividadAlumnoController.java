@@ -62,9 +62,9 @@ public class ActividadAlumnoController {
                 .body(new InputStreamResource(archivo));
     }
 
-    @GetMapping("/grupos/seguimiento")
-    public ResponseEntity<List<ReporteSeguimientoDto>>reporteSeguimientoGrupo(){
-        return ResponseEntity.ok(actividadAlumnoService.obtenerReporteSeguimientoGrupo());
+    @GetMapping("/grupos/seguimiento/{idGrupo}")
+    public ResponseEntity<List<ReporteSeguimientoDto>>reporteSeguimientoGrupo(@PathVariable Long idGrupo){
+        return ResponseEntity.ok(actividadAlumnoService.obtenerReporteSeguimientoPorGrupo(idGrupo));
     }
 
     @GetMapping("/actividad/{idActividadGrupo}")

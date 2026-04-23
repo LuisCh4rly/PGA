@@ -1,6 +1,7 @@
 package com.app.pga.App.Repositories;
 
 import com.app.pga.App.Models.Dtos.ReporteAsistenciaGrupoDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.SesionDto;
 import com.app.pga.App.Models.Entities.Sesion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -63,7 +64,8 @@ public interface ISesionRepository extends JpaRepository<Sesion, Long>, JpaSpeci
     JOIN sa.inscripcion i
     JOIN i.usuario u
     LEFT JOIN sa.asistencia asist
+    WHERE g.idGrupo = :idGrupo
     ORDER BY g.idGrupo, s.fecha, u.nombre
 """)
-    List<ReporteAsistenciaGrupoDto> reporteAsistenciaGeneral();
+    List<ReporteAsistenciaGrupoDto> reporteAsistenciaPorGrupo(@Param("idGrupo") Long idGrupo);
 }

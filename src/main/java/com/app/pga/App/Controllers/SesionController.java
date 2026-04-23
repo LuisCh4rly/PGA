@@ -25,7 +25,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sesiones")
@@ -98,9 +100,9 @@ class SesionController {
                 .body(sesionService.actualizarSesion(idSesion, dto));
     }
 
-    @GetMapping("/grupos/asistencias")
-    public ResponseEntity<List<ReporteAsistenciaGrupoDto>> reporteAsistenciaGrupo() {
-        return ResponseEntity.ok(sesionService.obtenerReporteAsistenciaGrupo());
+    @GetMapping("/grupos/asistencias/{idGrupo}")
+    public ResponseEntity<List<ReporteAsistenciaGrupoDto>> reporteAsistenciaGrupo(@PathVariable Long idGrupo) {
+        return ResponseEntity.ok(sesionService.obtenerReporteAsistenciaPorGrupo(idGrupo));
     }
 
     @GetMapping("/docente/{id}/sesiones")
@@ -108,5 +110,4 @@ class SesionController {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(sesionService.obtenerSesionesFiltradas(id, filtro, pageable));
     }
-
 }

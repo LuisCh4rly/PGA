@@ -4,6 +4,7 @@ import com.app.pga.App.Models.Dtos.ReporteSeguimientoDto;
 import com.app.pga.App.Models.Entities.ActividadAlumno;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -19,6 +20,11 @@ public interface IActividadAlumnoRepository extends JpaRepository<ActividadAlumn
     SELECT new com.app.pga.App.Models.Dtos.ReporteSeguimientoDto(
         g.idGrupo,
         g.nombre,
+        g.periodo,
+        g.estado,
+        g.created_at,
+        c.nombre,
+        CONCAT(doc.nombre,' ', doc.apellidoPaterno,' ', doc.apellidoMaterno),
         ag.idActividadGrupo,
         ag.titulo,
         ag.reqEntrega,
@@ -33,11 +39,14 @@ public interface IActividadAlumnoRepository extends JpaRepository<ActividadAlumn
     FROM ActividadAlumno au
     JOIN au.actividadGrupo ag
     JOIN ag.grupo g
+    JOIN g.curso c
+    LEFT JOIN g.usuario doc   
     JOIN au.inscripcion i
     JOIN i.usuario u
+    WHERE g.idGrupo = :idGrupo
     ORDER BY g.idGrupo, ag.idActividadGrupo, u.nombre
 """)
-    List<ReporteSeguimientoDto> reporteSeguimientoGeneral();
+    List<ReporteSeguimientoDto> reporteSeguimientoGeneralPorGrupo(@Param("idGrupo") Long idGrupo);
 
 
 }
