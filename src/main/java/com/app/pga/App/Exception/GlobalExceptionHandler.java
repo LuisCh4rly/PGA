@@ -194,6 +194,20 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
     }
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<ApiError> handleFileException(FileException ex, HttpServletRequest req) {
+
+        ApiError err = new ApiError(
+                OffsetDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Error procesando el archivo ",
+                ex.getMessage(),
+                req.getRequestURI(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
+    }
 
 
 }

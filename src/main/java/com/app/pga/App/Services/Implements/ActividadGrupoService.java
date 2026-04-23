@@ -14,9 +14,12 @@ import com.app.pga.App.Models.Enum.Origen;
 import com.app.pga.App.Models.Mappers.ActividadGrupoMapper;
 import com.app.pga.App.Repositories.*;
 import com.app.pga.App.Services.Interfaces.IActividadGrupoService;
+import com.app.pga.App.Services.Interfaces.IStorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,6 +37,7 @@ public class ActividadGrupoService implements IActividadGrupoService {
     private final IInscripcionRepository inscripcionRepository;
     private final IActividadAlumnoRepository actividadAlumnoRepository;
     private final ActividadGrupoMapper actividadGrupoMapper;
+    private final StorageService storageService;
 
 
 
@@ -65,12 +69,14 @@ public class ActividadGrupoService implements IActividadGrupoService {
             ag.setOrigen(Origen.CURSO);
             ag.setCampo(ab.getCampoFormativo().getNombre());
             ag.setGrupo(grupo);
-
-            actividadGrupoRepository.save(ag);
-
+            ag = actividadGrupoRepository.save(ag);
+            ag.setUrlInstrucciones(storageService.copiarInstruccionesActividadBase(ab.getUrlInstrucciones(), ag.getIdActividadGrupo()));
+            ag = actividadGrupoRepository.save(ag);
         }
     }
-    public ActividadGrupoDto asignarDesdeCatalogo(Long idGrupo, AsignarActividadCatalogoDto dto) {
+
+    @Override
+    public ActividadGrupoDto asignarDesdeCatalogo(Long idGrupo, AsignarActividadCatalogoDto dto, MultipartFile archivo) {
 
         ActividadBase ab = actividadBaseRepository.findById(dto.idActividadBase())
                     .orElseThrow(() -> new NotFoundException("Actividad Base no encontrada"));
@@ -94,15 +100,22 @@ public class ActividadGrupoService implements IActividadGrupoService {
             ag.setOrigen(Origen.CATALOGO);
             ag.setCampo(ab.getCampoFormativo().getNombre());
             ag.setGrupo(grupo);
+            ActividadGrupo an = actividadGrupoRepository.save(ag);
 
-            actividadGrupoRepository.save(ag);
-
+           if (archivo != null && !archivo.isEmpty()){
+               an.setUrlInstrucciones   (
+                       storageService.guardarInstruccionesActividadGrupo(an.getIdActividadGrupo(), archivo, an.getTitulo()));
+           }else {
+               an.setUrlInstrucciones(
+                       storageService.copiarInstruccionesActividadBase(ab.getUrlInstrucciones(), an.getIdActividadGrupo()));
+           }
+            ag = actividadGrupoRepository.save(ag);
             asignarActividad(ag, dto.idInscripciones());
 
             return actividadGrupoMapper.toDto(ag);
     }
-
-    public ActividadGrupoDto crearExtra( Long idGrupo, AsignarActividadExtraDto dto) {
+    @Override
+    public ActividadGrupoDto crearExtra( Long idGrupo, AsignarActividadExtraDto dto,MultipartFile archivo) {
         Grupo grupo = grupoRepository.findById(idGrupo)
                 .orElseThrow(()->new NotFoundException("Grupo no encontrado"));
         if (grupo.getEstado()== Estado.DESHABILITADO)
@@ -118,49 +131,20 @@ public class ActividadGrupoService implements IActividadGrupoService {
         ag.setAlcance(dto.alcance());
         ag.setOrigen(Origen.EXTRA);
         ag.setGrupo(grupo);
-
-        actividadGrupoRepository.save(ag);
+        ag= actividadGrupoRepository.save(ag);
+        if (archivo != null && !archivo.isEmpty()){
+            ag.setUrlInstrucciones   (
+                    storageService.guardarInstruccionesActividadGrupo(ag.getIdActividadGrupo(), archivo, ag.getTitulo()));
+        }
+        ag = actividadGrupoRepository.save(ag);
         asignarActividad(ag, dto.idInscripciones());
         return actividadGrupoMapper.toDto(ag);
-    }
-
-    private void asignarActividad(ActividadGrupo ag, List<Long> ids) {
-
-        List <Inscripcion> inscripciones = inscripcionRepository
-            .findByGrupo_IdGrupoAndEstadoTrue(ag.getGrupo().getIdGrupo());
-
-        if(ag.getAlcance()==Alcance.INDIVIDUAL){
-            if ( ids == null || ids.isEmpty()){
-                throw new IllegalArgumentException("Debe enviar alumnos para una actividad Individual");
-            }
-            Set<Long> idsGrupo = inscripciones.stream()
-                    .map(Inscripcion::getIdInscripcion)
-                    .collect(Collectors.toSet());
-            if (!idsGrupo.containsAll(ids)) {
-                throw new IllegalArgumentException("Hay inscripciones que no pertenecen al grupo");
-            }
-            inscripciones  = inscripciones
-                    .stream()
-                    .filter(i-> ids.contains(i.getIdInscripcion()))
-                    .toList();
-        }
-
-        for (Inscripcion i : inscripciones) {
-            ActividadAlumno aa = new ActividadAlumno();
-            aa.setEstadoTarea(EstadoTarea.Sin_Iniciar);
-            aa.setExcento(false);
-            aa.setMotivoExencion(null);
-            aa.setUrlEntrega(null);
-            aa.setObservaciones(null);
-            aa.setInscripcion(i);
-            aa.setActividadGrupo(ag);
-            actividadAlumnoRepository.save(aa);
-        }
     }
 
 
 
     @Transactional(readOnly = true)
+    @Override
     public List<ActividadGrupoDto> obtenerActividadesPorGrupo(Long idGrupo){
 
         if(!grupoRepository.existsById(idGrupo)){
@@ -173,10 +157,8 @@ public class ActividadGrupoService implements IActividadGrupoService {
                 .map(ag -> actividadGrupoMapper.toDto(ag))
                 .toList();
     }
-
-
-
     @Transactional(readOnly = true)
+    @Override
     public List<ActividadGrupoDto> obtenerActividadesGrupales(Long idGrupo){
         if(!grupoRepository.existsById(idGrupo)){
             throw new NotFoundException("Grupo no encontrado");
@@ -189,9 +171,8 @@ public class ActividadGrupoService implements IActividadGrupoService {
                 .map(actividadGrupoMapper::toDto)
                 .toList();
     }
-
-
     @Transactional(readOnly = true)
+    @Override
     public List<ActividadGrupoDto> obtenerActividadesIndividuales(Long idGrupo){
         if(!grupoRepository.existsById(idGrupo)){
             throw new NotFoundException("Grupo no encontrado");
@@ -202,8 +183,20 @@ public class ActividadGrupoService implements IActividadGrupoService {
                 .map(actividadGrupoMapper::toDto)
                 .toList();
     }
-
-
+    @Override
+    public ActividadGrupoDashboardDto obtenerActividadPorId(Long idActividad) {
+        return actividadGrupoRepository
+                .obtenerPorId(idActividad).orElseThrow( () -> new NotFoundException("Actividad no encontrada "));
+    }
+    @Override
+    public ActividadGrupoDto actualizarInstruccionesPorId (Long idActividadGrupo, MultipartFile archivo){
+        ActividadGrupo ag = actividadGrupoRepository.findById(idActividadGrupo)
+                .orElseThrow(()->new NotFoundException("Actividad no encontrada"));
+        if(archivo != null && !archivo.isEmpty()){
+            ag.setUrlInstrucciones(storageService.guardarInstruccionesActividadGrupo(idActividadGrupo,archivo,ag.getTitulo()));
+        }
+        return actividadGrupoMapper.toDto(actividadGrupoRepository.save(ag));
+    }
 
     @Transactional
     public void agregarInscripcionesActividad(Long idActividadGrupo, List<Long> nuevasInscripciones){
@@ -244,9 +237,13 @@ public class ActividadGrupoService implements IActividadGrupoService {
     }
 
     @Override
-    public ActividadGrupoDashboardDto obtenerActividadPorId(Long idActividad) {
-        return actividadGrupoRepository
-                .obtenerPorId(idActividad).orElseThrow( () -> new NotFoundException("Actividad no encontrada "));
+    public Resource visualizarInstrucciones(Long idActividadGrupo) {
+        ActividadGrupo ag = actividadGrupoRepository.findById(idActividadGrupo)
+                    .orElseThrow(() -> new NotFoundException("Actividad del grupo no encontrada"));
+            if (ag.getUrlInstrucciones() == null || ag.getUrlInstrucciones().isBlank()) {
+                throw new NotFoundException("La actividad aún no tiene instrucciones");
+            }
+            return storageService.loadAsResource(ag.getUrlInstrucciones());
     }
 
     private void asignarAGrupo(ActividadGrupo actividadGrupo, Long idGrupo) {
@@ -267,7 +264,39 @@ public class ActividadGrupoService implements IActividadGrupoService {
             actividadAlumnoRepository.save(aa);
         }
     }
+    private void asignarActividad(ActividadGrupo ag, List<Long> ids) {
 
+        List <Inscripcion> inscripciones = inscripcionRepository
+                .findByGrupo_IdGrupoAndEstadoTrue(ag.getGrupo().getIdGrupo());
+
+        if(ag.getAlcance()==Alcance.INDIVIDUAL){
+            if ( ids == null || ids.isEmpty()){
+                throw new IllegalArgumentException("Debe enviar alumnos para una actividad Individual");
+            }
+            Set<Long> idsGrupo = inscripciones.stream()
+                    .map(Inscripcion::getIdInscripcion)
+                    .collect(Collectors.toSet());
+            if (!idsGrupo.containsAll(ids)) {
+                throw new IllegalArgumentException("Hay inscripciones que no pertenecen al grupo");
+            }
+            inscripciones  = inscripciones
+                    .stream()
+                    .filter(i-> ids.contains(i.getIdInscripcion()))
+                    .toList();
+        }
+
+        for (Inscripcion i : inscripciones) {
+            ActividadAlumno aa = new ActividadAlumno();
+            aa.setEstadoTarea(EstadoTarea.Sin_Iniciar);
+            aa.setExcento(false);
+            aa.setMotivoExencion(null);
+            aa.setUrlEntrega(null);
+            aa.setObservaciones(null);
+            aa.setInscripcion(i);
+            aa.setActividadGrupo(ag);
+            actividadAlumnoRepository.save(aa);
+        }
+    }
 }
 
 

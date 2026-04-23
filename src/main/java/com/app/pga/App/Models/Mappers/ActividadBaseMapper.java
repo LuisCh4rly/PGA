@@ -10,7 +10,6 @@ public interface ActividadBaseMapper {
     ActividadBase toEntity(ActividadBaseRequestDto actividadBaseRequestDto);
     @Mapping(target= "campoFormativo", source = "campoFormativo", qualifiedByName = "toDto")
     ActividadBaseResponseDto toDto(ActividadBase actividadBase);
-
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     ActividadBase partialUpdate(ActividadBaseRequestDto actividadBaseDto, @MappingTarget ActividadBase actividadBase);
 }

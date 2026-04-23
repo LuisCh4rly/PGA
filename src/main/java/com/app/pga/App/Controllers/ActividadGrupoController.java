@@ -9,9 +9,13 @@ import com.app.pga.App.Models.Entities.ActividadGrupo;
 import com.app.pga.App.Services.Interfaces.IActividadGrupoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,17 +26,21 @@ public class ActividadGrupoController {
 
     private final IActividadGrupoService actividadGrupoService;
     @PostMapping("/{idGrupo}/actividades/catalogo")
-    public ResponseEntity<ActividadGrupoDto> asignarDedeCatalogo (@PathVariable Long idGrupo, @RequestBody @Valid AsignarActividadCatalogoDto dto){
+    public ResponseEntity<ActividadGrupoDto> asignarDedeCatalogo (@PathVariable Long idGrupo,
+                                                                  @RequestPart("dto") @Valid AsignarActividadCatalogoDto dto,
+                                                                  @RequestPart(value = "archivo", required = false) MultipartFile archivo){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(actividadGrupoService.asignarDesdeCatalogo(idGrupo, dto));
+                .body(actividadGrupoService.asignarDesdeCatalogo(idGrupo, dto, archivo));
     }
 
     @PostMapping("/{idGrupo}/actividades/extra")
-    public ResponseEntity<ActividadGrupoDto> asignarExtra (@PathVariable Long idGrupo, @RequestBody @Valid AsignarActividadExtraDto dto){
+    public ResponseEntity<ActividadGrupoDto> asignarExtra (@PathVariable Long idGrupo,
+                                                           @RequestPart("dto") @Valid AsignarActividadExtraDto dto,
+                                                           @RequestPart(value = "archivo") MultipartFile archivo){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(actividadGrupoService.crearExtra(idGrupo, dto));
+                .body(actividadGrupoService.crearExtra(idGrupo, dto, archivo));
     }
     @GetMapping("/{idGrupo}/actividades")
     public ResponseEntity<List<ActividadGrupoDto>> obtenerActividadesGrupo(@PathVariable Long idGrupo){
@@ -62,6 +70,27 @@ public class ActividadGrupoController {
                .status(HttpStatus.OK)
                .body(actividadGrupoService.obtenerActividadPorId(idActividad));
     }
+
+    @GetMapping("actividad/{idActividad}/instrucciones")
+    public ResponseEntity<Resource> verInstrucciones(@PathVariable Long idActividad) {
+
+        Resource archivo = actividadGrupoService.visualizarInstrucciones(idActividad);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" + archivo.getFilename() + "\"")
+                .body(archivo);
+    }
+
+    @PutMapping ("/actividad/{idActividad}/actualizar")
+    public ResponseEntity <ActividadGrupoDto> actualizarInstruccionesPorId (@PathVariable Long idActividad,
+                                                                            @RequestParam(value =  "archivo", required =false) MultipartFile archivo){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(actividadGrupoService.actualizarInstruccionesPorId(idActividad,archivo));
+    }
+
 
 
 

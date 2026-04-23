@@ -3,6 +3,7 @@ package com.app.pga.App.Models.Dtos.RequestDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 
@@ -15,7 +16,7 @@ public record ActividadBaseRequestDto(
         @NotBlank(message = "Campo obligatorio")
         String descripcion,
         @NotNull (message = "Campo obligatorio")
-        Long  idCampoFormativo
-
+        Long  idCampoFormativo,
+        MultipartFile archivo
 ) implements Serializable {
 }

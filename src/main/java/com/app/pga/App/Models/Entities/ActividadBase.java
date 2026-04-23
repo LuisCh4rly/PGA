@@ -33,6 +33,8 @@ public class ActividadBase {
     @OneToMany(mappedBy = "actividadBase")
     private List< Curso_ActividadBase > cursos;
 
+    private String urlInstrucciones;
+
 
 
 }
