@@ -8,6 +8,12 @@ import java.time.LocalDate;
 public record ReporteSeguimientoDto (
         Long idGrupo,
         String nombreGrupo,
+        String periodo,
+        com.app.pga.App.Models.Enum.Estado estadoGrupo,
+        java.time.LocalDate createdAtGrupo,
+        String nombreCurso,
+        String nombreDocente,
+
         Long idActividadGrupo,
         String titulo,
         Boolean reqEntrega,

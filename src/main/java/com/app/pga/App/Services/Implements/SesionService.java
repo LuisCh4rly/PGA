@@ -131,6 +131,11 @@ public class SesionService implements ISesionService {
                     "No se pueden modificar inscripciones de una sesión grupal");
         }
 
+        //validamos que la sesion no sea pasada
+        if(!sesion.getFecha().isAfter(LocalDateTime.now())){
+            throw new IllegalStateException("No se puede modificar inscripciones de una sesión que ya inició o finalizó");
+        }
+
         // borrar relaciones actuales
         asistenciaRepository.deleteBySesionAlumnoSesionIdSesion(idSesion);
         asistenciaRepository.flush();
@@ -175,6 +180,10 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
 
     if (relaciones.isEmpty()) {
         throw new NotFoundException("No existen alumnos asignados a esta sesión");
+    }
+    //validamos que la sesion no sea futura
+    if(!sesion.getFecha().isBefore(LocalDateTime.now())){
+        throw new IllegalStateException("No se puede pasar asistencia a una sesión que aún no inicia");
     }
 
     // Map para acceso rápido
@@ -310,8 +319,8 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
     }
 
     @Transactional(readOnly = true)
-    public List<ReporteAsistenciaGrupoDto>obtenerReporteAsistenciaGrupo(){
-        return sesionRepository.reporteAsistenciaGeneral();
+    public List<ReporteAsistenciaGrupoDto>obtenerReporteAsistenciaPorGrupo(Long idGrupo){
+        return sesionRepository.reporteAsistenciaPorGrupo(idGrupo);
     }
 
     //lista con paginacion y so de api criteria

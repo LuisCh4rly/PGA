@@ -36,6 +36,23 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Long>, JpaSpe
 """)
     Page<Usuario> findDocentes( Specification<Usuario> filtrar, Pageable pageable);
 
+    //--lISTA GENERAL DE Alumnos conteo
+    // Contar Docentes Inactivos
+    @Query("""
+    SELECT COUNT(u) FROM Usuario u 
+    WHERE u.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.DOCENTE
+    AND u.activo = true
+""")
+    int countDocentesActivos();
+
+    // Contar Docentes Inactivos
+    @Query("""
+    SELECT COUNT(u) FROM Usuario u 
+    WHERE u.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.DOCENTE
+    AND u.activo = false
+""")
+    int countDocentesInactivos();
+
     //--busqueda particular de un docente
     @Query("""
     SELECT u FROM Usuario u
@@ -54,12 +71,29 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Long>, JpaSpe
 """)
     List<Usuario> findAlumnosActivos();
 
-    //--lISTA GENERAL DE DOCENTES
+    //--lISTA GENERAL DE Alumnos
     @Query("""
     SELECT u FROM Usuario u
     WHERE u.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.ALUMNO
 """)
     Page<Usuario> findAlumnos(Specification<Usuario> filtrar, Pageable pageable);
+
+    //--lISTA GENERAL DE Alumnos conteo
+    // Contar Alumnos Inactivos
+    @Query("""
+    SELECT COUNT(u) FROM Usuario u 
+    WHERE u.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.ALUMNO 
+    AND u.activo = true
+""")
+    int countAlumnosActivos();
+
+    // Contar Alumnos Inactivos
+    @Query("""
+    SELECT COUNT(u) FROM Usuario u 
+    WHERE u.cuenta.role.name = com.app.pga.Auth.Models.Enum.ERole.ALUMNO 
+    AND u.activo = false
+""")
+    int countAlumnosInactivos();
 
     //BUSQUEDA PARTICULAR DE UN ALUMNO
     @Query("""

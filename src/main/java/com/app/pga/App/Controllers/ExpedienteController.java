@@ -1,13 +1,17 @@
 package com.app.pga.App.Controllers;
 
 import com.app.pga.App.Models.Dtos.RequestDto.ObservacionesExpedienteDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ExpedienteReporteDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ExpedienteResponseDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionReporteDto;
 import com.app.pga.App.Services.Interfaces.IExpedienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/expedientes")
@@ -29,5 +33,10 @@ class ExpedienteController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(expedienteService.agregarObservaciones(idExpediente, dto.observacion()));
+    }
+
+    @GetMapping ("reporte/expedientes")
+    public ResponseEntity<List<ExpedienteReporteDto>>reporteExpediente(){
+        return ResponseEntity.ok(expedienteService.findAll());
     }
 }

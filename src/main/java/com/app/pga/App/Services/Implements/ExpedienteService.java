@@ -3,6 +3,7 @@ package com.app.pga.App.Services.Implements;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.ResponseDto.DocumentoExpedienteResponseDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ExpedienteReporteDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ExpedienteResponseDto;
 import com.app.pga.App.Models.Entities.Documento;
 import com.app.pga.App.Models.Entities.Documento_Expediente;
@@ -125,4 +126,8 @@ public class ExpedienteService implements IExpedienteService {
         }
     }
 
+    //consulta de expediente generales reporte
+    public List<ExpedienteReporteDto>findAll(){
+        return expedienteRepository.obtenerExpedienteReporte();
+    }
 }

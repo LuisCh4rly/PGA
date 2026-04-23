@@ -176,8 +176,8 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReporteSeguimientoDto>obtenerReporteSeguimientoGrupo(){
-        return actividadAlumnoRepository.reporteSeguimientoGeneral();
+    public List<ReporteSeguimientoDto>obtenerReporteSeguimientoPorGrupo(Long idGrupo){
+        return actividadAlumnoRepository.reporteSeguimientoGeneralPorGrupo(idGrupo);
     }
 
     public void eliminarActividadesPorInscripcion(Long idInscripcion) {

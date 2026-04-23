@@ -22,4 +22,5 @@ public interface ISesionService {
     SesionDetalletDto actualizarSesion (Long idSesion, SesionUpdateDto dto );
     List<SesiondocenteDto>obtenerSesionPorAlumno(Long idInscripcion);
     public Page<SesiondocenteDto> obtenerSesionesFiltradas(Long idDocente, SesionFiltro filtro, Pageable pageable);
+    public List<ReporteAsistenciaGrupoDto>obtenerReporteAsistenciaPorGrupo(Long idGrupo);
 }
