@@ -69,7 +69,7 @@ public class ReporteAsistenciaService {
             Font fontTitulo = new Font(Font.HELVETICA, 16, Font.BOLD);
             Font fontFecha = new Font(Font.HELVETICA, 8, Font.NORMAL);
             Font fontSubtitulo = new Font(Font.HELVETICA, 14, Font.NORMAL);
-            Font fontSubtitulo2 = new Font(Font.HELVETICA, 12, Font.NORMAL);
+            Font fontSubtitulo2 = new Font(Font.HELVETICA, 11, Font.NORMAL);
             Font fontAlertaRoja = new Font(Font.HELVETICA, 12, Font.BOLD, new Color(211,47,47));
             Font fontLabelDatos = new Font(Font.HELVETICA, 9, Font.BOLD);
             Font fontValorDatos = new Font(Font.HELVETICA, 9, Font.NORMAL);
@@ -147,11 +147,11 @@ public class ReporteAsistenciaService {
             datosGrupo.setWidthPercentage(100);
             datosGrupo.setWidths(new float[]{1,1,1,2,1,3});
 
+            addFila(datosGrupo, "REGISTRO:", grupo.created_at().toString(), fontLabelDatos, fontValorDatos);
             addFila(datosGrupo, "GRUPO:", grupo.nombre(), fontLabelDatos, fontValorDatos);
-            addFila(datosGrupo, "PERIODO:", grupo.periodo(), fontLabelDatos, fontValorDatos);
             addFila(datosGrupo, "CURSO:", grupo.nombreCurso(), fontLabelDatos, fontValorDatos);
             addFila(datosGrupo, "ESTADO:", (grupo.estado() == Estado.HABILITADO) ? "ACTIVO" : "INACTIVO", fontLabelDatos, fontValorDatos);
-            addFila(datosGrupo, "REGISTRO:", grupo.created_at().toString(), fontLabelDatos, fontValorDatos);
+            addFila(datosGrupo, "PERIODO:", grupo.periodo(), fontLabelDatos, fontValorDatos);
             addFila(datosGrupo, "DOCENTE:", grupo.docente(), fontLabelDatos, fontValorDatos);
 
             document.add(datosGrupo);
@@ -268,6 +268,7 @@ public class ReporteAsistenciaService {
                     lineImage.scaleToFit(450, 250);
 
                     document.add(lineImage);
+                    document.add(Chunk.NEWLINE);
 
                     //alumnos en riesgo
                     //se agrupa por alumno y se cuentan las faltas
@@ -394,27 +395,114 @@ public class ReporteAsistenciaService {
 
                     PdfPTable resumen = new PdfPTable(3);
                     resumen.setWidthPercentage(70);
+                    resumen.setWidths(new float[]{4, 3, 3});//define la proporcion del ancho de cada columna
+                    resumen.setSpacingBefore(10);
 
-                    resumen.addCell(getHeaderCell("Estado"));
-                    resumen.addCell(getHeaderCell("Cantidad"));
-                    resumen.addCell(getHeaderCell("Porcentaje"));
+                    //encabezados sin color
+                    PdfPCell estado = new PdfPCell((new Phrase("Estado", fontSubtitulo)));
+                    estado.setBackgroundColor(null);//quita el color de fondo
+                    estado.setPadding(5);
+                    estado.setBorder(Rectangle.NO_BORDER);
 
-                    resumen.addCell("Asistieron");
-                    resumen.addCell(String.valueOf(asistio));
-                    resumen.addCell(String.format("%.2f %%", pAsistio));
+                    PdfPCell cantidad = new PdfPCell((new Phrase("Cantidad", fontSubtitulo)));
+                    cantidad.setBackgroundColor(null);//quita el color de fondo
+                    cantidad.setPadding(5);
+                    cantidad.setBorder(Rectangle.NO_BORDER);
 
-                    resumen.addCell("Faltaron");
-                    resumen.addCell(String.valueOf(falto));
-                    resumen.addCell(String.format("%.2f %%", pFalto));
+                    PdfPCell porcentaje = new PdfPCell((new Phrase("Porcentaje", fontSubtitulo)));
+                    porcentaje.setBackgroundColor(null);//quita el color de fondo
+                    porcentaje.setPadding(5);
+                    porcentaje.setBorder(Rectangle.NO_BORDER);
 
-                    resumen.addCell("Retardos");
-                    resumen.addCell(String.valueOf(retardo));
-                    resumen.addCell(String.format("%.2f %%", pRetardo));
+                    resumen.addCell(estado);
+                    resumen.addCell(cantidad);
+                    resumen.addCell(porcentaje);
+
+                    //celdad
+                    PdfPCell asistieron = new PdfPCell(new Phrase("Asistieron", fontValorDatos));
+                    asistieron.setPadding(5);
+                    asistieron.setBackgroundColor(new Color(245, 245, 245));//uso de gris claro para diferenciar filas
+                    asistieron.setBorder(Rectangle.NO_BORDER);
+                    asistieron.setBorder(Rectangle.BOTTOM);
+                    asistieron.setBorderColor(new Color(96, 93, 93));
+                    resumen.addCell(asistieron);
+
+                    PdfPCell asistieron1 = new PdfPCell(new Phrase(String.valueOf(asistio), fontValorDatos));
+                    asistieron1.setPadding(5);
+                    asistieron1.setBackgroundColor(new Color(245, 245, 245));//uso de gris claro para diferenciar filas
+                    asistieron1.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    asistieron1.setBorder(Rectangle.NO_BORDER);
+                    asistieron1.setBorder(Rectangle.BOTTOM);
+                    asistieron1.setBorderColor(new Color(96, 93, 93));
+                    resumen.addCell(asistieron1);
+
+                    PdfPCell asistieron2 = new PdfPCell(new Phrase(String.format("%.2f %%", pAsistio), fontValorDatos));
+                    asistieron2.setPadding(5);
+                    asistieron2.setBackgroundColor(new Color(245, 245, 245));//uso de gris claro para diferenciar filas
+                    asistieron2.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    asistieron2.setBorder(Rectangle.NO_BORDER);
+                    asistieron2.setBorder(Rectangle.BOTTOM);
+                    asistieron2.setBorderColor(new Color(96, 93, 93));
+                    resumen.addCell(asistieron2);
+
+                    PdfPCell faltaron = new PdfPCell(new Phrase("Faltaron", fontValorDatos));
+                    faltaron.setPadding(5);
+                    faltaron.setBackgroundColor(new Color(245, 245, 245));//uso de gris claro para diferenciar filas
+                    faltaron.setBorder(Rectangle.NO_BORDER);
+                    faltaron.setBorder(Rectangle.BOTTOM);
+                    faltaron.setBorderColor(new Color(96, 93, 93));
+                    resumen.addCell(faltaron);
+
+                    PdfPCell faltaron1 = new PdfPCell(new Phrase(String.valueOf(falto), fontValorDatos));
+                    faltaron1.setPadding(5);
+                    faltaron1.setBackgroundColor(new Color(245, 245, 245));//uso de gris claro para diferenciar filas
+                    faltaron1.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    faltaron1.setBorder(Rectangle.NO_BORDER);
+                    faltaron1.setBorder(Rectangle.BOTTOM);
+                    faltaron1.setBorderColor(new Color(96, 93, 93));
+                    resumen.addCell(faltaron1);
+
+                    PdfPCell faltaron2 = new PdfPCell(new Phrase(String.format("%.2f %%", pFalto), fontValorDatos));
+                    faltaron2.setPadding(5);
+                    faltaron2.setBackgroundColor(new Color(245, 245, 245));//uso de gris claro para diferenciar filas
+                    faltaron2.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    faltaron2.setBorder(Rectangle.NO_BORDER);
+                    faltaron2.setBorder(Rectangle.BOTTOM);
+                    faltaron2.setBorderColor(new Color(96, 93, 93));
+                    resumen.addCell(faltaron2);
+
+                    PdfPCell retardos = new PdfPCell(new Phrase("Retardos", fontValorDatos));
+                    retardos.setPadding(5);
+                    retardos.setBackgroundColor(new Color(245, 245, 245));//uso de gris claro para diferenciar filas
+                    retardos.setBorder(Rectangle.NO_BORDER);
+                    retardos.setBorder(Rectangle.BOTTOM);
+                    retardos.setBorderColor(new Color(96, 93, 93));
+                    resumen.addCell(retardos);
+
+                    PdfPCell retardos1 = new PdfPCell(new Phrase(String.valueOf(retardo), fontValorDatos));
+                    retardos1.setPadding(5);
+                    retardos1.setBackgroundColor(new Color(245, 245, 245));//uso de gris claro para diferenciar filas
+                    retardos1.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    retardos1.setBorder(Rectangle.NO_BORDER);
+                    retardos1.setBorder(Rectangle.BOTTOM);
+                    retardos1.setBorderColor(new Color(96, 93, 93));
+                    resumen.addCell(retardos1);
+
+                    PdfPCell retardos2 = new PdfPCell(new Phrase(String.format("%.2f %%", pRetardo), fontValorDatos));
+                    retardos2.setPadding(5);
+                    retardos2.setBackgroundColor(new Color(245, 245, 245));//uso de gris claro para diferenciar filas
+                    retardos2.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    retardos2.setBorder(Rectangle.NO_BORDER);
+                    retardos2.setBorder(Rectangle.BOTTOM);
+                    retardos2.setBorderColor(new Color(96, 93, 93));
+                    resumen.addCell(retardos2);
 
                     document.add(resumen);
+                    document.add(Chunk.NEWLINE);
                     LineSeparator linea4 = new LineSeparator();
                     linea4.setOffset(-5);
                     document.add(linea4);
+                    document.add(Chunk.NEWLINE);
 
                     //grafica de pastel
                     DefaultPieDataset dataset = new DefaultPieDataset();
@@ -539,8 +627,10 @@ public class ReporteAsistenciaService {
                         ReporteAsistenciaGrupoDto info = listaSesion.get(0);
 
                         // título de sesión
-                        Paragraph tituloSesion = new Paragraph("Tema: " + info.tema() + " - " + info.fechaSesion().format(formatter), fontSubtitulo2);
+                        Paragraph tituloSesion = new Paragraph("Tema: " + info.tema() + " - " + info.fechaSesion().format(formatter), fontLabelDatos);
                         document.add(tituloSesion);
+                        Paragraph alcance = new Paragraph("Alcance: " + info.alcance(), fontLabelDatos);
+                        document.add(alcance);
                         document.add(new Paragraph(" ")); //da mejor control
 
                         PdfPTable tablaAlumno = new PdfPTable(2);
@@ -550,10 +640,12 @@ public class ReporteAsistenciaService {
                         PdfPCell hAlumno = new PdfPCell((new Phrase("Alumno", fontSubtitulo)));
                         hAlumno.setBackgroundColor(null);//quita el color de fondo
                         hAlumno.setPadding(5);
+                        hAlumno.setBorder(Rectangle.NO_BORDER);
 
                         PdfPCell hEstado = new PdfPCell((new Phrase("Estado", fontSubtitulo)));
                         hEstado.setBackgroundColor(null);//quita el color de fondo
                         hEstado.setPadding(5);
+                        hEstado.setBorder(Rectangle.NO_BORDER);
 
                         tablaAlumno.addCell(hAlumno);
                         tablaAlumno.addCell(hEstado);
@@ -562,14 +654,19 @@ public class ReporteAsistenciaService {
                             //celda nommbre
                             PdfPCell nombreCell = new PdfPCell(new Phrase(a.nombreAlumno(), fontValorDatos));
                             nombreCell.setPadding(5);
-                            //uso de gris claro para diferenciar filas
-                            nombreCell.setBackgroundColor(new Color(245,245,245));
+                            nombreCell.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
+                            nombreCell.setBorder(Rectangle.NO_BORDER);
+                            nombreCell.setBorder(Rectangle.BOTTOM);
+                            nombreCell.setBorderColor(new Color(96, 93, 93));
                             tablaAlumno.addCell(nombreCell);
 
                             //celda estado
                             PdfPCell estadoCell = new PdfPCell(new Phrase(a.estado().name(), fontValorDatos));
                             estadoCell.setPadding(5);
                             estadoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            estadoCell.setBorder(Rectangle.NO_BORDER);
+                            estadoCell.setBorder(Rectangle.BOTTOM);
+                            estadoCell.setBorderColor(new Color(96, 93, 93));
 
                             if (a.estado() == EstadoAsistencia.ASISTIO) {
                                 estadoCell.setBackgroundColor(new Color(200,255,200));

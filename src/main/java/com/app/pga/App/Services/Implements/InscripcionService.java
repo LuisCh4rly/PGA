@@ -4,9 +4,7 @@ import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.RequestDto.InscripcionRequestDto;
-import com.app.pga.App.Models.Dtos.ResponseDto.AlumnoGrupoDto;
-import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionReporteDto;
-import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionResponseDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.*;
 import com.app.pga.App.Models.Entities.Grupo;
 import com.app.pga.App.Models.Entities.Inscripcion;
 import com.app.pga.App.Models.Entities.Usuario;
@@ -28,6 +26,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -191,7 +190,7 @@ public class InscripcionService implements IInscripcionService {
         return inscripcionMapper.toDto(inscripcionRepository.save(inscripcion));
         }
 
-
+    @Transactional(readOnly = true)
     public List<Inscripcion> obtenerPorAlumno(Long idAlumno){
         return inscripcionRepository.obtenerInscripcionesAlumno(idAlumno);
     }
@@ -200,6 +199,35 @@ public class InscripcionService implements IInscripcionService {
     @Transactional(readOnly = true)
     public List<InscripcionReporteDto>findAll(){
         return inscripcionRepository.obtenerInscripcionReporte();
+    }
+
+    //consulta del grupo por alumno con inscripcion activa
+    @Transactional(readOnly = true)
+    public Optional<GrupoAlumnoDto> grupoAlumnoInscripcion (Long idUsuario){
+        usuarioRepository.findAlumnoById(idUsuario)
+                .orElseThrow(()->new NotFoundException("Alumno no encontrado."));
+
+        boolean existe = inscripcionRepository.existeInscripcionActiva(idUsuario);
+
+        if (!existe) {
+            throw new ResourceDisabledException("El alumno no cuenta con una inscripción activa");
+        }
+
+        return inscripcionRepository.findGrupoActivoByUsuario(idUsuario);
+    }
+
+    //consulta de la lista de los grupos con inscripciones desactivadas
+    public List<GrupoAlumnoDto> gruposAlumnoInscripcion (Long idUsuario){
+        usuarioRepository.findAlumnoById(idUsuario)
+                .orElseThrow(()->new NotFoundException("Alumno no encontrado."));
+
+        List <GrupoAlumnoDto> gruposInactivos = inscripcionRepository.buscarInscripcionesInactivas(idUsuario);
+
+        if (gruposInactivos.isEmpty()) {
+            throw new ResourceDisabledException("El alumno no cuenta con inscripciones inactivas");
+        }
+
+        return gruposInactivos;
     }
 
     public int obtenerAlumnosActivosConteo() {

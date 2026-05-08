@@ -4,6 +4,7 @@ import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Models.Dtos.*;
 import com.app.pga.App.Models.Dtos.RequestDto.SesionRequestDto;
 import com.app.pga.App.Models.Dtos.RequestDto.SesionUpdateDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.SesionDetalleAlumnoDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.SesionDetalletDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.SesionDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.SesiondocenteDto;
@@ -109,5 +110,11 @@ class SesionController {
     public ResponseEntity<Page<SesiondocenteDto>> listar(@PathVariable Long id, SesionFiltro filtro,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(sesionService.obtenerSesionesFiltradas(id, filtro, pageable));
+    }
+
+    @GetMapping("/alumno/{id}/sesiones")
+    public ResponseEntity<Page<SesionDetalleAlumnoDto>> alumnoListar(@PathVariable Long id, SesionFiltro filtro, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(sesionService.obtenerSesionesFiltradasAlumno(id, filtro, pageable));
     }
 }

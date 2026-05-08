@@ -1,5 +1,7 @@
 package com.app.pga.App.Repositories;
 
+import com.app.pga.App.Models.Dtos.ResponseDto.GrupoAlumnoDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.GrupoResponseDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionReporteDto;
 import com.app.pga.App.Models.Entities.Inscripcion;
 import com.app.pga.App.Models.Enum.Estado;
@@ -11,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 
 import java.util.List;
@@ -83,4 +86,52 @@ public interface IInscripcionRepository extends JpaRepository<Inscripcion, Long>
     JOIN g.usuario d
     """)
     List<InscripcionReporteDto> obtenerInscripcionReporte();
+
+    @Query("""
+    SELECT new com.app.pga.App.Models.Dtos.ResponseDto.GrupoAlumnoDto(
+            g.idGrupo,
+            g.nombre,
+            COALESCE (g.estado, com.app.pga.App.Models.Enum.Estado.HABILITADO),
+            g.periodo,
+            c.nombre,
+            CONCAT(u.nombre, ' ', u.apellidoPaterno, ' ', u.apellidoMaterno),
+            i.idInscripcion
+            )
+            FROM Inscripcion i
+            JOIN i.grupo g
+            JOIN g.curso c
+            JOIN g.usuario u
+            WHERE i.usuario.idUsuario = :idUsuario
+            AND i.estado = true
+    """)
+    Optional<GrupoAlumnoDto> findGrupoActivoByUsuario(@Param("idUsuario") Long idUsuario);
+
+    @Query("""
+    SELECT new com.app.pga.App.Models.Dtos.ResponseDto.GrupoAlumnoDto(
+                g.idGrupo,
+                g.nombre,
+                COALESCE (g.estado, com.app.pga.App.Models.Enum.Estado.HABILITADO),
+                g.periodo,
+                c.nombre,
+                CONCAT(u.nombre, ' ', u.apellidoPaterno, ' ', u.apellidoMaterno),
+                i.idInscripcion
+                )
+                FROM Inscripcion i
+                JOIN i.grupo g
+                JOIN g.curso c
+                JOIN g.usuario u
+                WHERE i.usuario.idUsuario = :idUsuario
+                AND i.estado = false
+        """)
+    List<GrupoAlumnoDto> buscarInscripcionesInactivas (@Param("idUsuario") Long idUsuario);
+
+    @Query("""
+        SELECT CASE WHEN COUNT (i) > 0 THEN true ELSE false END
+            FROM Inscripcion i
+                 WHERE i.usuario.idUsuario = :idUsuario
+                     AND i.estado = true
+    """)
+    Boolean existeInscripcionActiva(@Param("idUsuario") Long idUsuario);
+
+    Boolean existsByUsuarioIdUsuarioAndEstadoFalse(Long idUsuario);
 }

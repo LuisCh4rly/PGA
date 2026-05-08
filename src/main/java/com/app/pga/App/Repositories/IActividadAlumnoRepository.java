@@ -12,8 +12,11 @@ public interface IActividadAlumnoRepository extends JpaRepository<ActividadAlumn
     List<ActividadAlumno> findByActividadGrupo_IdActividadGrupo(Long actividadGrupoIdActividadGrupo);
 
     List<ActividadAlumno> findByInscripcion_IdInscripcion(Long inscripcionIdInscripcion);
+    ActividadAlumno findByIdActividadAlumnoAndInscripcion_IdInscripcion(Long idInscripcion, Long idActividadGrupo);
+
     boolean existsByActividadGrupo_IdActividadGrupoAndInscripcion_IdInscripcion(Long idActividadGrupo, Long idInscripcion
     );
+    boolean existsByIdActividadAlumnoAndInscripcion_IdInscripcion(Long idInscripcion, Long idActividadAlumno);
     void deleteByInscripcion_IdInscripcion(Long idInscripcion);
 
     @Query("""
@@ -34,7 +37,8 @@ public interface IActividadAlumnoRepository extends JpaRepository<ActividadAlumn
         au.excento,
         au.fechaEntrega,
         u.idUsuario,
-        CONCAT(u.nombre, ' ', u.apellidoPaterno, ' ', u.apellidoMaterno)
+        CONCAT(u.nombre, ' ', u.apellidoPaterno, ' ', u.apellidoMaterno),
+        COALESCE(ag.origen, com.app.pga.App.Models.Enum.Origen.CATALOGO)
     )
     FROM ActividadAlumno au
     JOIN au.actividadGrupo ag

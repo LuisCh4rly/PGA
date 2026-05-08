@@ -2,6 +2,7 @@ package com.app.pga.App.Models.Dtos;
 
 import com.app.pga.App.Models.Enum.Alcance;
 import com.app.pga.App.Models.Enum.EstadoTarea;
+import com.app.pga.App.Models.Enum.Origen;
 
 import java.time.LocalDate;
 
@@ -23,6 +24,7 @@ public record ReporteSeguimientoDto (
         Boolean excento,
         LocalDate fechaEntrega,
         Long idAlumno,
-        String nombreAlumno
+        String nombreAlumno,
+        Origen origen
 ) {
 }

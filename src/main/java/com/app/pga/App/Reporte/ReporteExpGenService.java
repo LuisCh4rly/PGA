@@ -51,7 +51,7 @@ public class ReporteExpGenService {
 
             Font fontTitulo = new Font(Font.HELVETICA, 16, Font.BOLD);
             Font fontFecha = new Font(Font.HELVETICA, 8, Font.NORMAL);
-            Font fontSubtitulo = new Font(Font.HELVETICA, 12, Font.NORMAL);
+            Font fontSubtitulo = new Font(Font.HELVETICA, 11, Font.NORMAL);
             Font fontSubtitulo2 = new Font(Font.HELVETICA, 12, Font.NORMAL);
             Font fontLabelDatos = new Font(Font.HELVETICA, 9, Font.BOLD);
             Font fontValorDatos = new Font(Font.HELVETICA, 9, Font.NORMAL);
@@ -131,14 +131,17 @@ public class ReporteExpGenService {
                 PdfPCell hTitulo = new PdfPCell((new Phrase("Nombre", fontSubtitulo)));
                 hTitulo.setBackgroundColor(null);//quita el color de fondo
                 hTitulo.setPadding(5);
+                hTitulo.setBorder(Rectangle.NO_BORDER);
 
                 PdfPCell hTipo = new PdfPCell((new Phrase("Tipo", fontSubtitulo)));
                 hTipo.setBackgroundColor(null);//quita el color de fondo
                 hTipo.setPadding(5);
+                hTipo.setBorder(Rectangle.NO_BORDER);
 
                 PdfPCell hEstado = new PdfPCell((new Phrase("Estado", fontSubtitulo)));
                 hEstado.setBackgroundColor(null);//quita el color de fondo
                 hEstado.setPadding(5);
+                hEstado.setBorder(Rectangle.NO_BORDER);
 
                 tabla.addCell(hTitulo);
                 tabla.addCell(hTipo);
@@ -150,6 +153,9 @@ public class ReporteExpGenService {
                     nombreCell.setPadding(5);
                     //uso de gris claro para diferenciar filas
                     nombreCell.setBackgroundColor(new Color(245, 245, 245));
+                    nombreCell.setBorder(Rectangle.NO_BORDER);
+                    nombreCell.setBorder(Rectangle.BOTTOM);
+                    nombreCell.setBorderColor(new Color(96, 93, 93));
                     tabla.addCell(nombreCell);
 
                     //celda tipo
@@ -157,6 +163,9 @@ public class ReporteExpGenService {
                     nombreCell.setPadding(5);
                     //uso de gris claro para diferenciar filas
                     tipoCell.setBackgroundColor(new Color(245, 245, 245));
+                    tipoCell.setBorder(Rectangle.NO_BORDER);
+                    tipoCell.setBorder(Rectangle.BOTTOM);
+                    tipoCell.setBorderColor(new Color(96, 93, 93));
                     tabla.addCell(tipoCell);
 
                     //celda estado
@@ -166,6 +175,9 @@ public class ReporteExpGenService {
                     PdfPCell estadoCell = new PdfPCell(new Phrase(estadoTexto, fontValorDatos));
                     estadoCell.setPadding(5);
                     estadoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    estadoCell.setBorder(Rectangle.NO_BORDER);
+                    estadoCell.setBorder(Rectangle.BOTTOM);
+                    estadoCell.setBorderColor(new Color(96, 93, 93));
 
                     if (d.activo() == Boolean.TRUE) {
                         estadoCell.setBackgroundColor(new Color(200, 255, 200));
@@ -281,18 +293,22 @@ public class ReporteExpGenService {
                         PdfPCell alum = new PdfPCell((new Phrase("Alumno", fontSubtitulo)));
                         alum.setBackgroundColor(null);//quita el color de fondo
                         alum.setPadding(5);
+                        alum.setBorder(Rectangle.NO_BORDER);
 
                         PdfPCell estadoExp = new PdfPCell((new Phrase("Estado Expediente", fontSubtitulo)));
                         estadoExp.setBackgroundColor(null);//quita el color de fondo
                         estadoExp.setPadding(5);
+                        estadoExp.setBorder(Rectangle.NO_BORDER);
 
                         PdfPCell estadoAlumno = new PdfPCell((new Phrase("Estado Alumno", fontSubtitulo)));
                         estadoAlumno.setBackgroundColor(null);//quita el color de fondo
                         estadoAlumno.setPadding(5);
+                        estadoAlumno.setBorder(Rectangle.NO_BORDER);
 
                         PdfPCell observaciones = new PdfPCell((new Phrase("Observaciones", fontSubtitulo)));
                         observaciones.setBackgroundColor(null);//quita el color de fondo
                         observaciones.setPadding(5);
+                        observaciones.setBorder(Rectangle.NO_BORDER);
 
                         tablaNoAprobado.addCell(alum);
                         tablaNoAprobado.addCell(estadoAlumno);
@@ -305,6 +321,9 @@ public class ReporteExpGenService {
                             nombreCell.setPadding(5);
                             //uso de gris claro para diferenciar filas
                             nombreCell.setBackgroundColor(new Color(245, 245, 245));
+                            nombreCell.setBorder(Rectangle.NO_BORDER);
+                            nombreCell.setBorder(Rectangle.BOTTOM);
+                            nombreCell.setBorderColor(new Color(96, 93, 93));
                             tablaNoAprobado.addCell(nombreCell);
 
                             //celda estado alumno
@@ -313,6 +332,9 @@ public class ReporteExpGenService {
                             PdfPCell estadoCell = new PdfPCell(new Phrase(estadoTexto, fontValorDatos));
                             estadoCell.setPadding(5);
                             estadoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            estadoCell.setBorder(Rectangle.NO_BORDER);
+                            estadoCell.setBorder(Rectangle.BOTTOM);
+                            estadoCell.setBorderColor(new Color(96, 93, 93));
 
                             if (e.estadoAlumno() == Boolean.TRUE) {
                                 estadoCell.setBackgroundColor(new Color(200, 255, 200));
@@ -326,15 +348,21 @@ public class ReporteExpGenService {
                             PdfPCell estadoE = new PdfPCell(new Phrase(estadoFormateado, fontValorDatos));
                             estadoE.setPadding(5);
                             estadoE.setHorizontalAlignment(Element.ALIGN_CENTER);
-                            estadoE.setBackgroundColor(new Color(241, 141, 158));
+                            estadoE.setBackgroundColor(new Color(255, 200, 200));
+                            estadoE.setBorder(Rectangle.NO_BORDER);
+                            estadoE.setBorder(Rectangle.BOTTOM);
+                            estadoE.setBorderColor(new Color(96, 93, 93));
                             tablaNoAprobado.addCell(estadoE);
 
                             //celda observaciones
                             String obsTexto = (e.Observaciones() == null || e.Observaciones().isEmpty()) ? "SIN OBSERVACIONES" : e.Observaciones();
                             PdfPCell observacionesCell = new PdfPCell(new Phrase(obsTexto, fontValorDatos));
-                            nombreCell.setPadding(5);
+                            observacionesCell.setPadding(5);
                             //uso de gris claro para diferenciar filas
                             observacionesCell.setBackgroundColor(new Color(245, 245, 245));
+                            observacionesCell.setBorder(Rectangle.NO_BORDER);
+                            observacionesCell.setBorder(Rectangle.BOTTOM);
+                            observacionesCell.setBorderColor(new Color(96, 93, 93));
                             tablaNoAprobado.addCell(observacionesCell);
                         }
 
@@ -380,14 +408,17 @@ public class ReporteExpGenService {
                         PdfPCell alum = new PdfPCell((new Phrase("Alumno", fontSubtitulo)));
                         alum.setBackgroundColor(null);//quita el color de fondo
                         alum.setPadding(5);
+                        alum.setBorder(Rectangle.NO_BORDER);
 
                         PdfPCell estadoExp = new PdfPCell((new Phrase("Estado Expediente", fontSubtitulo)));
                         estadoExp.setBackgroundColor(null);//quita el color de fondo
                         estadoExp.setPadding(5);
+                        estadoExp.setBorder(Rectangle.NO_BORDER);
 
                         PdfPCell estadoAlumno = new PdfPCell((new Phrase("Estado Alumno", fontSubtitulo)));
                         estadoAlumno.setBackgroundColor(null);//quita el color de fondo
                         estadoAlumno.setPadding(5);
+                        estadoAlumno.setBorder(Rectangle.NO_BORDER);
 
                         tablaAprobado.addCell(alum);
                         tablaAprobado.addCell(estadoAlumno);
@@ -399,6 +430,9 @@ public class ReporteExpGenService {
                             nombreCell.setPadding(5);
                             //uso de gris claro para diferenciar filas
                             nombreCell.setBackgroundColor(new Color(245, 245, 245));
+                            nombreCell.setBorder(Rectangle.NO_BORDER);
+                            nombreCell.setBorder(Rectangle.BOTTOM);
+                            nombreCell.setBorderColor(new Color(96, 93, 93));
                             tablaAprobado.addCell(nombreCell);
 
                             //celda estado alumno
@@ -407,6 +441,9 @@ public class ReporteExpGenService {
                             PdfPCell estadoCell = new PdfPCell(new Phrase(estadoTexto, fontValorDatos));
                             estadoCell.setPadding(5);
                             estadoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            estadoCell.setBorder(Rectangle.NO_BORDER);
+                            estadoCell.setBorder(Rectangle.BOTTOM);
+                            estadoCell.setBorderColor(new Color(96, 93, 93));
 
                             if (e.estadoAlumno() == Boolean.TRUE) {
                                 estadoCell.setBackgroundColor(new Color(200, 255, 200));
@@ -420,6 +457,9 @@ public class ReporteExpGenService {
                             estadoE.setPadding(5);
                             estadoE.setHorizontalAlignment(Element.ALIGN_CENTER);
                             estadoE.setBackgroundColor(new Color(200, 255, 200));
+                            estadoE.setBorder(Rectangle.NO_BORDER);
+                            estadoE.setBorder(Rectangle.BOTTOM);
+                            estadoE.setBorderColor(new Color(96, 93, 93));
                             tablaAprobado.addCell(estadoE);
                         }
 
