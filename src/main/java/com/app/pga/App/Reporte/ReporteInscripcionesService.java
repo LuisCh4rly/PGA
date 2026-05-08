@@ -42,7 +42,7 @@ public class ReporteInscripcionesService {
 
             Font fontTitulo = new Font(Font.HELVETICA, 16, Font.BOLD);
             Font fontFecha = new Font(Font.HELVETICA, 8, Font.NORMAL);
-            Font fontSubtitulo = new Font(Font.HELVETICA, 14, Font.NORMAL);
+            Font fontSubtitulo = new Font(Font.HELVETICA, 11, Font.NORMAL);
             Font fontSubtitulo2 = new Font(Font.HELVETICA, 12, Font.NORMAL);
             Font fontLabelDatos = new Font(Font.HELVETICA, 9, Font.BOLD);
             Font fontValorDatos = new Font(Font.HELVETICA, 9, Font.NORMAL);
@@ -98,141 +98,163 @@ public class ReporteInscripcionesService {
 
             document.add(subtitulo);
 
-            //datos en tarjetas
-            //subtitulo
-            Paragraph datos = new Paragraph("REGISTRO DE USUARIOS", fontSubtitulo2);
-            datos.setSpacingBefore(10);
-            datos.setSpacingAfter(15);
-            document.add((datos));
-            //contendedor para las cartas
-            PdfPTable contenedorCards = new PdfPTable(3);
-            contenedorCards.setWidthPercentage(60);
-            contenedorCards.setHorizontalAlignment(Element.ALIGN_CENTER);
-            contenedorCards.setWidths(new float[]{5,1,5});
-            //espacio
-            PdfPCell espacio = new PdfPCell(new Phrase(""));
-            espacio.setBorder(Rectangle.NO_BORDER);
+            if(inscripciones.isEmpty()){
+                Paragraph vacio = new Paragraph(
+                        "NO EXISTEN USUARIOS REGISTRADOS EN EL SISTEMA", fontValorDatos);
+                vacio.setIndentationLeft(10);
+                document.add(vacio);
+                document.close();
+                return new ByteArrayInputStream(out.toByteArray());
+            }else{
+                //datos en tarjetas
+                //subtitulo
+                Paragraph datos = new Paragraph("REGISTRO DE USUARIOS", fontSubtitulo2);
+                datos.setSpacingBefore(10);
+                datos.setSpacingAfter(15);
+                document.add((datos));
+                //contendedor para las cartas
+                PdfPTable contenedorCards = new PdfPTable(3);
+                contenedorCards.setWidthPercentage(60);
+                contenedorCards.setHorizontalAlignment(Element.ALIGN_CENTER);
+                contenedorCards.setWidths(new float[]{5,1,5});
+                //espacio
+                PdfPCell espacio = new PdfPCell(new Phrase(""));
+                espacio.setBorder(Rectangle.NO_BORDER);
 
-            //creación de las cartas
-            PdfPCell cardAlumnos = crearCard(
-                    "ALUMNOS",conteoAlumAct, conteoAlumInac
-            );
+                //creación de las cartas
+                PdfPCell cardAlumnos = crearCard(
+                        "ALUMNOS",conteoAlumAct, conteoAlumInac
+                );
 
-            PdfPCell cardDocentes = crearCard(
-                    "DOCENTES",conteoDocAct, conteoDocInac
-            );
+                PdfPCell cardDocentes = crearCard(
+                        "DOCENTES",conteoDocAct, conteoDocInac
+                );
 
-            contenedorCards.addCell(cardAlumnos);
-            contenedorCards.addCell(espacio);
-            contenedorCards.addCell(cardDocentes);
+                contenedorCards.addCell(cardAlumnos);
+                contenedorCards.addCell(espacio);
+                contenedorCards.addCell(cardDocentes);
 
-            document.add(contenedorCards);
-            document.add(Chunk.NEWLINE);//es un salto de linea
-            LineSeparator linea1 = new LineSeparator();//es un detalle visual
-            linea1.setOffset(-3);//espacio visual hacia abajo para que no quede pegado con las letras
-            document.add(linea1);
-            document.add(Chunk.NEWLINE);//es un salto de linea
+                document.add(contenedorCards);
+                document.add(Chunk.NEWLINE);//es un salto de linea
+                LineSeparator linea1 = new LineSeparator();//es un detalle visual
+                linea1.setOffset(-3);//espacio visual hacia abajo para que no quede pegado con las letras
+                document.add(linea1);
+                document.add(Chunk.NEWLINE);//es un salto de linea
 
-            //tablas por docente y grupos
+                //tablas por docente y grupos
 
-            Map<String , List<InscripcionReporteDto>> gruposAgrupados =
-                    inscripciones.stream()
-                            .collect(Collectors.groupingBy(InscripcionReporteDto::Docente));
+                Map<String , List<InscripcionReporteDto>> gruposAgrupados =
+                        inscripciones.stream()
+                                .collect(Collectors.groupingBy(InscripcionReporteDto::Docente));
 
-            Paragraph subtitulo2 = new Paragraph("GRUPOS POR DOCENTE", fontSubtitulo);
+                Paragraph subtitulo2 = new Paragraph("GRUPOS POR DOCENTE", fontSubtitulo);
 
-            document.add(subtitulo2);
+                document.add(subtitulo2);
 
-            for (Map.Entry<String, List<InscripcionReporteDto>> entry : gruposAgrupados.entrySet()) {
+                for (Map.Entry<String, List<InscripcionReporteDto>> entry : gruposAgrupados.entrySet()) {
 
-                String docente = entry.getKey();
-                List <InscripcionReporteDto> listaGrupos = entry.getValue();
+                    String docente = entry.getKey();
+                    List <InscripcionReporteDto> listaGrupos = entry.getValue();
+                    String estadoDocente = listaGrupos.get(0).estado() ? "HABILITADO" : "INHABILITADO";
 
-                // nombre del grupo
-                Paragraph nombreGrupo = new Paragraph("Docente: " + docente, fontSubtitulo2);
-                nombreGrupo.setSpacingBefore(10);
-                nombreGrupo.setSpacingAfter(5);
-                document.add(nombreGrupo);
+                    // nombre del grupo
+                    Paragraph nombreGrupo = new Paragraph("Docente: " + docente + "         Estado: " + estadoDocente, fontLabelDatos);
+                    nombreGrupo.setSpacingBefore(10);
+                    nombreGrupo.setSpacingAfter(7);
+                    document.add(nombreGrupo);
 
-                PdfPTable tablaGrupo = new PdfPTable(2);
-                tablaGrupo.setWidthPercentage(70);
-                tablaGrupo.setWidths(new float[]{6, 2});
+                    PdfPTable tablaGrupo = new PdfPTable(2);
+                    tablaGrupo.setWidthPercentage(70);
+                    tablaGrupo.setWidths(new float[]{6, 2});
 
-                //encabezados sin color
-                PdfPCell hGrupo = new PdfPCell((new Phrase("Grupo", fontSubtitulo)));
-                hGrupo.setBackgroundColor(null);//quita el color de fondo
-                hGrupo.setPadding(5);
+                    //encabezados sin color
+                    PdfPCell hGrupo = new PdfPCell((new Phrase("Grupo", fontSubtitulo)));
+                    hGrupo.setBackgroundColor(null);//quita el color de fondo
+                    hGrupo.setPadding(5);
+                    hGrupo.setBorder(Rectangle.NO_BORDER);
 
-                PdfPCell hEstado = new PdfPCell((new Phrase("Estado", fontSubtitulo)));
-                hEstado.setBackgroundColor(null);//quita el color de fondo
-                hEstado.setPadding(5);
+                    PdfPCell hEstado = new PdfPCell((new Phrase("Estado", fontSubtitulo)));
+                    hEstado.setBackgroundColor(null);//quita el color de fondo
+                    hEstado.setPadding(5);
+                    hEstado.setBorder(Rectangle.NO_BORDER);
 
-                tablaGrupo.addCell(hGrupo);
-                tablaGrupo.addCell(hEstado);
+                    tablaGrupo.addCell(hGrupo);
+                    tablaGrupo.addCell(hEstado);
 
-                //tabla de grupos por docente
-                List<InscripcionReporteDto> gruposUnicos = listaGrupos.stream()
-                        .collect(Collectors.toMap(
-                                InscripcionReporteDto::nombreGrupo,
-                                g -> g,
-                                (existing, replacement) -> existing
-                        ))
-                        .values()
-                        .stream()
-                        .collect(Collectors.toList());
+                    //tabla de grupos por docente
+                    List<InscripcionReporteDto> gruposUnicos = listaGrupos.stream()
+                            .collect(Collectors.toMap(
+                                    InscripcionReporteDto::nombreGrupo,
+                                    g -> g,
+                                    (existing, replacement) -> existing
+                            ))
+                            .values()
+                            .stream()
+                            .collect(Collectors.toList());
 
-                for (InscripcionReporteDto g : gruposUnicos) {
-                    //celda nommbre
-                    PdfPCell nombreCell = new PdfPCell(new Phrase(g.nombreGrupo(), fontValorDatos));
-                    nombreCell.setPadding(5);
-                    //uso de gris claro para diferenciar filas
-                    nombreCell.setBackgroundColor(new Color(245,245,245));
-                    tablaGrupo.addCell(nombreCell);
+                    for (InscripcionReporteDto g : gruposUnicos) {
+                        //celda nommbre
+                        PdfPCell nombreCell = new PdfPCell(new Phrase(g.nombreGrupo(), fontValorDatos));
+                        nombreCell.setPadding(5);
+                        //uso de gris claro para diferenciar filas
+                        nombreCell.setBackgroundColor(new Color(245,245,245));
+                        nombreCell.setBorder(Rectangle.NO_BORDER);
+                        nombreCell.setBorder(Rectangle.BOTTOM);
+                        nombreCell.setBorderColor(new Color(96, 93, 93));
+                        tablaGrupo.addCell(nombreCell);
 
-                    //celda estado
-                    PdfPCell estadoCell = new PdfPCell(new Phrase(g.estadoGrupo().toString(), fontValorDatos));
-                    estadoCell.setPadding(5);
-                    estadoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        //celda estado
+                        PdfPCell estadoCell = new PdfPCell(new Phrase(g.estadoGrupo().toString(), fontValorDatos));
+                        estadoCell.setPadding(5);
+                        estadoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        estadoCell.setBorder(Rectangle.NO_BORDER);
+                        estadoCell.setBorder(Rectangle.BOTTOM);
+                        estadoCell.setBorderColor(new Color(96, 93, 93));
 
-                    if (g.estadoGrupo() == Estado.HABILITADO) {
-                        estadoCell.setBackgroundColor(new Color(200,255,200));
-                    } else{
-                        estadoCell.setBackgroundColor(new Color(255, 248,200));
+                        if (g.estadoGrupo() == Estado.HABILITADO) {
+                            estadoCell.setBackgroundColor(new Color(200,255,200));
+                        } else{
+                            estadoCell.setBackgroundColor(new Color(255, 248,200));
+                        }
+
+                        tablaGrupo.addCell(estadoCell);
+
                     }
-
-                    tablaGrupo.addCell(estadoCell);
-
+                    document.add(tablaGrupo);
+                    document.add(Chunk.NEWLINE);
                 }
-                document.add(tablaGrupo);
+
+                LineSeparator linea4 = new LineSeparator();//es un detalle visual
+                linea4.setOffset(-3);//espacio visual hacia abajo para que no quede pegado con las letras
+                document.add(linea4);
                 document.add(Chunk.NEWLINE);
-            }
+                //tablas
+                Map<String, List<InscripcionReporteDto>> inscripcionesAgrupadas =
+                        inscripciones.stream()
+                                .collect(Collectors.groupingBy(InscripcionReporteDto :: nombreGrupo));
 
-            LineSeparator linea4 = new LineSeparator();//es un detalle visual
-            linea4.setOffset(-3);//espacio visual hacia abajo para que no quede pegado con las letras
-            document.add(linea4);
-            document.add(Chunk.NEWLINE);
-            //tablas
-            Map<String, List<InscripcionReporteDto>> inscripcionesAgrupadas =
-                    inscripciones.stream()
-                                    .collect(Collectors.groupingBy(InscripcionReporteDto :: nombreGrupo));
+                //document.add(Chunk.NEWLINE);//es un salto de linea
 
-            //document.add(Chunk.NEWLINE);//es un salto de linea
+                Paragraph subtitulo3 = new Paragraph("INSCRIPCIONES POR GRUPO", fontSubtitulo);
 
-            Paragraph subtitulo3 = new Paragraph("INSCRIPCIONES POR GRUPO", fontSubtitulo);
+                document.add(subtitulo3);
 
-            document.add(subtitulo3);
-
-            for (Map.Entry<String, List<InscripcionReporteDto>> entry : inscripcionesAgrupadas.entrySet()) {
+                for (Map.Entry<String, List<InscripcionReporteDto>> entry : inscripcionesAgrupadas.entrySet()) {
 
                     String grupo = entry.getKey();
                     List <InscripcionReporteDto> listaAlumnos = entry.getValue();
                     String curso = listaAlumnos.get(0).nombreCurso();
+                    String docente = listaAlumnos.get(0).Docente();
 
                     // nombre del grupo
-                    Paragraph nombreGrupo = new Paragraph("Grupo: " + grupo + "   Curso: " + curso, fontSubtitulo2);
+                    Paragraph nombreGrupo = new Paragraph("Grupo: " + grupo + "   Curso: " + curso, fontLabelDatos);
                     nombreGrupo.setSpacingBefore(10);
                     nombreGrupo.setSpacingAfter(5);
                     document.add(nombreGrupo);
+
+                    Paragraph nombreDocente = new Paragraph("Docente: " + docente, fontLabelDatos);
+                    nombreDocente.setSpacingAfter(7);
+                    document.add(nombreDocente);
 
                     PdfPTable tablaAlumno = new PdfPTable(2);
                     tablaAlumno.setWidthPercentage(100);
@@ -241,10 +263,12 @@ public class ReporteInscripcionesService {
                     //encabezados sin color
                     PdfPCell hAlumno = new PdfPCell((new Phrase("Alumno", fontSubtitulo)));
                     hAlumno.setBackgroundColor(null);//quita el color de fondo
+                    hAlumno.setBorder(Rectangle.NO_BORDER);
                     hAlumno.setPadding(5);
 
                     PdfPCell hEstado = new PdfPCell((new Phrase("Estado", fontSubtitulo)));
                     hEstado.setBackgroundColor(null);//quita el color de fondo
+                    hEstado.setBorder(Rectangle.NO_BORDER);
                     hEstado.setPadding(5);
 
                     tablaAlumno.addCell(hAlumno);
@@ -258,6 +282,10 @@ public class ReporteInscripcionesService {
                         nombreCell.setPadding(5);
                         //uso de gris claro para diferenciar filas
                         nombreCell.setBackgroundColor(new Color(245,245,245));
+                        nombreCell.setBorder(Rectangle.NO_BORDER);
+                        nombreCell.setBorder(Rectangle.BOTTOM);
+                        nombreCell.setBorderColor(new Color(96, 93, 93));
+
                         tablaAlumno.addCell(nombreCell);
 
                         String estadoTexto = a.estado() ? "HABILITADO" : "INHABILITADO";
@@ -266,6 +294,9 @@ public class ReporteInscripcionesService {
                         PdfPCell estadoCell = new PdfPCell(new Phrase(estadoTexto, fontValorDatos));
                         estadoCell.setPadding(5);
                         estadoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        estadoCell.setBorder(Rectangle.NO_BORDER);
+                        estadoCell.setBorder(Rectangle.BOTTOM);
+                        estadoCell.setBorderColor(new Color(96, 93, 93));
 
                         if (a.estado() == Boolean.TRUE) {
                             estadoCell.setBackgroundColor(new Color(200,255,200));
@@ -274,12 +305,11 @@ public class ReporteInscripcionesService {
                         }
 
                         tablaAlumno.addCell(estadoCell);
-
                     }
                     document.add(tablaAlumno);
                     document.add(Chunk.NEWLINE);
                 }
-
+            }
             document.close();
         } catch(Exception e){
             throw new ReporteException("Error generando el reporte", e);
@@ -328,12 +358,14 @@ public class ReporteInscripcionesService {
         card.addCell(crearFilaCard("Inactivos", inactivos, fondo));
         card.addCell(lineaSeparadora());
         card.addCell(crearFilaCard("Total", activos + inactivos, fondo));
+        card.setHorizontalAlignment(Element.ALIGN_CENTER);
 
         //contenedor final
         PdfPCell contenedor = new PdfPCell(card);
         contenedor.setPadding(12);
         contenedor.setBackgroundColor(Color.WHITE);
-        contenedor.setBorderWidth(0.8f);
+        //contenedor.setBorderWidth(0.8f);
+        contenedor.setBorder(Rectangle.NO_BORDER);
 
         return contenedor;
     }

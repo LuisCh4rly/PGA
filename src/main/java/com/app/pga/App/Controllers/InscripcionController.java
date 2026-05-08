@@ -1,9 +1,7 @@
 package com.app.pga.App.Controllers;
 
 import com.app.pga.App.Models.Dtos.RequestDto.InscripcionRequestDto;
-import com.app.pga.App.Models.Dtos.ResponseDto.AlumnoGrupoDto;
-import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionReporteDto;
-import com.app.pga.App.Models.Dtos.ResponseDto.InscripcionResponseDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.*;
 import com.app.pga.App.Models.Filtros.InscripcionFiltro;
 import com.app.pga.App.Services.Implements.InscripcionService;
 import jakarta.validation.Valid;
@@ -17,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/inscripcion")
@@ -79,5 +78,16 @@ public class InscripcionController {
         return ResponseEntity.ok(inscripcionService.asignarGrupo(idInscripcion,idGrupo));
     }
 
+    //---consulta alumno grupo ---
+    @GetMapping("/grupoAlumno/{id}")
+    public ResponseEntity<Optional<GrupoAlumnoDto>>consultaAlumnoActivo(@PathVariable @Min(1) Long id){
+        return ResponseEntity.ok(inscripcionService.grupoAlumnoInscripcion(id));
+    }
+
+    //---consulta alumno grupos---
+    @GetMapping("/gruposAlumno/{id}")
+    public ResponseEntity<List<GrupoAlumnoDto>>consultaAlumnoGrupos(@PathVariable @Min(1) Long id){
+        return ResponseEntity.ok(inscripcionService.gruposAlumnoInscripcion(id));
+    }
 
 }

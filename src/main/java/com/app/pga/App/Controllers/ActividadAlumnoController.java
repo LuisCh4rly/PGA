@@ -3,6 +3,7 @@ package com.app.pga.App.Controllers;
 import com.app.pga.App.Models.Dtos.ActividadAlumnoDto;
 import com.app.pga.App.Models.Dtos.ReporteSeguimientoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.CambiarEstadoTareaDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadALumnoListaDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ActividadAlumnoResponseDTO;
 import com.app.pga.App.Models.Enum.EstadoTarea;
 import com.app.pga.App.Services.Implements.ActividadAlumnoService;
@@ -30,11 +31,18 @@ public class ActividadAlumnoController {
         return ResponseEntity.ok().build();
     }
     @GetMapping("/inscripcion/{idInscripcion}")
-    public ResponseEntity<List<ActividadAlumnoDto>> obtenerActividadesAlumno( @PathVariable Long idInscripcion) {
+    public ResponseEntity<List<ActividadALumnoListaDto>> obtenerActividadesAlumno(@PathVariable Long idInscripcion) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(actividadAlumnoService.obtenerPorInscripcion(idInscripcion));
     }
+    @GetMapping("/inscripcion/{idInscripcion}/{idActividadAlumno}")
+    public ResponseEntity<ActividadAlumnoDto> obtenerActividadAlumno(@PathVariable Long idInscripcion, @PathVariable Long idActividadAlumno) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(actividadAlumnoService.obtenerPorInscripcionYActividad(idInscripcion, idActividadAlumno));
+    }
+
     @PutMapping("/{id}/observacion")
     public ResponseEntity<Void> agregarObservacion(@PathVariable Long id, @RequestBody CambiarEstadoTareaDto dto) {
         actividadAlumnoService.agregarObservacion(id, dto);
