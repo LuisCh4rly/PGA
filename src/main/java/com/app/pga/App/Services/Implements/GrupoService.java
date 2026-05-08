@@ -15,6 +15,7 @@ import com.app.pga.App.Models.Mappers.GrupoMapper;
 import com.app.pga.App.Models.Specification.GrupoSpecification;
 import com.app.pga.App.Repositories.ICursoRepository;
 import com.app.pga.App.Repositories.IGrupoRepository;
+import com.app.pga.App.Repositories.IInscripcionRepository;
 import com.app.pga.App.Repositories.IUsuarioRepository;
 import com.app.pga.App.Services.Interfaces.IGrupoService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ class GrupoService implements IGrupoService {
     private final IGrupoRepository grupoRepository;
     private final ActividadGrupoService actividadGrupoService;
     private final IUsuarioRepository iUsuarioRepository;
+    private final IInscripcionRepository inscripcionRepository;
 
     @Override
 
@@ -121,7 +123,11 @@ class GrupoService implements IGrupoService {
         Grupo grupo = grupoRepository.findById(idGrupo)
                 .orElseThrow(() -> new NotFoundException(" Grupo no encontrado"));
 
+
     if (grupo.getEstado().equals(Estado.HABILITADO)) {
+        if(inscripcionRepository.existsByGrupo_IdGrupoAndEstadoTrue(grupo.getIdGrupo())){
+            throw new ResourceDisabledException("El grupo cuenta con inscripciones activas");
+        }
         grupo.setEstado(Estado.DESHABILITADO);
     }else{
         grupo.setEstado(Estado.HABILITADO);

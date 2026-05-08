@@ -17,8 +17,17 @@ public record ActividadAlumnoDto(
         String urlEntrega,
         LocalDate fechaEntrega,
         String observaciones,
-        Long idActividadGrupo,
-        Long idInscripcion
+        Long avanceGlobal,
+
+        Long idInscripcion,
+
+        String titulo,
+        String descripcion,
+        String campoFormativo,
+        String origen,
+        String urlInstrucciones,
+        String fechaAsignacion,
+        Boolean reqEntrega
 
 ) implements Serializable {
 }

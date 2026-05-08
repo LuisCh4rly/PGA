@@ -145,6 +145,9 @@ public class InscripcionService implements IInscripcionService {
                     .ifPresent(InscripcionDto->{
                 throw new DuplicateResourceException("El alumno tiene una inscripción activa");
             });
+            if( inscripcion.getGrupo().getEstado()==Estado.DESHABILITADO){
+                throw new ResourceDisabledException("El grupo se encuentra deshabilitado");
+            }
             inscripcion.setFechaBaja(null);
             inscripcion.setFechaInscripcion(LocalDate.now());
         }

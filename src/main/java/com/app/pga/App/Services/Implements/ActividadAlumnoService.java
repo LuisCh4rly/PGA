@@ -64,6 +64,7 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
         aa.setFechaEntrega(LocalDate.now());
         aa.setUrlEntrega(url);
         aa.setEstadoTarea(EstadoTarea.Completada);
+        aa.setAvanceGlobal(100L);
 
         actividadAlumnoRepository.save(aa);
     }
@@ -88,8 +89,12 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
         if (aa.getUrlEntrega()== null)
             throw new NotFoundException("No hay entrega del alumno");
 
-        if (aa.getExcento() == true)
+        if (aa.getExcento())
             throw new ResourceDisabledException("Actividad Excenta");
+
+        if (aa.getEstadoTarea() == EstadoTarea.Aprobada) {
+            throw new IllegalStateException("La actividad ya fue aprobada");
+        }
 
         aa.setEstadoTarea(cambiarEstadoTareaDto.estado());
         aa.setObservaciones(cambiarEstadoTareaDto.mensaje());
@@ -153,6 +158,7 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
             aa.setActividadGrupo(ag);
             aa.setInscripcion(inscripcion);
             aa.setEstadoTarea(EstadoTarea.Sin_Iniciar);
+            aa.setAvanceGlobal(0L);
             aa.setExcento(false);
             nuevas.add(aa);
         }

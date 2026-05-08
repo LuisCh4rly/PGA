@@ -202,7 +202,7 @@ WHERE g.estado = 'HABILITADO' AND ab.activo = true;
 
 
 ---Precargar actividades de alumno
-INSERT INTO actividades_alumnos (estado_tarea, excento,motivo_exencion,Url_entrega, fecha_entrega, observaciones,  id_actividad_grupo, id_inscripcion)
+INSERT INTO actividades_alumnos (estado_tarea, excento,motivo_exencion,Url_entrega, fecha_entrega, observaciones,  id_actividad_grupo, id_inscripcion, avance_global)
 SELECT
     'Sin_Iniciar',
     FALSE,
@@ -211,7 +211,8 @@ SELECT
     null,
     null,
     ag.id_actividad_grupo,
-    i.id_inscripcion
+    i.id_inscripcion,
+    0
 
 FROM inscripciones i
          JOIN actividades_grupos ag

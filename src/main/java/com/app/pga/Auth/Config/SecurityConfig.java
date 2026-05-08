@@ -102,6 +102,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/inscripcion/**").permitAll()
                         .requestMatchers("/api/sesiones/**").permitAll()
                         .requestMatchers("/api/reporte/alumnos/{id}/reporte").permitAll()
+                        .requestMatchers("/api/seguimiento-semanal/**").permitAll()
+                        .requestMatchers("/api/detalles/**").permitAll()
                         // RUTAS DE ADMIN
                         //RUTAS ALUMNO
                         //RUTAS DOCENTE
