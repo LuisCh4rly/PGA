@@ -6,10 +6,7 @@ import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.*;
 import com.app.pga.App.Models.Dtos.RequestDto.SesionRequestDto;
 import com.app.pga.App.Models.Dtos.RequestDto.SesionUpdateDto;
-import com.app.pga.App.Models.Dtos.ResponseDto.SesionAlumnoDetalleDto;
-import com.app.pga.App.Models.Dtos.ResponseDto.SesionDetalletDto;
-import com.app.pga.App.Models.Dtos.ResponseDto.SesionDto;
-import com.app.pga.App.Models.Dtos.ResponseDto.SesiondocenteDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.*;
 import com.app.pga.App.Models.Entities.*;
 import com.app.pga.App.Models.Enum.Alcance;
 import com.app.pga.App.Models.Enum.Estado;
@@ -344,5 +341,42 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
                     sesion.getPlataforma(),
                     sesion.getGrupo().getNombre(),
                     sesion.getAlcance()));
+    }
+
+
+    //lista con paginacion y so de api criteria PARA EL ALUMNO
+    @Transactional(readOnly = true)
+    public Page<SesionDetalleAlumnoDto> obtenerSesionesFiltradasAlumno(Long idInscripcion, SesionFiltro filtro, Pageable pageable){
+        Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion)
+                .orElseThrow(() -> new NotFoundException("Inscripcion no encontrada"));
+        if (!inscripcion.getEstado()) {
+            throw new ResourceDisabledException("Inscripción deshabilitado");
+        }
+        List<SesionAlumno>relaciones=sesionAlumnoRepository.findByInscripcion_IdInscripcion(idInscripcion);
+        if(relaciones==null||relaciones.isEmpty()){
+            throw new NotFoundException("El alumno no tiene sesiones asignadas");
+        }
+        // 2. Crear la especificación pasando el idDocente
+        Specification<Sesion> spec = SesionSpecification.filtrarSesionesAlumno(filtro, idInscripcion);
+
+        // 3. Ejecutar la consulta paginada
+        Page<Sesion> paginaSesiones = sesionRepository.findAll(spec, pageable);
+
+        return paginaSesiones.map(sesion -> {
+            // Buscamos la relación específica de este alumno con esta sesión
+            EstadoAsistencia estado = sesion.getSesionAlumnos().stream()
+                    .filter(sa -> sa.getInscripcion().getIdInscripcion().equals(idInscripcion))
+                    .findFirst()
+                    .map(sa -> sa.getAsistencia() != null ? sa.getAsistencia().getEstado() : EstadoAsistencia.FALTO)
+                    .orElse(EstadoAsistencia.FALTO); // Por si acaso no se encuentra la relación
+
+            return new SesionDetalleAlumnoDto(
+                    sesion.getFecha(),
+                    sesion.getTema(),
+                    sesion.getAlcance(),
+                    sesion.getUrlSesion(),
+                    estado
+            );
+        });
     }
 }

@@ -5,6 +5,7 @@ import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.ActividadAlumnoDto;
 import com.app.pga.App.Models.Dtos.ReporteSeguimientoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.CambiarEstadoTareaDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadALumnoListaDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ActividadAlumnoResponseDTO;
 import com.app.pga.App.Models.Entities.ActividadAlumno;
 import com.app.pga.App.Models.Entities.ActividadGrupo;
@@ -20,6 +21,7 @@ import com.app.pga.App.Repositories.IInscripcionRepository;
 import com.app.pga.App.Services.Interfaces.IActividadAlumnoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,16 +71,31 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
     }
     @Override
     @Transactional(readOnly = true)
-    public List<ActividadAlumnoDto> obtenerPorInscripcion(Long idInscripcion) {
+    public List<ActividadALumnoListaDto> obtenerPorInscripcion(Long idInscripcion) {
 
         Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion)
                 .orElseThrow(() -> new NotFoundException("Inscripción no encontrada"));
         return actividadAlumnoRepository
                 .findByInscripcion_IdInscripcion(idInscripcion)
                 .stream()
-                .map(aa-> actividadAlumnoMapper.toDto(aa))
+                .map(aa-> actividadAlumnoMapper.toDtoList(aa))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ActividadAlumnoDto obtenerPorInscripcionYActividad (Long idInscripcion, Long idActividadAlumno) {
+
+        inscripcionRepository.findById(idInscripcion).orElseThrow(() -> new NotFoundException("Inscripción no encontrada"));
+
+        Boolean existe = actividadAlumnoRepository.existsByIdActividadAlumnoAndInscripcion_IdInscripcion(idInscripcion, idActividadAlumno);
+        if(existe){
+            new NotFoundException("Actividad no encontrada");
+        }
+
+        return actividadAlumnoMapper.toDto(actividadAlumnoRepository.findByIdActividadAlumnoAndInscripcion_IdInscripcion(idActividadAlumno, idInscripcion));
+    }
+
     @Override
     public void agregarObservacion(Long idActividadAlumno, CambiarEstadoTareaDto cambiarEstadoTareaDto) {
 

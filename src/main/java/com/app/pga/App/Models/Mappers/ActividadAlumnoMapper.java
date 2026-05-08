@@ -1,6 +1,7 @@
 package com.app.pga.App.Models.Mappers;
 
 import com.app.pga.App.Models.Dtos.ActividadAlumnoDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadALumnoListaDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ActividadAlumnoResponseDTO;
 import com.app.pga.App.Models.Dtos.ResponseDto.ActividadBaseResponseDto;
 import com.app.pga.App.Models.Entities.ActividadAlumno;
@@ -12,8 +13,19 @@ public interface ActividadAlumnoMapper {
     ActividadAlumno toEntity(ActividadAlumnoDto actividadAlumnoDto);
 
     @Mapping(target = "idInscripcion", source = "inscripcion.idInscripcion")
-    @Mapping(target = "idActividadGrupo", source = "actividadGrupo.idActividadGrupo")
+    @Mapping(target = "titulo", source = "actividadGrupo.titulo")
+    @Mapping(target = "descripcion", source = "actividadGrupo.descripcion")
+    @Mapping(target = "campoFormativo", source = "actividadGrupo.campo")
+    @Mapping(target = "origen", source = "actividadGrupo.origen")
+    @Mapping(target = "urlInstrucciones", source = "actividadGrupo.urlInstrucciones")
+    @Mapping(target = "fechaAsignacion", source = "actividadGrupo.fechaAsignacion")
+    @Mapping(target = "reqEntrega", source = "actividadGrupo.reqEntrega")
     ActividadAlumnoDto toDto(ActividadAlumno actividadAlumno);
+
+    @Mapping(target = "idInscripcion", source = "inscripcion.idInscripcion")
+    @Mapping(target = "titulo", source = "actividadGrupo.titulo")
+    @Mapping(target = "campoFormativo", source = "actividadGrupo.campo")
+    ActividadALumnoListaDto toDtoList (ActividadAlumno actividadAlumno);
 
 
     @Mapping(target = "idInscripcion", source = "inscripcion.idInscripcion")
