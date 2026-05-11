@@ -25,6 +25,7 @@ public interface ActividadAlumnoMapper {
     @Mapping(target = "idInscripcion", source = "inscripcion.idInscripcion")
     @Mapping(target = "titulo", source = "actividadGrupo.titulo")
     @Mapping(target = "campoFormativo", source = "actividadGrupo.campo")
+    @Mapping(target = "descripcion", source = "actividadGrupo.descripcion")
     ActividadALumnoListaDto toDtoList (ActividadAlumno actividadAlumno);
 
 

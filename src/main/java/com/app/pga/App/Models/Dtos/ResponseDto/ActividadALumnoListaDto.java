@@ -11,6 +11,7 @@ public record ActividadALumnoListaDto(
         Long idInscripcion,
 
         String titulo,
-        String campoFormativo
+        String campoFormativo,
+        String descripcion
 ) implements Serializable {
 }
