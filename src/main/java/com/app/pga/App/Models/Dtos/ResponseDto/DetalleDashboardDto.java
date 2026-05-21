@@ -16,13 +16,15 @@ public record DetalleDashboardDto(
         Long idDetalleSeguimiento,
         EstadoTarea estadoSemana,
 
-        Long avanceSemanal,
+        Long avanceReal,
 
         String observacionesAlumno,
         String tituloActividad,
         Long avanceGlobalActividad,
 
         Long idActividadAlumno,
-        Boolean requiereEntrega
+        Boolean requiereEntrega,
+        Long idSeguimientoSemanal,
+        Long avanceEsperado
 ) {
 }

@@ -15,7 +15,7 @@ public interface DetalleSeguimientoMapper {
     @Mapping(target = "avanceGlobalActividad", source = "actividad.avanceGlobal")
     @Mapping(target = "idActividadAlumno", source = "actividad.idActividadAlumno")
     @Mapping(target = "requiereEntrega", source = "actividad.actividadGrupo.reqEntrega")
-
+    @Mapping(target = "idSeguimientoSemanal", source = "semana.idSeguimientoSemanal")
     DetalleDashboardDto toDashboardDto (DetalleSeguimiento dto);
 
 

@@ -25,4 +25,6 @@ public interface IActividadAlumnoService {
     List<ActividadAlumnoResponseDTO> verAsignaciones (Long idActividadGrupo);
     List<ReporteSeguimientoDto>obtenerReporteSeguimientoPorGrupo(Long idGrupo);
     ActividadAlumnoDto obtenerPorInscripcionYActividad (Long idInscripcion, Long idActividadAlumno);
+
+    List<ActividadALumnoListaDto> obtenerPorInscripcionDisponibles(Long idInscripcion);
 }

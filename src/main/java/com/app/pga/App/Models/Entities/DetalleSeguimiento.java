@@ -20,10 +20,19 @@ public class DetalleSeguimiento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idDetalleSeguimiento;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EstadoTarea estadoSemana;
+
     @Min(value = 0, message = "El valor mínimo es 0")
     @Max(value = 100, message = "El valor máximo es 100")
-    private Long avanceSemanal;
+    private Long avanceEsperado;
+
+    @Min(value = 0, message = "El valor mínimo es 0")
+    @Max(value = 100, message = "El valor máximo es 100")
+    private Long avanceReal;
+
+
     private String observacionesAlumno;
 
     @ManyToOne(fetch = FetchType.LAZY)

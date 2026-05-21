@@ -24,6 +24,7 @@ public class Inscripcion {
     private String escuela;
     private String nivelEstudio;
     private String carrera;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private tipoInscripcion tipo;

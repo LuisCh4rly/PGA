@@ -291,6 +291,9 @@ public class ActividadGrupoService implements IActividadGrupoService {
             }
             Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion)
                     .orElseThrow(() -> new NotFoundException("Inscripción no encontrada"));
+            if(!inscripcion.getEstado()){
+               throw  new ResourceDisabledException("Inscripción deshabilitada");
+            }
 
             if(!inscripcion.getGrupo().getIdGrupo().equals(ag.getGrupo().getIdGrupo())){
                 throw new IllegalArgumentException("La inscripción no pertenece al grupo");

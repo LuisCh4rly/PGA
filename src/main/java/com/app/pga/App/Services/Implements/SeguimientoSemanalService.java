@@ -8,6 +8,7 @@ import com.app.pga.App.Models.Dtos.ResponseDto.DetalleDashboardDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.SeguimientoDashboardResponseDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.SemanaResponseDto;
 import com.app.pga.App.Models.Entities.ActividadAlumno;
+import com.app.pga.App.Models.Entities.DetalleSeguimiento;
 import com.app.pga.App.Models.Entities.Inscripcion;
 import com.app.pga.App.Models.Entities.SeguimentoSemanal;
 import com.app.pga.App.Models.Mappers.ActividadAlumnoMapper;
@@ -17,6 +18,8 @@ import com.app.pga.App.Repositories.ISeguimentoSemanalRepository;
 import com.app.pga.App.Services.Interfaces.ISeguimientoSemanalService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.DisabledException;
@@ -25,10 +28,7 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,9 +41,9 @@ class SeguimientoSemanalService implements ISeguimientoSemanalService {
 
 
     @Override
-    public SemanaResponseDto crearSeguimientoSemanal(SemanaRequestDto dto) {
+    public SemanaResponseDto crearSeguimientoSemanal(Long idInscripcion) {
 
-        Inscripcion inscripcion = inscripcionRepository.findById(dto.idInscripcion())
+        Inscripcion inscripcion = inscripcionRepository.findById(idInscripcion)
                 .orElseThrow(() -> new NotFoundException("Inscripción no encontrada"));
         if(!inscripcion.getEstado()) throw new ResourceDisabledException("Inscripción deshabilitada");
 
@@ -52,9 +52,9 @@ class SeguimientoSemanalService implements ISeguimientoSemanalService {
         LocalDate inicioInscripción = inscripcion.getFechaInicio();
         LocalDate finInscripcion = inscripcion.getFechaFin();
 
-        LocalDate inicioSemana = dto.fechaInicio().with(DayOfWeek.MONDAY);
+        LocalDate inicioSemana = hoy.with(DayOfWeek.MONDAY);
         LocalDate finSemana = inicioSemana.plusDays(4);
-        LocalDate fechaLimiteEdicion= dto.fechaInicio().with(DayOfWeek.SUNDAY);
+        LocalDate fechaLimiteEdicion= hoy.with(DayOfWeek.SUNDAY);
 
 
         if (inicioSemana.isAfter(hoy.with(DayOfWeek.MONDAY))) {
@@ -116,15 +116,16 @@ class SeguimientoSemanalService implements ISeguimientoSemanalService {
 
     @Override
     public SeguimientoDashboardResponseDto obtenerSeguimientoSemanalActual( Long idInscripcion) {
-        SeguimientoDashboardResponseDto semanaBase = seguimentoSemanalRepository
-                .findSemanas(idInscripcion, PageRequest.of(0,1))
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("No hay semanas registradas"));
+        Optional<SeguimientoDashboardResponseDto> semanaOptional = seguimentoSemanalRepository
+                .obtenerSemanaActual(idInscripcion);
+        if (semanaOptional.isEmpty()) {
+            return null;
+        }
+        SeguimientoDashboardResponseDto semanaBase = semanaOptional.get();
 
         List<Long> idSemana = List.of(semanaBase.idSeguimientoSemanal());
 
-       List<DetalleDashboardDto> detalles= detalleSeguimientoRepository.obtenerDetalles(idSemana);
+        List<DetalleDashboardDto> detalles= detalleSeguimientoRepository.obtenerDetalles(idSemana);
 
         return new SeguimientoDashboardResponseDto(
                 semanaBase.idSeguimientoSemanal(),
@@ -139,19 +140,20 @@ class SeguimientoSemanalService implements ISeguimientoSemanalService {
     }
 
     @Override
-    public List<SeguimientoDashboardResponseDto> obtenerSeguimientoAlumno( Long idInscripcion, Pageable pageable) {
+    public List<SeguimientoDashboardResponseDto> obtenerSeguimientoAlumno(Long idInscripcion) {
     List<SeguimientoDashboardResponseDto> semanas = seguimentoSemanalRepository
-                .findSemanas(idInscripcion, pageable);
+                .findSemanas(idInscripcion);
     if (semanas.isEmpty()) {
-        return List.of();
+        List.of();
     }
     List<Long> idSemanas = new ArrayList<>();
     semanas.forEach(s-> idSemanas.add(s.idSeguimientoSemanal()));
     List<DetalleDashboardDto> detalles = detalleSeguimientoRepository.obtenerDetalles(idSemanas);
 
-    Map<Long, List<DetalleDashboardDto>> detallesPorSemana = detalles.stream().collect(Collectors.groupingBy(d-> d.idDetalleSeguimiento()));
+    Map<Long, List<DetalleDashboardDto>> detallesPorSemana =
+            detalles.stream().collect(Collectors.groupingBy(d-> d.idSeguimientoSemanal()));
 
-    return semanas.stream()
+     return semanas.stream()
             .map (s ->
                 new SeguimientoDashboardResponseDto(
                         s.idSeguimientoSemanal(),
@@ -164,6 +166,32 @@ class SeguimientoSemanalService implements ISeguimientoSemanalService {
                 )
 
             ).toList();
+
     }
+
+    public void recalcularAvanceSemana(SeguimentoSemanal semana) {
+
+        List<DetalleSeguimiento> detalles = detalleSeguimientoRepository.findBySemana_IdSeguimientoSemanal(semana.getIdSeguimientoSemanal());
+        if(detalles.isEmpty()) {
+            semana.setPorcentajeAvance(0L);
+            seguimentoSemanalRepository.save(semana);
+            return;
+        }
+        Long sumaEsperada = detalles.stream()
+                .mapToLong(d -> d.getAvanceEsperado())
+                .sum();
+        Long sumaReal = detalles.stream()
+                .mapToLong(d-> d.getAvanceReal())
+                .sum();
+
+        Long porcentaje = sumaEsperada == 0 ? 100L : (sumaReal * 100) / sumaEsperada;
+
+        semana.setPorcentajeAvance(
+                Math.min(porcentaje, 100L)
+        );
+
+        seguimentoSemanalRepository.save(semana);
+    }
+
 }
 

@@ -26,6 +26,14 @@ class DetalleSeguimientoController {
                 .body(detalleSeguimientoService.crearDetalleSeguimiento(dto));
     }
 
+    @PutMapping("/{idDetalle}")
+    public ResponseEntity<DetalleDashboardDto> actualizarDetalle (@PathVariable Long idDetalle, @RequestBody DetalleSeguimientoRequestDto dto){
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(detalleSeguimientoService.actualizarEstado(idDetalle, dto));
+    }
+
+
 
 
 }
