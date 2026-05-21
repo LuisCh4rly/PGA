@@ -59,6 +59,7 @@ public class SesionService implements ISesionService {
         if(grupo.getEstado()== Estado.DESHABILITADO){
             throw new ResourceDisabledException("Grupo deshbilitado");
         }
+
         //verifiicar que el docente no tenga sesion a esa hora
         boolean existe = sesionRepository.existsSesionActivaDocente(grupo.getUsuario().getIdUsuario(), dto.fecha());
         if (existe) {

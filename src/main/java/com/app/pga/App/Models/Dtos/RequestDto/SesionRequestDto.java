@@ -2,10 +2,7 @@ package com.app.pga.App.Models.Dtos.RequestDto;
 
 import com.app.pga.App.Models.Enum.Alcance;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,6 +15,7 @@ import java.util.List;
 public record SesionRequestDto (//creacion
         @NotNull(message = "Campo Obligatorio")
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+        @Future(message = "La fecha debe ser futura")
         LocalDateTime fecha,
         @Size(message = "Máximo 120 carácteres.", max = 120)
         @NotBlank(message = "Campo Obligatorio")

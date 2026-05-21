@@ -81,6 +81,9 @@ public class InscripcionService implements IInscripcionService {
     //consulta de alumnos por grupo
     @Transactional(readOnly = true)
     public List<AlumnoGrupoDto> obtenerAlumnosPorGrupo(Long idGrupo){
+        if(inscripcionRepository.findByGrupo_IdGrupo(idGrupo).isEmpty()){
+            throw new NotFoundException("Grupo no encontrado");
+        }
         List<Inscripcion> inscripciones = inscripcionRepository.findByGrupo_IdGrupoAndEstadoTrue(idGrupo);
         if(inscripciones.isEmpty()){
             throw new NotFoundException("No hay alumnos en este grupo");
@@ -100,6 +103,9 @@ public class InscripcionService implements IInscripcionService {
     //consulta de alumnos por grupo general
     @Transactional(readOnly = true)
     public List<AlumnoGrupoDto> obtenerAlumnosPorGrupoGeneral(Long idGrupo){
+        if(inscripcionRepository.findByGrupo_IdGrupo(idGrupo).isEmpty()){
+            throw new NotFoundException("Grupo no encontrado");
+        }
         List<Inscripcion> inscripciones = inscripcionRepository.findByGrupo_IdGrupo(idGrupo);
         if(inscripciones.isEmpty()){
             throw new NotFoundException("No hay alumnos en este grupo");
@@ -144,7 +150,7 @@ public class InscripcionService implements IInscripcionService {
                     .ifPresent(InscripcionDto->{
                 throw new DuplicateResourceException("El alumno tiene una inscripción activa");
             });
-            if( inscripcion.getGrupo().getEstado()==Estado.DESHABILITADO){
+            if( inscripcion.getGrupo()!=null && inscripcion.getGrupo().getEstado()==Estado.DESHABILITADO){
                 throw new ResourceDisabledException("El grupo se encuentra deshabilitado");
             }
             inscripcion.setFechaBaja(null);

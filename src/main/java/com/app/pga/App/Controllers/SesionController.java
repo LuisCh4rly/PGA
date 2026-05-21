@@ -58,6 +58,12 @@ class SesionController {
         SesionDetalletDto sesion = sesionService.actualizarInscripcionesSesion(idSesion, idsInscripcion);
         return ResponseEntity.ok(sesion);
     }
+    //actualizar detalles de la sesion
+    @PutMapping("/actualizar/{idSesion}")
+    public ResponseEntity<SesionDetalletDto> actualizarDetallesSesion(@PathVariable Long idSesion, @Valid @RequestBody SesionUpdateDto dto){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(sesionService.actualizarSesion(idSesion, dto));
+    }
 
     //tomar asistencia
     @PostMapping("/{idSesion}/asistencia")
@@ -94,12 +100,6 @@ class SesionController {
                 .body(sesionService.obtenerSesionPorAlumno(idInscripcion));
     }
 
-    //actualizar detalles de la sesion
-    @PutMapping("/actualizar/{idSesion}")
-    public ResponseEntity<SesionDetalletDto> actualizarDetallesSesion(@PathVariable Long idSesion, @Valid @RequestBody SesionUpdateDto dto){
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(sesionService.actualizarSesion(idSesion, dto));
-    }
 
     @GetMapping("/grupos/asistencias/{idGrupo}")
     public ResponseEntity<List<ReporteAsistenciaGrupoDto>> reporteAsistenciaGrupo(@PathVariable Long idGrupo) {
