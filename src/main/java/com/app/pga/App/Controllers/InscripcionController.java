@@ -46,48 +46,50 @@ public class InscripcionController {
         return ResponseEntity.ok(inscripcionService.findAllActivos());
     }
 
+    @GetMapping
+    public ResponseEntity<Page<InscripcionResponseDto>> listar(InscripcionFiltro filtro, Pageable pageable) {
+        return ResponseEntity.ok(inscripcionService.findAll(filtro, pageable));
+    }
+
+    @PutMapping("/desactivar/{id}")
+    public ResponseEntity<InscripcionResponseDto>desactivarActivar(@PathVariable @Min(1) Long id){
+        InscripcionResponseDto inscripcionDes = inscripcionService.desactivarActivarInscripcion(id);
+        return ResponseEntity.ok(inscripcionDes);
+    }
+
+    @PutMapping("{idInscripcion}/asignarGrupo/{idGrupo}")
+    public ResponseEntity<InscripcionResponseDto>asignarGrupo(@PathVariable @Min(1) Long idInscripcion,@PathVariable @Min(1) Long idGrupo){
+        return ResponseEntity.ok(inscripcionService.asignarGrupo(idInscripcion,idGrupo));
+    }
+
     //-----consulta de alumnos por grupo
     @GetMapping("/grupo/{idGrupo}/alumnos")
     public ResponseEntity<List<AlumnoGrupoDto>> obtenerAlumnosPorGrupo(@PathVariable Long idGrupo){
         return ResponseEntity.ok(inscripcionService.obtenerAlumnosPorGrupo(idGrupo));
     }
-
     //-----consulta de alumnos por grupo general
     @GetMapping("/grupo/{idGrupo}/alumnos/general")
     public ResponseEntity<List<AlumnoGrupoDto>> obtenerAlumnosPorGrupoGeneral(@PathVariable Long idGrupo){
         return ResponseEntity.ok(inscripcionService.obtenerAlumnosPorGrupoGeneral(idGrupo));
     }
 
-    //---consulta ---
-    @GetMapping
-    public ResponseEntity<Page<InscripcionResponseDto>> listar(InscripcionFiltro filtro, Pageable pageable) {
-        return ResponseEntity.ok(inscripcionService.findAll(filtro, pageable));
-    }@GetMapping ("reporte/inscripciones")
+
+    @GetMapping ("reporte/inscripciones")
     public ResponseEntity<List<InscripcionReporteDto>>reporteInscripciones(){
         return ResponseEntity.ok(inscripcionService.findAll());
     }
 
-    //---consulta por id---
-    @PutMapping("/desactivar/{id}")
-    public ResponseEntity<InscripcionResponseDto>desactivarActivar(@PathVariable @Min(1) Long id){
-        InscripcionResponseDto inscripcionDes = inscripcionService.desactivarActivarInscripcion(id);
-        return ResponseEntity.ok(inscripcionDes);
-    }
-    @PutMapping("{idInscripcion}/asignarGrupo/{idGrupo}")
-    public ResponseEntity<InscripcionResponseDto>asignarGrupo(@PathVariable @Min(1) Long idInscripcion,@PathVariable @Min(1) Long idGrupo){
-        return ResponseEntity.ok(inscripcionService.asignarGrupo(idInscripcion,idGrupo));
-    }
 
     //---consulta alumno grupo ---
-    @GetMapping("/grupoAlumno/{id}")
-    public ResponseEntity<Optional<GrupoAlumnoDto>>consultaAlumnoActivo(@PathVariable @Min(1) Long id){
-        return ResponseEntity.ok(inscripcionService.grupoAlumnoInscripcion(id));
+    @GetMapping("/grupoAlumno/{idUsuario}")
+    public ResponseEntity<Optional<GrupoAlumnoDto>>consultaAlumnoActivo(@PathVariable @Min(1) Long idUsuario){
+        return ResponseEntity.ok(inscripcionService.grupoAlumnoInscripcion(idUsuario));
     }
 
     //---consulta alumno grupos---
-    @GetMapping("/gruposAlumno/{id}")
-    public ResponseEntity<List<GrupoAlumnoDto>>consultaAlumnoGrupos(@PathVariable @Min(1) Long id){
-        return ResponseEntity.ok(inscripcionService.gruposAlumnoInscripcion(id));
+    @GetMapping("/gruposAlumno/{idUsuario}")
+    public ResponseEntity<List<GrupoAlumnoDto>>consultaAlumnoGrupos(@PathVariable @Min(1) Long idUsuario){
+        return ResponseEntity.ok(inscripcionService.gruposAlumnoInscripcion(idUsuario));
     }
 
 }
