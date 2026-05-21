@@ -1,17 +1,20 @@
 package com.app.pga.App.Services.Implements;
 
 import com.app.pga.App.Exception.NotFoundException;
+import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.RequestDto.DocumentoRevisionDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.DocumentoExpedienteResponseDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ExpedienteResponseDto;
 import com.app.pga.App.Models.Entities.Documento;
 import com.app.pga.App.Models.Entities.Documento_Expediente;
 import com.app.pga.App.Models.Entities.Expediente;
+import com.app.pga.App.Models.Entities.Usuario;
 import com.app.pga.App.Models.Enum.EstadoDocumento;
 import com.app.pga.App.Models.Enum.EstadoExpediente;
 import com.app.pga.App.Models.Mappers.Documento_ExpedienteMapper;
 import com.app.pga.App.Repositories.IDocumentoRepository;
 import com.app.pga.App.Repositories.IDocumento_ExpedienteRepository;
+import com.app.pga.App.Repositories.IUsuarioRepository;
 import com.app.pga.App.Services.Interfaces.IDocumentoExpedienteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +34,8 @@ class DocuentoExpedienteService implements IDocumentoExpedienteService {
     private final ExpedienteService expedienteService;
     private final IDocumento_ExpedienteRepository documento_expedienteRepository;
     private final Documento_ExpedienteMapper documento_ExpedienteMapper;
+    private final UsuarioService usuarioService;
+    private final IUsuarioRepository iUsuarioRepository;
 
 
     @Override
@@ -37,6 +43,11 @@ class DocuentoExpedienteService implements IDocumentoExpedienteService {
 
         Documento tipo = documentoRepository.findByTipo (tipoDocumento)
                 .orElseThrow(() -> new NotFoundException("Tipo de documento no válido"));
+       Optional<Usuario> alumno = iUsuarioRepository.findById(idAlumno);
+       if(alumno.isPresent() && !alumno.get().getActivo()){
+           throw new ResourceDisabledException("Alumno deshabilitado");
+       }
+
         Expediente expediente = expedienteService.obtenerPorAlumno(idAlumno);
         String url = storageService.guardarDocumentoExpediente( idAlumno, tipoDocumento, archivo);
 

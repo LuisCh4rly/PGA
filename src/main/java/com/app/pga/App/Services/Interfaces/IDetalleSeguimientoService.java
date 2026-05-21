@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface IDetalleSeguimientoService {
 
-    void actualizarEstado (Long idDetalleSeguimeinto, DetalleSeguimientoRequestDto dto);
+    DetalleDashboardDto actualizarEstado (Long idDetalleSeguimeinto, DetalleSeguimientoRequestDto dto);
     List<DetalleDashboardDto> crearDetalleSeguimiento(DetalleSeguimientoAgrupadoDto dto);
     void agregarActividadesPendientes(Long numeroSemanaActual, Long idInscripcion);
 

@@ -3,6 +3,7 @@ package com.app.pga.App.Controllers;
 import com.app.pga.App.Models.Dtos.RequestDto.DocumentoRevisionDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.DocumentoExpedienteResponseDto;
 import com.app.pga.App.Services.Interfaces.IDocumentoExpedienteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -39,7 +40,7 @@ class DocumentoExpedienteController {
     }
 
     @PutMapping("/documentos/{idDocumento}/revision")
-    public ResponseEntity<Void> revisarDocumento (@PathVariable Long idDocumento, @RequestBody DocumentoRevisionDto dto){
+    public ResponseEntity<Void> revisarDocumento (@PathVariable Long idDocumento, @Valid @RequestBody DocumentoRevisionDto dto){
         documentoExpedienteService.revisarDocumento(idDocumento,dto);
         return ResponseEntity.ok().build();
     }

@@ -35,6 +35,7 @@ class DetalleSeguimientoService implements IDetalleSeguimientoService {
     private final IActividadAlumnoRepository actividadAlumnoRepository;
     private final ActividadAlumnoService actividadAlumnoService;
     private final DetalleSeguimientoMapper detalleSeguimientoMapper;
+    private final  SeguimientoSemanalService seguimientoSemanalService;
 
     @Override
 
@@ -42,6 +43,7 @@ class DetalleSeguimientoService implements IDetalleSeguimientoService {
         LocalDate hoy = LocalDate.now();
         SeguimentoSemanal semana = seguimentoSemanalRepository.findById(dto.idSemana())
             .orElseThrow(()-> new NotFoundException("Semana no encontrada"));
+
 
         if(hoy.isAfter(semana.getFechaLimiteEdicion())){
         throw new ResourceDisabledException("Semana deshabilitada para actualizacion");
@@ -72,9 +74,13 @@ class DetalleSeguimientoService implements IDetalleSeguimientoService {
                 if (aa.getAvanceGlobal() >= 100) {
                     throw new ResourceDisabledException("Actividad ya completada");
                 }
+                    Long avanceActual = Optional.ofNullable(aa.getAvanceGlobal()).orElse(0L);
+                    Long limite =  100L;
+                    Long restante = limite - avanceActual;
 
                 detalleSeguimiento.setActividad(aa);
-                detalleSeguimiento.setAvanceSemanal(0L);
+                detalleSeguimiento.setAvanceReal(0L);
+                detalleSeguimiento.setAvanceEsperado(restante);
                 detalleSeguimiento.setEstadoSemana(a.estadoSemana());
                 detalleSeguimiento.setObservacionesAlumno("");
                 detalleSeguimiento.setSemana(semana);
@@ -82,9 +88,12 @@ class DetalleSeguimientoService implements IDetalleSeguimientoService {
                 detalles.add(detalleSeguimiento);
             }
             );
-    return detalleSeguimientoRepository.saveAll(detalles).stream()
+
+        List<DetalleDashboardDto> dnuevos = detalleSeguimientoRepository.saveAll(detalles).stream()
             .map(d-> detalleSeguimientoMapper.toDashboardDto(d))
             .toList();
+        seguimientoSemanalService.recalcularAvanceSemana(semana);
+        return dnuevos;
 
     }
 
@@ -123,19 +132,26 @@ class DetalleSeguimientoService implements IDetalleSeguimientoService {
                             aa.getIdActividadAlumno()
                     );
                 if (existe) continue;
+                Long avanceActual = Optional.ofNullable(aa.getAvanceGlobal()).orElse(0L);
+                Long limite = aa.getActividadGrupo().getReqEntrega()? 99L : 100L;
+                Long restante = limite - avanceActual;
+
                 DetalleSeguimiento detalleSeguimiento = new DetalleSeguimiento();
                 detalleSeguimiento.setActividad(aa);
-                detalleSeguimiento.setAvanceSemanal(0L);
+                detalleSeguimiento.setAvanceReal(0L);
+                detalleSeguimiento.setAvanceEsperado(restante);
                 detalleSeguimiento.setEstadoSemana(EstadoTarea.En_Espera);
                 detalleSeguimiento.setObservacionesAlumno("");
                 detalleSeguimiento.setSemana(semanaActual);
                 detalles.add(detalleSeguimiento);
         }
         detalleSeguimientoRepository.saveAll(detalles);
+        seguimientoSemanalService.recalcularAvanceSemana(semanaActual);
 
     }
     @Override
-    public void actualizarEstado(Long idDetalleSeguimeinto, DetalleSeguimientoRequestDto dto) {
+    public DetalleDashboardDto actualizarEstado(Long idDetalleSeguimeinto, DetalleSeguimientoRequestDto dto) {
+
         LocalDate hoy = LocalDate.now();
 
         DetalleSeguimiento detalle = detalleSeguimientoRepository.findById(idDetalleSeguimeinto)
@@ -153,32 +169,50 @@ class DetalleSeguimientoService implements IDetalleSeguimientoService {
                 || actividadAlumno.getEstadoTarea() == EstadoTarea.Exenta){
             throw new ResourceDisabledException("Actividad no editable");
         }
-        Long limite = actividadAlumno.getActividadGrupo().getReqEntrega()? 99L : 100L;
-        Long restante = limite - actividadAlumno.getAvanceGlobal();
+        List<EstadoTarea> estadosPermitidos = List.of(
+                EstadoTarea.Sin_Iniciar,
+                EstadoTarea.En_Progreso,
+                EstadoTarea.En_Espera
+        );
 
-        if(dto.avanceSemanal() < 0){
+        if (!estadosPermitidos.contains(dto.estadoSemana())) {
+            throw new BadRequestException(
+                    "Estado no permitido"
+            );
+        }
+        Long avanceGlobalActual = Optional.ofNullable(actividadAlumno.getAvanceGlobal()).orElse(0L);
+        Long esperado = detalle.getAvanceEsperado();
+        Long realActual = Optional.ofNullable(detalle.getAvanceReal()).orElse(0L);
+        Long restanteSemana = esperado - realActual;
+
+        if(dto.avanceReal() < 0){
             throw new BadRequestException("El avance no puede ser negativo");
         }
 
 
-        if(dto.avanceSemanal() > restante ){
+        if(dto.avanceReal() > restanteSemana ){
             throw new BadRequestException ("El avance ingresado supera el permitido");
         }
-
-        Long avanceAcumuladoGlobal = Optional.of(actividadAlumno.getAvanceGlobal()).orElse(0L) + dto.avanceSemanal();
-        actividadAlumno.setAvanceGlobal(avanceAcumuladoGlobal);;
-
-        Long avanceAcumuladoSemanal= Optional.ofNullable(detalle.getAvanceSemanal()).orElse(0L) + dto.avanceSemanal();
-        detalle.setAvanceSemanal(avanceAcumuladoSemanal);
+        actividadAlumno.setAvanceGlobal(avanceGlobalActual + dto.avanceReal());
+        Long avanceSemanal = Optional.ofNullable(detalle.getAvanceReal()).orElse(0L);
+        detalle.setAvanceReal(avanceSemanal + dto.avanceReal());
 
         detalle.setEstadoSemana(dto.estadoSemana());
         actividadAlumno.setEstadoTarea(dto.estadoSemana());
+
         detalle.setObservacionesAlumno(dto.observacionesAlumno());
         actividadAlumno.setComentarios(dto.observacionesAlumno());
 
         if (!actividadAlumno.getActividadGrupo().getReqEntrega() && actividadAlumno.getAvanceGlobal() == 100) {
-            actividadAlumno.setEstadoTarea(EstadoTarea.Completada);
+            actividadAlumno.setEstadoTarea( EstadoTarea.Completada);
+            detalle.setEstadoSemana(EstadoTarea.Completada);
         }
+
+        actividadAlumnoRepository.save(actividadAlumno);
+        DetalleSeguimiento detalleSeguimiento = detalleSeguimientoRepository.save(detalle);
+        seguimientoSemanalService.recalcularAvanceSemana(detalle.getSemana());
+
+        return detalleSeguimientoMapper.toDashboardDto(detalleSeguimiento);
 
     }
 

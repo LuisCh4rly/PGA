@@ -10,7 +10,7 @@ public record DetalleSeguimientoRequestDto(
     String observacionesAlumno,
     @Min(value = 0, message = "El valor mínimo es 0")
     @Max(value = 100, message = "El valor máximo es 100")
-    Long avanceSemanal
+    Long avanceReal
 
 ) {
 }

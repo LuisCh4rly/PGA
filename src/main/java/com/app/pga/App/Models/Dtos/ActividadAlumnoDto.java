@@ -27,7 +27,8 @@ public record ActividadAlumnoDto(
         String origen,
         String urlInstrucciones,
         String fechaAsignacion,
-        Boolean reqEntrega
+        Boolean reqEntrega,
+        Boolean seguimientoActivo
 
 ) implements Serializable {
 }

@@ -61,7 +61,6 @@ public class UsuarioController {
     //----Consulta general----
     @GetMapping
     public ResponseEntity<Page<UsuarioResponseDto>>Consulta(UsuarioFiltro filtro, Pageable pageable){
-
         return ResponseEntity.ok(usuarioService.findAll(filtro, pageable));
     }
 
@@ -80,13 +79,6 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.findAllActivosDocentes());
     }
 
-    //-------consulta DOCENTES
-    @GetMapping("/docentes")
-    public ResponseEntity<Page<UsuarioResponseDto>>consultaDocentes(UsuarioFiltro filtro, Pageable pageable){
-        return ResponseEntity.ok(usuarioService.findAllDocentes(filtro, pageable));
-    }
-
-    //-----------ALUMNOS--------
 
     //-------consulta ALUMNOS ACTIVOS
     @GetMapping("/alumnos-activos")
@@ -94,10 +86,5 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.findAllActivosAlumnos());
     }
 
-    //-------consulta ALUMNOS
-    @GetMapping("/alumnos")
-    public ResponseEntity<Page<UsuarioResponseDto>>consultaAlumnos(UsuarioFiltro filtro, Pageable pageable){
-        return ResponseEntity.ok(usuarioService.findAllAlumnos(filtro, pageable));
-    }
 
 }

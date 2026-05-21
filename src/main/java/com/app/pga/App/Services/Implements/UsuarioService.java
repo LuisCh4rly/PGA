@@ -69,7 +69,7 @@ public class UsuarioService implements IUsuarioService {
         Usuario usuarioExistente = usuarioRepository.findById(idUsuario).orElseThrow(() -> new NotFoundException("Registro no encontrado: "+ idUsuario));
 
         if(!usuarioExistente.getActivo()){
-            throw new IllegalStateException("No se puede modificar un registro inactivo");
+            throw new ResourceDisabledException("No se puede modificar un registro inactivo");
         }
 
         usuarioExistente.setDireccion(usuarioRequestDto.direccion());

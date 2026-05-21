@@ -1,5 +1,6 @@
 package com.app.pga.App.Services.Implements;
 
+import com.app.pga.App.Exception.BadRequestException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Exception.ResourceDisabledException;
 import com.app.pga.App.Models.Dtos.ActividadAlumnoDto;
@@ -7,16 +8,14 @@ import com.app.pga.App.Models.Dtos.ReporteSeguimientoDto;
 import com.app.pga.App.Models.Dtos.RequestDto.CambiarEstadoTareaDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ActividadALumnoListaDto;
 import com.app.pga.App.Models.Dtos.ResponseDto.ActividadAlumnoResponseDTO;
-import com.app.pga.App.Models.Entities.ActividadAlumno;
-import com.app.pga.App.Models.Entities.ActividadGrupo;
-import com.app.pga.App.Models.Entities.Grupo;
-import com.app.pga.App.Models.Entities.Inscripcion;
+import com.app.pga.App.Models.Entities.*;
 import com.app.pga.App.Models.Enum.Alcance;
 import com.app.pga.App.Models.Enum.Estado;
 import com.app.pga.App.Models.Enum.EstadoTarea;
 import com.app.pga.App.Models.Mappers.ActividadAlumnoMapper;
 import com.app.pga.App.Repositories.IActividadAlumnoRepository;
 import com.app.pga.App.Repositories.IActividadGrupoRepository;
+import com.app.pga.App.Repositories.IDetalleSeguimientoRepository;
 import com.app.pga.App.Repositories.IInscripcionRepository;
 import com.app.pga.App.Services.Interfaces.IActividadAlumnoService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +39,8 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
     private final ActividadAlumnoMapper actividadAlumnoMapper;
     private final StorageService storageService;
     private final IActividadGrupoRepository actividadGrupoRepository;
+    private final IDetalleSeguimientoRepository detalleSeguimientoRepository;
+    private final SeguimientoSemanalService seguimientoSemanalService;
 
 
     @Override
@@ -52,23 +54,39 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
         if (!inscripcion.getEstado())
             throw new ResourceDisabledException("Inscripción deshabilitada");
 
-        if (!aa.getActividadGrupo().getReqEntrega())
-            throw new IllegalStateException("Actividad no requiere entrega");
+        DetalleSeguimiento detalle = detalleSeguimientoRepository.findDetalleActivo(idActividadAlumno)
+                .orElseThrow(() -> new ResourceDisabledException( "La actividad no está registrada en una semana activa"));
 
-        if (aa.getExcento()==true)
-            throw new IllegalStateException("Alumno exento");
+        if (!aa.getActividadGrupo().getReqEntrega())
+            throw new ResourceDisabledException("Actividad no requiere entrega");
+
+        if(Boolean.TRUE.equals(aa.getExcento()))
+            throw new ResourceDisabledException("Alumno exento");
 
         if (aa.getEstadoTarea() == EstadoTarea.Aprobada)
-            throw new IllegalStateException("Tarea ya aprobada");
+            throw new ResourceDisabledException("Tarea ya aprobada");
 
         String url = storageService.guardarEntrega(inscripcion.getUsuario().getIdUsuario(), inscripcion.getGrupo().getIdGrupo(), aa.getActividadGrupo().getIdActividadGrupo(), archivo);
 
         aa.setFechaEntrega(LocalDate.now());
         aa.setUrlEntrega(url);
         aa.setEstadoTarea(EstadoTarea.Completada);
+
         aa.setAvanceGlobal(100L);
 
+        Long avanceSemanaActual = Optional.ofNullable(detalle.getAvanceReal()).orElse(0L);
+        Long avanceEsperadoSemana = Optional.ofNullable(detalle.getAvanceEsperado()).orElse(0L);
+        Long restante = Math.max(avanceEsperadoSemana - avanceSemanaActual, 0L);
+
+
+        detalle.setAvanceReal(avanceSemanaActual + restante);
+        detalle.setEstadoSemana(EstadoTarea.Completada);
+
+        detalleSeguimientoRepository.save(detalle);
         actividadAlumnoRepository.save(aa);
+        seguimientoSemanalService.recalcularAvanceSemana(detalle.getSemana());
+
+
     }
     @Override
     @Transactional(readOnly = true)
@@ -89,12 +107,38 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
 
         inscripcionRepository.findById(idInscripcion).orElseThrow(() -> new NotFoundException("Inscripción no encontrada"));
 
-        Boolean existe = actividadAlumnoRepository.existsByIdActividadAlumnoAndInscripcion_IdInscripcion(idInscripcion, idActividadAlumno);
-        if(existe){
-            new NotFoundException("Actividad no encontrada");
-        }
+        Boolean existe = actividadAlumnoRepository.existsByIdActividadAlumnoAndInscripcion_IdInscripcion(idActividadAlumno, idInscripcion);
 
-        return actividadAlumnoMapper.toDto(actividadAlumnoRepository.findByIdActividadAlumnoAndInscripcion_IdInscripcion(idActividadAlumno, idInscripcion));
+        if (!existe) {
+           throw  new NotFoundException("Actividad no encontrada");
+        }
+        ActividadAlumnoDto aa = actividadAlumnoMapper.toDto(actividadAlumnoRepository.findByIdActividadAlumnoAndInscripcion_IdInscripcion(idActividadAlumno, idInscripcion));
+        boolean seguimientoActivo = detalleSeguimientoRepository
+                .existsByActividad_IdActividadAlumnoAndSemana_FechaLimiteEdicionGreaterThanEqual(aa.idActividadAlumno(), LocalDate.now());
+
+        return new ActividadAlumnoDto(aa.idInscripcion(),
+                aa.estadoTarea(),
+                aa.comentarios(),
+                aa.excento(),
+                aa.motivoExencion(),
+                aa.urlEntrega(),
+                aa.fechaEntrega(),
+                aa.observaciones(),
+                aa.avanceGlobal(),
+                aa.idInscripcion(),
+                aa.titulo(),
+                aa.descripcion(),
+                aa.campoFormativo(),
+                aa.origen(),
+                aa.urlInstrucciones(),
+                aa.fechaAsignacion(),
+                aa.reqEntrega(),
+                seguimientoActivo
+        );
+    }
+    @Override
+    public List<ActividadALumnoListaDto> obtenerPorInscripcionDisponibles(Long idInscripcion) {
+        return actividadAlumnoRepository.actividadesFiltradas(idInscripcion);
     }
 
     @Override
@@ -110,8 +154,18 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
             throw new ResourceDisabledException("Actividad Excenta");
 
         if (aa.getEstadoTarea() == EstadoTarea.Aprobada) {
-            throw new IllegalStateException("La actividad ya fue aprobada");
+            throw new ResourceDisabledException("La actividad ya fue aprobada");
         }
+        List<EstadoTarea> estadosPermitidos = List.of(
+                EstadoTarea.Aprobada,
+                EstadoTarea.Incompleta
+        );
+
+        if (!estadosPermitidos.contains(cambiarEstadoTareaDto.estado())) {
+            throw new BadRequestException("Estado no permitido");
+        }
+
+
 
         aa.setEstadoTarea(cambiarEstadoTareaDto.estado());
         aa.setObservaciones(cambiarEstadoTareaDto.mensaje());
@@ -119,15 +173,34 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
     }
     @Override
     public void exentarActividad( Long idActividadAlumno, CambiarEstadoTareaDto cambiarEstadoTareaDto) {
-
         ActividadAlumno aa = actividadAlumnoRepository.findById(idActividadAlumno)
                 .orElseThrow(() -> new NotFoundException("Actividad alumno no encontrada"));
 
         if (aa.getUrlEntrega() != null)
             throw new ResourceDisabledException("Exite una entrega del alumno");
+        if(Boolean.TRUE.equals(aa.getExcento())){
+            throw new ResourceDisabledException( "Actividad ya exenta");
+        }
+        if(aa.getEstadoTarea() == EstadoTarea.Completada || aa.getEstadoTarea()==EstadoTarea.Aprobada){
+            throw new ResourceDisabledException("Tarea ya completada");
+        }
+
         aa.setExcento(true);
+
+
+        Optional <DetalleSeguimiento>  detalleOptional = detalleSeguimientoRepository.findDetalleActivo(idActividadAlumno);
+        if(detalleOptional.isPresent()){
+            DetalleSeguimiento detalleSeguimiento = detalleOptional.get();
+            detalleSeguimiento.setEstadoSemana(EstadoTarea.Exenta);
+            Long restante = detalleSeguimiento.getAvanceEsperado();
+            detalleSeguimiento.setAvanceReal(restante);
+
+            seguimientoSemanalService.recalcularAvanceSemana(detalleSeguimiento.getSemana());
+
+        }
         aa.setMotivoExencion(cambiarEstadoTareaDto.mensaje());
         aa.setEstadoTarea(EstadoTarea.Exenta);
+        aa.setAvanceGlobal(100L);
         actividadAlumnoRepository.save(aa);
     }
     @Override
@@ -144,6 +217,16 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
 
         if (aa.getEstadoTarea() == EstadoTarea.Aprobada)
             throw new ResourceDisabledException("Tarea ya aprobada");
+        List<EstadoTarea> estadosPermitidos = List.of(
+                EstadoTarea.Aprobada,
+                EstadoTarea.Incompleta
+        );
+
+        if (!estadosPermitidos.contains(cambiarEstadoTareaDto.estado())) {
+            throw new BadRequestException(
+                    "Estado no permitido"
+            );
+        }
 
         aa.setEstadoTarea(cambiarEstadoTareaDto.estado());
         aa.setComentarios(cambiarEstadoTareaDto.mensaje());
