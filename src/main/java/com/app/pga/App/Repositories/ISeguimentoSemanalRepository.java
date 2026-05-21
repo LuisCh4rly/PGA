@@ -34,5 +34,22 @@ public interface ISeguimentoSemanalRepository extends JpaRepository<SeguimentoSe
     WHERE s.inscripcion.idInscripcion = :idInscripcion
     ORDER BY s.numeroSemana DESC
     """)
-    List<SeguimientoDashboardResponseDto> findSemanas(Long idInscripcion, Pageable pageable);
+    List<SeguimientoDashboardResponseDto> findSemanas(Long idInscripcion);
+
+    @Query("""
+    SELECT new com.app.pga.App.Models.Dtos.ResponseDto.SeguimientoDashboardResponseDto(
+        s.idSeguimientoSemanal,
+        s.numeroSemana,
+        s.semanaInicio,
+        s.semanaFin,
+        s.fechaLimiteEdicion,
+        s.porcentajeAvance,
+        null
+    )
+    FROM SeguimentoSemanal s
+    WHERE s.inscripcion.idInscripcion = :idInscripcion
+    AND CURRENT_DATE BETWEEN s.semanaInicio AND s.semanaFin
+""")
+    Optional<SeguimientoDashboardResponseDto> obtenerSemanaActual( Long idInscripcion);
+    long countByInscripcion_IdInscripcion(Long idInscripcion);
 }

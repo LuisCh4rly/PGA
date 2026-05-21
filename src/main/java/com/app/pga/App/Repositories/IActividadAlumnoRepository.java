@@ -1,6 +1,7 @@
 package com.app.pga.App.Repositories;
 
 import com.app.pga.App.Models.Dtos.ReporteSeguimientoDto;
+import com.app.pga.App.Models.Dtos.ResponseDto.ActividadALumnoListaDto;
 import com.app.pga.App.Models.Entities.ActividadAlumno;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +13,7 @@ public interface IActividadAlumnoRepository extends JpaRepository<ActividadAlumn
     List<ActividadAlumno> findByActividadGrupo_IdActividadGrupo(Long actividadGrupoIdActividadGrupo);
 
     List<ActividadAlumno> findByInscripcion_IdInscripcion(Long inscripcionIdInscripcion);
-    ActividadAlumno findByIdActividadAlumnoAndInscripcion_IdInscripcion(Long idInscripcion, Long idActividadGrupo);
+    ActividadAlumno findByIdActividadAlumnoAndInscripcion_IdInscripcion( Long idActividadGrupo, Long idInscripcion);
 
     boolean existsByActividadGrupo_IdActividadGrupoAndInscripcion_IdInscripcion(Long idActividadGrupo, Long idInscripcion
     );
@@ -52,5 +53,17 @@ public interface IActividadAlumnoRepository extends JpaRepository<ActividadAlumn
 """)
     List<ReporteSeguimientoDto> reporteSeguimientoGeneralPorGrupo(@Param("idGrupo") Long idGrupo);
 
+    @Query("""
+    SELECT new com.app.pga.App.Models.Dtos.ResponseDto.ActividadALumnoListaDto(
+        au.idActividadAlumno,
+        au.inscripcion.idInscripcion,
+        au.actividadGrupo.titulo,
+        au.actividadGrupo.campo
+    )
+    FROM ActividadAlumno au
+    WHERE au.inscripcion.idInscripcion = :idInscripcion
+    AND au.estadoTarea NOT IN ('Completada', 'Exenta', 'Aprobada')
+""")
+    List <ActividadALumnoListaDto> actividadesFiltradas (Long idInscripcion);
 
 }

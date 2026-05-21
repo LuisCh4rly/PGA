@@ -263,6 +263,60 @@ FROM expedientes_creados ec
 WHERE d.activo = true;
 
 
+INSERT INTO seguimientos_semanales (numero_semana, semana_inicio, semana_fin, fecha_limite_edicion, porcentaje_avance, id_inscripcion) VALUES
+    (1, '02/02/2026', '06/02/2026', '08/02/2026', 8, 1),
+    (2, '09/02/2026', '13/02/2026', '15/02/2026', 19, 1),
+    (3, '16/02/2026', '20/02/2026', '22/02/2026', 28, 1),
+    (4, '23/02/2026', '27/02/2026', '01/03/2026', 40, 1),
+    (5, '02/03/2026', '06/03/2026', '08/03/2026', 51, 1),
+    (6, '09/03/2026', '13/03/2026', '15/03/2026', 61, 1),
+    (7, '16/03/2026', '20/03/2026', '22/03/2026', 73, 1),
+    (8, '23/03/2026', '27/03/2026', '29/03/2026', 89, 1);
+
+
+INSERT INTO detalle_seguimientos (estado_semana, avance_real, observaciones_alumno, id_actividad_alumno, id_seguimiento_semanal, avance_esperado) VALUES
+                                                                                                                                        ('En_Progreso', 20, 'Inicio del desarrollo.', 4, 1,20),
+                                                                                                                                        ('En_Progreso', 20, 'Avance inicial.', 4, 2, 20),
+                                                                                                                                        ('En_Progreso', 20, 'Desarrollo medio.', 4, 3, 20),
+                                                                                                                                        ('En_Progreso', 20, 'Casi terminado.', 4, 4,20),
+                                                                                                                                        ('Completada', 20, 'Finalizado.', 4, 5,20),
+
+                                                                                                                                        ('En_Progreso', 5,  'Inicio.', 8, 1,20),
+                                                                                                                                        ('En_Progreso', 10, 'Base.', 8, 2,20),
+                                                                                                                                        ('En_Progreso', 20, 'Avance.', 8, 3, 20),
+                                                                                                                                        ('En_Progreso', 25, 'Integración.', 8, 4, 30),
+                                                                                                                                        ('Completada', 40, 'Finalizado.', 8, 5, 50),
+
+                                                                                                                                        ('En_Progreso', 10, 'Inicio.', 12, 1, 30),
+                                                                                                                                        ('En_Progreso', 15, 'Base.', 12, 2, 30),
+                                                                                                                                        ('En_Progreso', 15, 'Desarrollo inicial.', 12, 3, 30 ),
+                                                                                                                                        ('En_Progreso', 20, 'Avance medio.', 12, 4, 30),
+                                                                                                                                        ('En_Progreso', 15, 'Optimización.', 12, 5, 30),
+                                                                                                                                        ('En_Progreso', 10, 'Ajustes finales.', 12, 6, 30),
+                                                                                                                                        ('En_Progreso', 10, 'Correcciones.', 12, 7, 30),
+                                                                                                                                        ('Completada', 5, 'Finalizado.', 12, 8, 30),
+
+                                                                                                                                        ('En_Progreso', 10, 'Inicio.', 16,1 , 30),
+                                                                                                                                        ('En_Progreso', 10, 'Base.', 16, 2, 30),
+                                                                                                                                        ('En_Progreso', 15, 'Desarrollo.', 16, 3, 30),
+                                                                                                                                        ('En_Progreso', 15, 'Avance.', 16, 4, 30),
+                                                                                                                                        ('En_Progreso', 15, 'Casi listo.', 16, 5, 30),
+                                                                                                                                        ('En_Progreso', 15, 'Pulido.', 16, 6, 30),
+                                                                                                                                        ('En_Progreso', 10, 'Optimización.', 16, 7, 30),
+                                                                                                                                        ('Completada', 10, 'Finalizado.', 16, 8, 30),
+
+                                                                                                                                        ('En_Progreso', 5,  'Inicio.', 20, 1, 30),
+                                                                                                                                        ('En_Progreso', 5,  'Análisis.', 20, 2, 30),
+                                                                                                                                        ('En_Progreso', 10, 'Diseño.', 20, 3, 30),
+                                                                                                                                        ('En_Progreso', 10, 'Desarrollo inicial.', 20, 4, 30),
+                                                                                                                                        ('En_Progreso', 15, 'Avance medio.', 20, 5, 30),
+                                                                                                                                        ('En_Progreso', 15, 'Integración.', 20, 6, 30),
+                                                                                                                                        ('En_Progreso', 20, 'Pruebas.', 20, 7, 30),
+                                                                                                                                        ('Completada', 20, 'Finalizado.', 20, 8, 30);
+
+
+
+
 
 COMMIT ;
 

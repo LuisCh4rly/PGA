@@ -97,6 +97,9 @@ public class ExpedienteService implements IExpedienteService {
         if (exp.getEstado() == EstadoExpediente.APROBADO) {
             throw new ResourceDisabledException("No se pueden agregar observaciones a un expediente aprobado");
         }
+        if(!exp.getUsuario().getActivo()){
+            throw new ResourceDisabledException("Alumno deshabilitado");
+        }
         exp.setObservaciones(observaciones);
         return expedienteMapper.toDto(expedienteRepository.save(exp));
     }

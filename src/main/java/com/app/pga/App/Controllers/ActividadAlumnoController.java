@@ -81,4 +81,11 @@ public class ActividadAlumnoController {
                 .status(HttpStatus.OK)
                 .body(actividadAlumnoService.verAsignaciones(idActividadGrupo));
     }
+
+    @GetMapping("/inscripcion/{idInscripcion}/disponibles")
+    public ResponseEntity<List<ActividadALumnoListaDto>> obtenerActividadesAlumnoDisponibles(@PathVariable Long idInscripcion) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(actividadAlumnoService.obtenerPorInscripcionDisponibles(idInscripcion));
+    }
 }
