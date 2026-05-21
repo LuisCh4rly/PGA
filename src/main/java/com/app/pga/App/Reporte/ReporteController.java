@@ -8,6 +8,7 @@ import com.app.pga.App.Models.Entities.Inscripcion;
 import com.app.pga.App.Services.Implements.*;
 import com.app.pga.App.Services.Interfaces.IDocumentoService;
 import com.app.pga.App.Services.Interfaces.IGrupoService;
+import com.app.pga.App.Services.Interfaces.ISeguimientoSemanalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reporte")
@@ -39,6 +41,8 @@ public class ReporteController {
     private final ReporteInscripcionesService reporteInscripcionesService;
     private final IDocumentoService documentoService;
     private final ReporteExpGenService reporteExpGenService;
+    private final ISeguimientoSemanalService seguimientoSemanalService;
+    private final ReporteSeguimientoAlumnoService reporteSeguimientoAlumnoService;
 
     @GetMapping("/alumnos/{id}/reporte")
     public ResponseEntity<InputStreamResource> descargarReporte(@PathVariable Long id) throws Exception {
@@ -113,6 +117,23 @@ public class ReporteController {
         List<ExpedienteReporteDto> expedientes = expedienteService.findAll();
         List <DocumentoResponseDto> documentos = documentoService.obtenerDocumentos();
         ByteArrayInputStream pdf = reporteExpGenService.generarResporteExpediente(expedientes, documentos);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition",
+                "inline; filename=reporte_seguimiento.pdf");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(pdf));
+    }
+
+    @GetMapping("/seguimientoSemanal/{idUsuario}/reporte")
+    public ResponseEntity<InputStreamResource> SeguimientoSemanalReporte(@PathVariable Long idUsuario) throws Exception {
+        Optional<GrupoAlumnoDto> grupo = inscripcionService.grupoAlumnoInscripcion(idUsuario);
+        List <SeguimientoDashboardResponseDto> semanas = seguimientoSemanalService.obtenerSeguimientoAlumno(grupo.get().idInscripcion());
+        InscripcionResponseDto inscripcion = inscripcionService.finfById(grupo.get().idInscripcion());
+        ByteArrayInputStream pdf = reporteSeguimientoAlumnoService.generarSeguimientoSemanal(semanas, inscripcion);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition",
                 "inline; filename=reporte_seguimiento.pdf");

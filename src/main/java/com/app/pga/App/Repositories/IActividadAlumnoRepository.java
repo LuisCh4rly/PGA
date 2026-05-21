@@ -58,7 +58,8 @@ public interface IActividadAlumnoRepository extends JpaRepository<ActividadAlumn
         au.idActividadAlumno,
         au.inscripcion.idInscripcion,
         au.actividadGrupo.titulo,
-        au.actividadGrupo.campo
+        au.actividadGrupo.campo,
+        au.observaciones
     )
     FROM ActividadAlumno au
     WHERE au.inscripcion.idInscripcion = :idInscripcion
