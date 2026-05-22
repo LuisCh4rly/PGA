@@ -74,10 +74,6 @@ public class InscripcionController {
     }
 
 
-    @GetMapping ("reporte/inscripciones")
-    public ResponseEntity<List<InscripcionReporteDto>>reporteInscripciones(){
-        return ResponseEntity.ok(inscripcionService.findAll());
-    }
 
 
     //---consulta alumno grupo ---

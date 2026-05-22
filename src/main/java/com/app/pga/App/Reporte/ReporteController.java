@@ -128,11 +128,11 @@ public class ReporteController {
                 .body(new InputStreamResource(pdf));
     }
 
-    @GetMapping("/seguimientoSemanal/{idUsuario}/reporte")
-    public ResponseEntity<InputStreamResource> SeguimientoSemanalReporte(@PathVariable Long idUsuario) throws Exception {
-        Optional<GrupoAlumnoDto> grupo = inscripcionService.grupoAlumnoInscripcion(idUsuario);
-        List <SeguimientoDashboardResponseDto> semanas = seguimientoSemanalService.obtenerSeguimientoAlumno(grupo.get().idInscripcion());
-        InscripcionResponseDto inscripcion = inscripcionService.finfById(grupo.get().idInscripcion());
+    @GetMapping("/seguimientoSemanal/{idInscripcion}/reporte")
+    public ResponseEntity<InputStreamResource> SeguimientoSemanalReporte(@PathVariable Long idInscripcion) throws Exception {
+
+        List <SeguimientoDashboardResponseDto> semanas = seguimientoSemanalService.obtenerSeguimientoAlumno(idInscripcion);
+        InscripcionResponseDto inscripcion = inscripcionService.finfById(idInscripcion);
         ByteArrayInputStream pdf = reporteSeguimientoAlumnoService.generarSeguimientoSemanal(semanas, inscripcion);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition",

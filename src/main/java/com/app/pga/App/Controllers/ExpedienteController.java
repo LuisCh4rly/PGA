@@ -35,8 +35,5 @@ class ExpedienteController {
                 .body(expedienteService.agregarObservaciones(idExpediente, dto.observacion()));
     }
 
-    @GetMapping ("reporte/expedientes")
-    public ResponseEntity<List<ExpedienteReporteDto>>reporteExpediente(){
-        return ResponseEntity.ok(expedienteService.findAll());
-    }
+
 }

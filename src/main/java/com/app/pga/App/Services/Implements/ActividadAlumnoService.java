@@ -116,7 +116,7 @@ public class ActividadAlumnoService implements IActividadAlumnoService {
         boolean seguimientoActivo = detalleSeguimientoRepository
                 .existsByActividad_IdActividadAlumnoAndSemana_FechaLimiteEdicionGreaterThanEqual(aa.idActividadAlumno(), LocalDate.now());
 
-        return new ActividadAlumnoDto(aa.idInscripcion(),
+        return new ActividadAlumnoDto(aa.idActividadAlumno(),
                 aa.estadoTarea(),
                 aa.comentarios(),
                 aa.excento(),
