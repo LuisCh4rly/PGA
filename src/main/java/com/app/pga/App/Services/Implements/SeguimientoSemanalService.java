@@ -58,13 +58,13 @@ class SeguimientoSemanalService implements ISeguimientoSemanalService {
 
 
         if (inicioSemana.isAfter(hoy.with(DayOfWeek.MONDAY))) {
-            throw new IllegalStateException("No se puede crear semanas futuras");
+            throw new ResourceDisabledException("No se puede crear semanas futuras");
         }
         if (inicioSemana.isBefore(inicioInscripción.with(DayOfWeek.MONDAY))) {
-            throw new IllegalStateException("Semana anterior a la inscripción");
+            throw new ResourceDisabledException("Semana anterior a la inscripción");
         }
         if (inicioSemana.isAfter(finInscripcion)) {
-            throw new IllegalStateException("Semana posterior al fin de la inscripción");
+            throw new ResourceDisabledException("Semana posterior al fin de la inscripción");
         }
 
         Long numeroSemana = ChronoUnit.WEEKS.between(inicioBase, inicioSemana) + 1;
@@ -78,7 +78,7 @@ class SeguimientoSemanalService implements ISeguimientoSemanalService {
                         inscripcion, finSemana, inicioSemana);
 
         if (traslape) {
-            throw new IllegalStateException("Las fechas se traslapan");
+            throw new ResourceDisabledException("Las fechas se traslapan");
         }
 
         SeguimentoSemanal semanaAnterior =  seguimentoSemanalRepository

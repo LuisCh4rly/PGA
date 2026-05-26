@@ -125,13 +125,13 @@ public class SesionService implements ISesionService {
                 .orElseThrow(() -> new NotFoundException("Sesión no encontrada"));
 
         if (sesion.getAlcance() == Alcance.GRUPAL) {
-            throw new IllegalStateException(
+            throw new ResourceDisabledException(
                     "No se pueden modificar inscripciones de una sesión grupal");
         }
 
         //validamos que la sesion no sea pasada
         if(!sesion.getFecha().isAfter(LocalDateTime.now())){
-            throw new IllegalStateException("No se puede modificar inscripciones de una sesión que ya inició o finalizó");
+            throw new ResourceDisabledException("No se puede modificar inscripciones de una sesión que ya inició o finalizó");
         }
 
         // borrar relaciones actuales
@@ -301,7 +301,7 @@ public SesionDetalletDto tomarAsistencia(Long idSesion, List<AsistenciaDto> list
 
         //validamos que la sesion no sea pasada
         if(!sesion.getFecha().isAfter(LocalDateTime.now())){
-            throw new IllegalStateException("No se puede modificar una sesión que ya inició o finalizó");
+            throw new ResourceDisabledException("No se puede modificar una sesión que ya inició o finalizó");
         }
         //verifiicar que el docente no tenga sesion a esa hora
         boolean existe = sesionRepository.existsSesionActivaDocenteExcluyendoSesion(sesion.getGrupo().getUsuario().getIdUsuario(), dto.fecha(), idSesion);

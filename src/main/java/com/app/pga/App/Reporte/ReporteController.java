@@ -9,6 +9,11 @@ import com.app.pga.App.Services.Implements.*;
 import com.app.pga.App.Services.Interfaces.IDocumentoService;
 import com.app.pga.App.Services.Interfaces.IGrupoService;
 import com.app.pga.App.Services.Interfaces.ISeguimientoSemanalService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Tag(name = "Reportes", description = "Endpoints para la generación de reportes de usuarios, inscripciones, avance académico ")
 @RestController
 @RequestMapping("/api/reporte")
 @RequiredArgsConstructor
@@ -44,8 +50,17 @@ public class ReporteController {
     private final ISeguimientoSemanalService seguimientoSemanalService;
     private final ReporteSeguimientoAlumnoService reporteSeguimientoAlumnoService;
 
+    @Operation(summary = "Reporte de Inscripciones" ,description = "Genera un reporte que incluye el historial deinscripciones, situación del expediente e información del alumno")
+    @ApiResponses( value  = {
+         @ApiResponse(responseCode = "200", description = "Reporte generado correctamente"),
+         @ApiResponse(responseCode = "404", description = "Inscripcion no encontrada, alumno no encontrado,"),
+            @ApiResponse (responseCode = "500", description = "Error al generar el reporte")
+        }
+    )
     @GetMapping("/alumnos/{id}/reporte")
-    public ResponseEntity<InputStreamResource> descargarReporte(@PathVariable Long id) throws Exception {
+    public ResponseEntity<InputStreamResource> descargarReporte(
+            @Parameter(description = "Id de Inscripción", example = "1") @PathVariable Long id
+    ) throws Exception {
         UsuarioResponseDto alumno = usuarioService.findById(id);
         List<Inscripcion> inscripciones = inscripcionService.obtenerPorAlumno(id);
         ExpedienteResponseDto expediente = expedienteService.verExpediente(id);
@@ -60,9 +75,15 @@ public class ReporteController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(new InputStreamResource(pdf));
     }
-
+    @Operation(summary = "Generar reporte de asistencias", description = "Genera un reporte PDF de asistencias por grupo.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reporte generado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Grupo no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error generando el reporte")
+    })
     @GetMapping("/asistencias/{id}/reporte")
-    public ResponseEntity<InputStreamResource> asistenciasReporte(@PathVariable Long id) throws Exception {
+    public ResponseEntity<InputStreamResource> asistenciasReporte(
+            @Parameter(description = "Id de Grupo", example = "1") @PathVariable Long id) throws Exception {
         List<ReporteAsistenciaGrupoDto> sesiones = sesionService.obtenerReporteAsistenciaPorGrupo(id);
         GrupoResponseDto grupo = grupoService.obtenerPorId(id);
         List<AlumnoGrupoDto> inscripciones = inscripcionService.obtenerAlumnosPorGrupo(id);
@@ -78,8 +99,16 @@ public class ReporteController {
                 .body(new InputStreamResource(pdf));
     }
 
+    @Operation(summary = "Generar reporte de seguimiento grupal", description = "Genera un reporte PDF de seguimiento de actividades por grupo.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reporte generado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Grupo no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error generando el reporte")
+    })
     @GetMapping("/grupos/{id}/reporte")
-    public ResponseEntity<InputStreamResource> seguimientoReporte(@PathVariable Long id) throws Exception {
+    public ResponseEntity<InputStreamResource> seguimientoReporte(
+            @Parameter(description = "Id de Grupo", example = "1") @PathVariable Long id
+    ) throws Exception {
         List<ReporteSeguimientoDto> seguimiento = actividadAlumnoService.obtenerReporteSeguimientoPorGrupo(id);
         ByteArrayInputStream pdf = seguimientoService.generarReporteSeguimiento(seguimiento);
         HttpHeaders headers = new HttpHeaders();
@@ -93,8 +122,13 @@ public class ReporteController {
                 .body(new InputStreamResource(pdf));
     }
 
+    @Operation(summary = "Generar reporte de Usuarios", description = "Genera un reporte PDF con estadísticas e información general de usuarios.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reporte generado correctamente"),
+            @ApiResponse(responseCode = "500", description = "Error generando el reporte")
+    })
     @GetMapping("/inscripciones/reporte")
-    public ResponseEntity<InputStreamResource> inscripcionesReporte() throws Exception {
+    public ResponseEntity<InputStreamResource> usuariosReporte() throws Exception {
         List<InscripcionReporteDto> inscripciones = inscripcionService.findAll();
         int conteoAlumAct = inscripcionService.obtenerAlumnosActivosConteo();
         int conteoAlumInac = inscripcionService.obtenerAlumnosInactivosConteo();
@@ -112,6 +146,11 @@ public class ReporteController {
                 .body(new InputStreamResource(pdf));
     }
 
+    @Operation(summary = "Generar reporte de expedientes", description = "Genera un reporte PDF con el estado de expedientes y documentos.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reporte generado correctamente"),
+            @ApiResponse(responseCode = "500", description = "Error generando el reporte")
+    })
     @GetMapping("/expediente/reporte")
     public ResponseEntity<InputStreamResource> ExpedieneteReporte() throws Exception {
         List<ExpedienteReporteDto> expedientes = expedienteService.findAll();
@@ -128,8 +167,16 @@ public class ReporteController {
                 .body(new InputStreamResource(pdf));
     }
 
+    @Operation(summary = "Generar reporte de seguimiento semanal", description = "Genera un reporte PDF del seguimiento semanal de un alumno.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reporte generado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Inscripción no encontrada"),
+            @ApiResponse(responseCode = "500", description = "Error generando el reporte")
+    })
     @GetMapping("/seguimientoSemanal/{idInscripcion}/reporte")
-    public ResponseEntity<InputStreamResource> SeguimientoSemanalReporte(@PathVariable Long idInscripcion) throws Exception {
+    public ResponseEntity<InputStreamResource> SeguimientoSemanalReporte(
+            @Parameter(description = "Id de Inscripción", example = "1") @PathVariable Long idInscripcion
+    ) throws Exception {
 
         List <SeguimientoDashboardResponseDto> semanas = seguimientoSemanalService.obtenerSeguimientoAlumno(idInscripcion);
         InscripcionResponseDto inscripcion = inscripcionService.finfById(idInscripcion);
