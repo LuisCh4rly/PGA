@@ -32,6 +32,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -60,8 +61,8 @@ public class ReporteSeguimientoAlumnoService {
             //fuentes
             Font fontTitulo = new Font(Font.HELVETICA, 16, Font.BOLD);
             Font fontfecha = new Font(Font.HELVETICA, 8, Font.NORMAL);
-            Font fontSubtitulo = new Font(Font.HELVETICA, 14, Font.NORMAL);
-            Font fontSubtitulo2 = new Font(Font.HELVETICA, 12, Font.NORMAL);
+            Font fontSubtitulo = new Font(Font.HELVETICA, 12, Font.NORMAL);
+            Font fontSubtitulo2 = new Font(Font.HELVETICA, 10, Font.NORMAL);
 
             Font fontLabelDatos = new Font(Font.HELVETICA, 9, Font.BOLD);
             Font fontValorDatos = new Font(Font.HELVETICA, 9, Font.NORMAL);
@@ -131,7 +132,6 @@ public class ReporteSeguimientoAlumnoService {
             subtitulo.setAlignment(Element.ALIGN_CENTER);
 
             document.add(subtitulo);
-
             // datos alumno
             //CONFIGURAR TABLA
             PdfPTable datosAlumno = new PdfPTable(4);
@@ -147,6 +147,58 @@ public class ReporteSeguimientoAlumnoService {
             document.add(datosAlumno);
             document.add(Chunk.NEWLINE);
 
+            if(semanas == null || semanas.isEmpty()){
+
+                Paragraph sinDatos = new Paragraph(
+                        "No existen semanas registradas para este alumno.",
+                        fontValorDatos
+                );
+
+                sinDatos.setSpacingBefore(20);
+                sinDatos.setAlignment(Element.ALIGN_CENTER);
+
+                document.add(sinDatos);
+
+                document.close();
+
+                return new ByteArrayInputStream(out.toByteArray());
+            }
+
+            semanas = new ArrayList<>(semanas);
+            semanas.sort(
+                    Comparator.comparing(SeguimientoDashboardResponseDto::numeroSemana)
+            );
+
+            List<SeguimientoDashboardResponseDto> semanasCompletas = new ArrayList<>();
+
+            Long ultimaSemana = semanas.get(semanas.size() - 1).numeroSemana();
+
+            for (long i = 1; i <= ultimaSemana; i++) {
+
+                Long semanaActual = i;
+
+                SeguimientoDashboardResponseDto semanaExistente = semanas.stream()
+                        .filter(s -> s.numeroSemana().equals(semanaActual))
+                        .findFirst()
+                        .orElse(null);
+
+                if (semanaExistente != null) {
+                    semanasCompletas.add(semanaExistente);
+                } else {
+
+                    semanasCompletas.add(
+                            new SeguimientoDashboardResponseDto(
+                                    null,
+                                    semanaActual,
+                                    null, // semanaInicio
+                                    null,
+                                    null,// semanaFin
+                                    0L,   // porcentajeAvance
+                                    new ArrayList<>() // detalles vacíos
+                            )
+                    );
+                }
+            }
 
             //grafica de lineas del seguimiento
             // tabla contenedora para evitar que la gráfica se separe del nombre
@@ -158,7 +210,7 @@ public class ReporteSeguimientoAlumnoService {
             List<Integer> xData = new ArrayList<>();
             List<Long> yData= new ArrayList<>();
 
-            for (SeguimientoDashboardResponseDto semana : semanas ){
+            for (SeguimientoDashboardResponseDto semana : semanas){
                 xData.add(semana.numeroSemana().intValue());
                 yData.add(semana.porcentajeAvance());
             }
@@ -190,8 +242,7 @@ public class ReporteSeguimientoAlumnoService {
             ByteArrayOutputStream chartOut = new ByteArrayOutputStream();
             ChartUtils.writeChartAsPNG(
                     chartOut,
-                    indivChart,
-                    500, 300
+                    indivChart, 420,220
             );
 
             //insertar al PDF
@@ -208,26 +259,27 @@ public class ReporteSeguimientoAlumnoService {
             linea2.setOffset(-5);
             document.add(linea2);
             document.add(Chunk.NEWLINE);
-            document.add(contenedorAlumno);
 
-            document.add(Chunk.NEWLINE);
-            LineSeparator linea3 = new LineSeparator();
-            linea3.setOffset(-5);
-            document.add(linea3);
-            document.add(Chunk.NEWLINE);
+            document.add(contenedorAlumno);
+            LineSeparator linea6 = new LineSeparator();
+            linea6.setOffset(-5);
+            document.add(linea6);
 
             //grafica de pastel
             long enProgreso = semanas.stream()
-                    .flatMap(semana -> semana.detalles().stream())
+                    .filter(semana -> semana.detalles() !=null)
+            .flatMap(semana -> semana.detalles().stream())
                     .filter(detalle -> detalle.estadoSemana() == EstadoTarea.En_Progreso)
                     .count();
 
             long completadas = semanas.stream()
+                    .filter(semana -> semana.detalles() !=null)
                     .flatMap(semana -> semana.detalles().stream())
                     .filter(detalle -> detalle.estadoSemana() == EstadoTarea.Completada)
                     .count();
 
             long pendientes = semanas.stream()
+                    .filter(semana -> semana.detalles() !=null)
                     .flatMap(semana -> semana.detalles().stream())
                     .filter(detalle -> detalle.estadoSemana() == EstadoTarea.Sin_Iniciar)
                     .count();
@@ -272,16 +324,17 @@ public class ReporteSeguimientoAlumnoService {
             celda.setHorizontalAlignment(Element.ALIGN_CENTER);
 
             contenedorImagen.addCell(celda);
-
+            document.add(Chunk.NEWLINE);
             contenedorImagen.setKeepTogether(true);//intenta que la grafica quede en la misma hoja
             document.add(contenedorImagen);
+            document.add(Chunk.NEWLINE);
             LineSeparator linea5 = new LineSeparator();
             linea5.setOffset(-5);
             document.add(linea5);
 
 
             //tabla con el seguimiento por semana
-            for (SeguimientoDashboardResponseDto semana : semanas) {
+            for (SeguimientoDashboardResponseDto semana : semanasCompletas) {
 
                 document.add(Chunk.NEWLINE);
 
@@ -296,12 +349,14 @@ public class ReporteSeguimientoAlumnoService {
 
                 document.add(semanaTitulo);
 
+                String periodo = (semana.semanaInicio() != null && semana.semanaFin() != null)
+                        ? semana.semanaInicio() + " - " + semana.semanaFin()
+                        : "Sin periodo registrado";
+
                 // DATOS SEMANA
                 Paragraph infoSemana = new Paragraph(
                         "Periodo: "
-                                + semana.semanaInicio()
-                                + " - "
-                                + semana.semanaFin()
+                                + periodo
                                 + "    |    Avance general: "
                                 + semana.porcentajeAvance()
                                 + "%",
@@ -319,7 +374,7 @@ public class ReporteSeguimientoAlumnoService {
 
                 tabla.setWidths(new float[]{3, 3, 2, 2, 2, 3});
 
-                // ENCABEZactividadADOS
+                // titulo de la actividad
                 PdfPCell hActividad = new PdfPCell((new Phrase("Actividad", fontSubtitulo2)));
                 hActividad.setBackgroundColor(null);//quita el color de fondo
                 hActividad.setPadding(5);
@@ -358,69 +413,83 @@ public class ReporteSeguimientoAlumnoService {
                 tabla.addCell(hObservaciones);
 
                 // FILAS
-                for (DetalleDashboardDto detalle : semana.detalles()) {
-                    //titulo de actividad
-                    PdfPCell nombreCell = new PdfPCell(new Phrase(detalle.tituloActividad(), fontValorDatos));
-                    nombreCell.setPadding(5);
-                    nombreCell.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
-                    nombreCell.setBorder(Rectangle.NO_BORDER);
-                    nombreCell.setBorder(Rectangle.BOTTOM);
-                    nombreCell.setBorderColor(new Color(96, 93, 93));
-                    tabla.addCell(nombreCell);
+                if (semana.detalles()==null || semana.detalles().isEmpty()){
+                    PdfPCell sinDatos = new PdfPCell(
+                            new Phrase("No se registraron actividades en esta semana.", fontValorDatos)
+                    );
+                    sinDatos.setColspan(6);
+                    sinDatos.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    sinDatos.setPadding(10);
+                    sinDatos.setBorder(Rectangle.NO_BORDER);
+                    sinDatos.setBackgroundColor(new Color(245, 245, 245));
 
-                    //estado semanal
-                    PdfPCell estadoSemCell = new PdfPCell(new Phrase(detalle.estadoSemana().name(), fontValorDatos));
-                    estadoSemCell.setPadding(5);
-                    estadoSemCell.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
-                    estadoSemCell.setBorder(Rectangle.NO_BORDER);
-                    estadoSemCell.setBorder(Rectangle.BOTTOM);
-                    estadoSemCell.setBorderColor(new Color(96, 93, 93));
-                    tabla.addCell(estadoSemCell);
+                    tabla.addCell(sinDatos);
+                } else{
+                    for (DetalleDashboardDto detalle : semana.detalles()) {
+                        //titulo de actividad
+                        PdfPCell nombreCell = new PdfPCell(new Phrase(detalle.tituloActividad(), fontValorDatos));
+                        nombreCell.setPadding(5);
+                        nombreCell.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
+                        nombreCell.setBorder(Rectangle.NO_BORDER);
+                        nombreCell.setBorder(Rectangle.BOTTOM);
+                        nombreCell.setBorderColor(new Color(96, 93, 93));
+                        tabla.addCell(nombreCell);
 
-                    //detalla avance real
-                    PdfPCell estadoGlobalCell = new PdfPCell(new Phrase(detalle.avanceReal() + "%", fontValorDatos));
-                    estadoGlobalCell.setPadding(5);
-                    estadoGlobalCell.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
-                    estadoGlobalCell.setBorder(Rectangle.NO_BORDER);
-                    estadoGlobalCell.setBorder(Rectangle.BOTTOM);
-                    estadoGlobalCell.setBorderColor(new Color(96, 93, 93));
-                    tabla.addCell(estadoGlobalCell);
+                        //estado semanal
+                        PdfPCell estadoSemCell = new PdfPCell(new Phrase(detalle.estadoSemana().name().replace("_"," "), fontValorDatos));
+                        estadoSemCell.setPadding(5);
+                        estadoSemCell.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
+                        estadoSemCell.setBorder(Rectangle.NO_BORDER);
+                        estadoSemCell.setBorder(Rectangle.BOTTOM);
+                        estadoSemCell.setBorderColor(new Color(96, 93, 93));
+                        tabla.addCell(estadoSemCell);
 
-                    //avance global
-                    PdfPCell estadoGCell = new PdfPCell(new Phrase(detalle.avanceGlobalActividad() + "%", fontValorDatos));
-                    estadoGCell.setPadding(5);
-                    estadoGCell.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
-                    estadoGCell.setBorder(Rectangle.NO_BORDER);
-                    estadoGCell.setBorder(Rectangle.BOTTOM);
-                    estadoGCell.setBorderColor(new Color(96, 93, 93));
-                    tabla.addCell(estadoGCell);
+                        //detalla avance real
+                        PdfPCell estadoGlobalCell = new PdfPCell(new Phrase(detalle.avanceReal() + "%", fontValorDatos));
+                        estadoGlobalCell.setPadding(5);
+                        estadoGlobalCell.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
+                        estadoGlobalCell.setBorder(Rectangle.NO_BORDER);
+                        estadoGlobalCell.setBorder(Rectangle.BOTTOM);
+                        estadoGlobalCell.setBorderColor(new Color(96, 93, 93));
+                        tabla.addCell(estadoGlobalCell);
 
-                    //req  entrega
-                    PdfPCell reqEntrega = new PdfPCell(new Phrase(detalle.requiereEntrega() ? "SI" : "NO", fontValorDatos));
-                    reqEntrega.setPadding(5);
-                    reqEntrega.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
-                    reqEntrega.setBorder(Rectangle.NO_BORDER);
-                    reqEntrega.setBorder(Rectangle.BOTTOM);
-                    reqEntrega.setBorderColor(new Color(96, 93, 93));
-                    tabla.addCell(reqEntrega);
+                        //avance global
+                        PdfPCell estadoGCell = new PdfPCell(new Phrase(detalle.avanceGlobalActividad() + "%", fontValorDatos));
+                        estadoGCell.setPadding(5);
+                        estadoGCell.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
+                        estadoGCell.setBorder(Rectangle.NO_BORDER);
+                        estadoGCell.setBorder(Rectangle.BOTTOM);
+                        estadoGCell.setBorderColor(new Color(96, 93, 93));
+                        tabla.addCell(estadoGCell);
 
-                    // observaciones
-                    PdfPCell observaciones = new PdfPCell(new Phrase(detalle.observacionesAlumno() != null
-                            ? detalle.observacionesAlumno()
-                            : "-", fontValorDatos));
-                    observaciones.setPadding(5);
-                    observaciones.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
-                    observaciones.setBorder(Rectangle.NO_BORDER);
-                    observaciones.setBorder(Rectangle.BOTTOM);
-                    observaciones.setBorderColor(new Color(96, 93, 93));
-                    tabla.addCell(observaciones);
+                        //req  entrega
+                        PdfPCell reqEntrega = new PdfPCell(new Phrase(detalle.requiereEntrega() ? "SI" : "NO", fontValorDatos));
+                        reqEntrega.setPadding(5);
+                        reqEntrega.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
+                        reqEntrega.setBorder(Rectangle.NO_BORDER);
+                        reqEntrega.setBorder(Rectangle.BOTTOM);
+                        reqEntrega.setBorderColor(new Color(96, 93, 93));
+                        tabla.addCell(reqEntrega);
+
+                        // observaciones
+                        PdfPCell observaciones = new PdfPCell(new Phrase(detalle.observacionesAlumno() != null
+                                ? detalle.observacionesAlumno()
+                                : "-", fontValorDatos));
+                        observaciones.setPadding(5);
+                        observaciones.setBackgroundColor(new Color(245,245,245));//uso de gris claro para diferenciar filas
+                        observaciones.setBorder(Rectangle.NO_BORDER);
+                        observaciones.setBorder(Rectangle.BOTTOM);
+                        observaciones.setBorderColor(new Color(96, 93, 93));
+                        tabla.addCell(observaciones);
+                    }
                 }
                 document.add(tabla);
             }
 
             document.close();
         } catch (Exception e){
-            throw new ReporteException("Error generando reporte del seguimiento semnaal", e);
+            e.printStackTrace();
+            throw new ReporteException("Error generando reporte del seguimiento semanal", e);
         }
 
         return new ByteArrayInputStream(out.toByteArray());
