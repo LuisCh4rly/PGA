@@ -86,6 +86,9 @@ public class SecurityConfig {
                 // Definir qué rutas son públicas o privadas
                 .authorizeHttpRequests(auth -> auth
                         //  RUTAS PÚBLICAS
+                        .requestMatchers("/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/register").hasRole("ADMIN")
                         .requestMatchers("/api/auth/usuario-actual").hasAnyRole("DOCENTE", "ALUMNO", "ADMIN")
