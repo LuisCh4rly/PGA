@@ -1,6 +1,7 @@
 package com.app.pga.Auth.Service;
 
 import com.app.pga.App.Exception.BadRequestException;
+import com.app.pga.App.Exception.DuplicateResourceException;
 import com.app.pga.App.Exception.NotFoundException;
 import com.app.pga.App.Models.Dtos.RequestDto.UsuarioRequestDto;
 import com.app.pga.App.Models.Entities.Expediente;
@@ -17,6 +18,7 @@ import com.app.pga.Auth.Models.Entities.Role;
 import com.app.pga.Auth.Models.Enum.ERole;
 import com.app.pga.Auth.Repositories.ICuentaRepository;
 import com.app.pga.Auth.Repositories.IRoleRepository;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 
 public class CuentaService implements ICuentaService {
     private final ICuentaRepository cuentaRepository;
@@ -44,7 +47,7 @@ public class CuentaService implements ICuentaService {
     public CuentaResponseDto register(AuthRegisterDto dto) {
 
         cuentaRepository.findByEmail(dto.email()).ifPresent(e -> {
-            throw new IllegalArgumentException("El email ya está en uso");
+            throw new DuplicateResourceException("El email ya está en uso");
         });
         Role role = roleRepository.findByName(ERole.valueOf(dto.rol()))
                 .orElseThrow(() -> new NotFoundException("Rol no encontrado"));
