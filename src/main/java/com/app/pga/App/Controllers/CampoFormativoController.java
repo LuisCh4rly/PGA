@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "Campos Formativos", description = "Endpoints para la gestión de campos formativos")
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/campo")
 public class CampoFormativoController {
