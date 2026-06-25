@@ -31,12 +31,17 @@ public class ActividadGrupoInitializer implements CommandLineRunner {
 
                 if (ruta != null && ruta.startsWith("actividades/actividades-base")) {
 
-                    String nuevaRuta = storageService.copiarInstruccionesActividadBase(
-                            ruta,
-                            ag.getIdActividadGrupo()
-                    );
-
-                    ag.setUrlInstrucciones(nuevaRuta);
+                    try {
+                        String nuevaRuta = storageService.copiarInstruccionesActividadBase(
+                                ruta,
+                                ag.getIdActividadGrupo()
+                        );
+                        ag.setUrlInstrucciones(nuevaRuta);
+                    } catch (Exception e) {
+                        System.err.println("⚠ Alerta: No se pudo copiar el archivo físico para la actividad ID "
+                                + ag.getIdActividadGrupo() + ". Error: " + e.getMessage());
+                        // Al no relanzar la excepción, el bucle continúa con la siguiente actividad
+                    }
                 }
             }
 

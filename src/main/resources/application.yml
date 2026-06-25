@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: PGA
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/PGA}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:1234}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create-drop}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: aplataformagestionacademica@gmail.com
+    password: ${PASSWORD_MAIL}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+
+#configuración del JWT
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:300000}

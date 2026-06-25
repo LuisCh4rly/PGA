@@ -1,0 +1,42 @@
+services:
+  postgres-db: #servicio encargado de gestionar la base de datos
+    image: postgres:15-alpine #utiliza la version ligera bsada en alpine linux
+    container_name: postgres_container
+    command: postgres -c datestyle=iso,dmy
+    environment:
+      POSTGRES_DB: PGA #define el nombre de la base de datos
+      POSTGRES_USER: postgres #establecen las credenciales maestras de acceso a la base de datos
+      POSTGRES_PASSWORD: 1234
+    ports: #mapea el puerto interno del contenedor al mismo puerto del equipo host.
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - red-aplicacion
+
+  springboot-app: #sesrvicio encargado de ejecutar tu aplicacion backend
+    build: . #indica que debe buscar el dockerfile en el directorio actual para contruir la imagen
+    container_name: springboot_container
+    ports: #mapea el puerto del servidor tomcat interno al puerto local de la maquina para que se puedan hacer peticiones HTTP
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/PGA #configura la rutta de conexión JPA, en lugar de usar el localhost se ocupa el nombre del servicio postgres_db
+      SPRING_DATASOURCE_USERNAME: postgres #deben coinicidir con las credenciales declaradas en el servicio de postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update #configurado en update para que hibernate cree o actualice lsa tablas de las entidades
+      JWT_SECRET: ${JWT_SECRET} #SE AGREGAN
+      PASSWORD_MAIL: ${PASSWORD_MAIL}
+    volumes:
+      - ./actividades:/app/actividades
+      - ./actividades:/actividades
+    depends_on: #indica a docker el orden de arranque
+      - postgres-db
+    networks:
+      - red-aplicacion
+
+volumes: #evita la parte efimera de los contenedores
+  postgres_data:
+
+networks:
+  red-aplicacion:
+    driver: bridge
